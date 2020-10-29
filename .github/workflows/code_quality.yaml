@@ -27,4 +27,4 @@ jobs:
         with:
           args: -O scalastyle_2.12-1.0.0-batch.jar https://repo1.maven.org/maven2/org/scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar
       - name: Run Scalastyle
-        run: java -jar scalastyle_2.12-1.0.0-batch.jar --config scalastyle_config.xml ./
+        run: java -jar scalastyle_2.12-1.0.0-batch.jar --config project/scalastyle_config.xml ./prinz/src/main/scala/
