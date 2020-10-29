@@ -6,6 +6,7 @@ ThisBuild / version      := "0.0.1-SNAPSHOT"
 ThisBuild / scalaVersion := scalaV
 
 lazy val commonSettings = Seq(
+  scalastyleConfig := file("project/scalastyle_config.xml")
 )
 
 lazy val root = (project in file("."))
