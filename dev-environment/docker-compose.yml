@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+
+  mlflow:
+    build: ./mlflow
+    container_name: mlflow_server
+    restart: always
+    ports:
+     - "5000:5000"
+    environment:
+     - BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres_mlflow/mlflow
+    networks:
+     - mlflow_frontend
+     - mlflow_backend
+    depends_on:
+     - postgres_mlflow
+
+  postgres_mlflow:
+    image: postgres:12-alpine
+    container_name: mlflow_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+    networks:
+     - mlflow_backend
+
+networks:
+  mlflow_frontend:
+    driver: bridge
+  mlflow_backend:
+    driver: bridge
+
