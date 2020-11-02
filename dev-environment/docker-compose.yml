@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
 
@@ -25,7 +25,7 @@ services:
      - "8080:8080"
     networks:
      - nussknacker
-    
+
   postgres_mlflow:
     image: postgres:12-alpine
     container_name: mlflow_postgres
@@ -40,7 +40,7 @@ services:
 networks:
   mlflow_frontend:
     driver: bridge
-    
+
   mlflow_backend:
     driver: bridge
 
