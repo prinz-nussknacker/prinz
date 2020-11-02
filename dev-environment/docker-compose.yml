@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 services:
 
@@ -16,6 +16,16 @@ services:
     depends_on:
      - postgres_mlflow
 
+  nussknacker:
+    build: ./nussknacker
+    container_name: nussknacker
+    restart: always
+    ports:
+     - "3000:3000"
+     - "8080:8080"
+    networks:
+     - nussknacker
+    
   postgres_mlflow:
     image: postgres:12-alpine
     container_name: mlflow_postgres
@@ -30,5 +40,9 @@ services:
 networks:
   mlflow_frontend:
     driver: bridge
+    
   mlflow_backend:
+    driver: bridge
+
+  nussknacker:
     driver: bridge
