@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# Remove -d flag to debug your environment startup
-docker-compose up -d --build
+# Add -d flag to hide environment startup
+docker-compose up --build
