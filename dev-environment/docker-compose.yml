@@ -15,6 +15,18 @@ services:
      - mlflow_backend
     depends_on:
      - postgres_mlflow
+    volumes:
+     - './mlflow/artifact-store:/opt/mlflow/artifact-store'
+
+  nussknacker:
+    build: ./nussknacker
+    container_name: nussknacker
+    restart: always
+    ports:
+     - "3000:3000"
+     - "8080:8080"
+    networks:
+     - nussknacker
 
   postgres_mlflow:
     image: postgres:12-alpine
@@ -30,5 +42,9 @@ services:
 networks:
   mlflow_frontend:
     driver: bridge
+
   mlflow_backend:
+    driver: bridge
+
+  nussknacker:
     driver: bridge
