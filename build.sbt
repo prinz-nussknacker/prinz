@@ -10,6 +10,11 @@ lazy val commonSettings = Seq(
   resolvers ++= Seq(
     "Sonatype snaphots" at "https://oss.sonatype.org/content/groups/public/",
   ),
+  libraryDependencies ++= {
+    Seq(
+      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+    )
+  },
   scalastyleConfig := file("project/scalastyle_config.xml")
 )
 
@@ -24,9 +29,11 @@ lazy val prinz = (project in file("prinz"))
   .settings(commonSettings)
   .settings(
     name := "prinz",
-    libraryDependencies ++= {
-      Seq(
-        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
-      )
-    }
   )
+
+lazy val prinz_sample = (project in file("prinz_sample"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-sample",
+  )
+  .dependsOn(prinz)
