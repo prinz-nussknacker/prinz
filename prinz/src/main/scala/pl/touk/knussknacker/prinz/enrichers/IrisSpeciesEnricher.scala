@@ -6,10 +6,6 @@ import pl.touk.nussknacker.engine.api.{MetaData, MethodToInvoke, ParamName, Serv
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-/**
-  * Computes species for iris based on dimensions. All entries are classified
-  * as Iris setosa.
-  */
 class IrisSpeciesEnricher extends Service {
 
   @MethodToInvoke
