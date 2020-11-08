@@ -54,7 +54,7 @@ services:
       - mlflow-backend
     entrypoint: sh
     command: -c 'mkdir -p /mlflow-storage && /usr/bin/minio server /mlflow-storage'
-    
+
     nussknacker:
       build: ./nussknacker
       container_name: nussknacker
