@@ -12,3 +12,9 @@ project/plugins/project/
 # Scala files
 *.class
 *.log
+
+# Docker data
+dev-environment/minio/*
+!dev-environment/minio/.gitkeep
+dev-environment/minio/mlflow/*
+dev-environment/mlflow/models/*/mlruns
