@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:buster-slim
 
 RUN apt-get update && apt-get install -y wget curl git gnupg apt-utils gcc g++ make software-properties-common build-essential && apt-get update
 
