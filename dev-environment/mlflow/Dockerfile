@@ -19,7 +19,7 @@ RUN conda install -c conda-forge azure-storage=0.36.0
 RUN conda install -c conda-forge azure-storage-blob=12.5.0
 
 RUN mkdir -p ${MLFLOW_HOME}/scripts
-RUN cd /home && git clone https://github.com/mlflow/mlflow
+RUN mkdir -p ${MLFLOW_WORK_DIR}
 
 COPY run.sh ${MLFLOW_HOME}/scripts/run.sh
 RUN chmod +x ${MLFLOW_HOME}/scripts/run.sh

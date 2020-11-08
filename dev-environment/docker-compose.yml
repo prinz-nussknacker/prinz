@@ -53,17 +53,17 @@ services:
     networks:
       - mlflow-backend
     entrypoint: sh
-    command: -c 'mkdir -p /mlflow-storage && /usr/bin/minio server /mlflow-storage'
+    command: -c 'mkdir -p /mlflow-storage/mlflow && /usr/bin/minio server /mlflow-storage'
 
-    nussknacker:
-      build: ./nussknacker
-      container_name: nussknacker
-      restart: always
-      ports:
-       - "3000:3000"
-       - "8080:8080"
-      networks:
-       - mlflow-backend
+  nussknacker:
+    build: ./nussknacker
+    container_name: nussknacker
+    restart: always
+    ports:
+     - "3000:3000"
+     - "8080:8080"
+    networks:
+     - mlflow-backend
 
 networks:
   mlflow-backend:
