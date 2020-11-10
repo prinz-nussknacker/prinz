@@ -22,7 +22,8 @@ jobs:
         run: |
           wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
           sudo add-apt-repository 'deb https://apt.corretto.aws stable main'
-          sudo apt-get update && sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
+          sudo apt-get update && \
+          sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Run Scalastyle
         env:
           SCALASTYLE_DOWNLOAD_LINK: 'https://repo1.maven.org/maven2/org/
