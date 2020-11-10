@@ -28,4 +28,6 @@ RUN cd /opt/nussknacker/ui && \
     ./buildServer.sh
 
 COPY run.sh /opt/nussknacker/run.sh
+RUN chmod +x /opt/nussknacker/run.sh
+
 CMD ["/opt/nussknacker/run.sh"]

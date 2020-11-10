@@ -41,19 +41,19 @@ services:
       - mlflow-backend
 
   aws-mlflow:
+    build: ./minio
     container_name: aws-mlflow
-    image: minio/minio:latest
     volumes:
       - ./minio/mlflow:/mlflow-storage
-    ports:
-      - "9000:9000"
     environment:
       - MINIO_ACCESS_KEY=mlflow-key
       - MINIO_SECRET_KEY=mlflow-secret
+      - BUCKET_NAME=mlflow
+      - STORAGE=mlflow-storage
+    ports:
+      - "9000:9000"
     networks:
       - mlflow-backend
-    entrypoint: sh
-    command: -c 'mkdir -p /mlflow-storage/mlflow && /usr/bin/minio server /mlflow-storage'
 
   nussknacker:
     build: ./nussknacker
