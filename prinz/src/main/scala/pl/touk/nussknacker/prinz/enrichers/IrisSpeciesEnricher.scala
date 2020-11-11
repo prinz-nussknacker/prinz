@@ -10,9 +10,9 @@ class IrisSpeciesEnricher extends Service {
 
   @MethodToInvoke
   def invoke(@ParamName("sepalLength") @NotBlank sepalLength: Float,
-            @ParamName("sepalWidth") @NotBlank sepalWidth: Float,
-            @ParamName("petalLength") @NotBlank petalLength: Float,
-            @ParamName("petalWidth") @NotBlank petalWidth: Float)
+             @ParamName("sepalWidth") @NotBlank sepalWidth: Float,
+             @ParamName("petalLength") @NotBlank petalLength: Float,
+             @ParamName("petalWidth") @NotBlank petalWidth: Float)
             (implicit ec: ExecutionContext, metaData: MetaData): Future[String] = {
     Future { "setosa" }
   }
