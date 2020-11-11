@@ -39,7 +39,7 @@ class MlflowDataConverterTest extends UnitTest {
   }
 
   it should "throw IllegalArgumentException for null input" in {
-    val inputData: String = null // scalastyle:ignore
+    val inputData: String = null
 
     assertThrows[IllegalArgumentException] {
       // TODO call converter with null argument
