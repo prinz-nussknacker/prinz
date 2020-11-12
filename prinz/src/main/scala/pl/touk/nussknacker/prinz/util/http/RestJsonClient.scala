@@ -6,14 +6,16 @@ import sttp.client3.{Empty, HttpURLConnectionBackend, Identity, RequestT, Respon
 import sttp.client3.json4s.SttpJson4sApi
 import sttp.model.Uri
 
+//TODO: Parse object to JSON in body?
 class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) extends SttpJson4sApi {
 
   private implicit val SERIALIZATION: Serialization = Serialization
   private implicit val FORMATS: Formats = DefaultFormats
 
-  def postJsonBody[BODY <: AnyRef, RESPONSE: Manifest](relativePath: String, body: BODY): Either[RestClientException, RESPONSE] = {
+  def postJsonBody[RESPONSE: Manifest](relativePath: String, body: String): Either[RestClientException, RESPONSE] = {
     val request = basicRequest
       .post(uriFromRelativePath(relativePath))
+      .contentType("application/json")
       .body(body)
       .response(asJson[RESPONSE])
     wrapCaughtException(() => request.send(backend)
@@ -30,9 +32,10 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
     )
   }
 
-  def getJsonBody[BODY <: AnyRef, RESPONSE: Manifest](relativePath: String, body: BODY): Either[RestClientException, RESPONSE] = {
+  def getJsonBody[RESPONSE: Manifest](relativePath: String, body: String): Either[RestClientException, RESPONSE] = {
     val request = basicRequest
       .get(uriFromRelativePath(relativePath))
+      .contentType("application/json")
       .body(body)
       .response(asJson[RESPONSE])
     wrapCaughtException(() => request.send(backend)

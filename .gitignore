@@ -18,3 +18,7 @@ dev-environment/minio/*
 !dev-environment/minio/.gitkeep
 dev-environment/minio/mlflow/*
 dev-environment/mlflow/models/*/mlruns
+
+#IDE files
+.idea/
+.bsp/
