@@ -35,4 +35,5 @@ object MLFRepositoryRestClient {
 
 //RESPONSES
 private case class GetAllRegisteredModelsResponse(registered_models: List[RegisteredModel])
+
 private case class GetRegisteredModelResponse(registered_model: RegisteredModel)
