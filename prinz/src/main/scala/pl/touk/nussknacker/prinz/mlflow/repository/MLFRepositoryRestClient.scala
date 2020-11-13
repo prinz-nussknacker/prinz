@@ -12,7 +12,7 @@ class MLFRepositoryRestClient(hostUrl: URL) extends ModelRepository {
   type RestResponse[RESPONSE] = Either[RestClientException, RESPONSE]
 
   private val restClient = new RestJsonClient(s"$hostUrl$BASE_API_PATH")
-  
+
   private val previewRestClient = new RestJsonClient(s"$hostUrl$BASE_PREVIEW_API_PATH")
 
   override def listModels(): RestResponse[List[RegisteredModel]] =
