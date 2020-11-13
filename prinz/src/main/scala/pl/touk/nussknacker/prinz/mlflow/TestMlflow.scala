@@ -10,11 +10,15 @@ import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 object TestMlflow {
 
   def main(args: Array[String]): Unit = {
-    val restClient: MLFRepositoryRestClient = MLFRepositoryRestClient(new URL(s"http://localhost:$DEFAULT_PORT"))
-    val models2 = restClient.listModels(10, 1)
+    val url = new URL(s"http://localhost:$DEFAULT_PORT")
+    val max = 10
+    val page = 1
+
+    val restClient: MLFRepositoryRestClient = MLFRepositoryRestClient(url)
+    val models2 = restClient.listModels(max, page)
     println(models2)
 
-    val repositoryClient: ModelRepository = MLFRepositoryRestClient(new URL(s"http://localhost:$DEFAULT_PORT"))
+    val repositoryClient: ModelRepository = MLFRepositoryRestClient(url)
     val models = repositoryClient.listModels()
     println(models)
 
