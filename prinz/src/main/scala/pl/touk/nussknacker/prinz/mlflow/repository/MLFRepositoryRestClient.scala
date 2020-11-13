@@ -12,6 +12,7 @@ class MLFRepositoryRestClient(hostUrl: URL) extends ModelRepository {
   type RestResponse[RESPONSE] = Either[RestClientException, RESPONSE]
 
   private val restClient = new RestJsonClient(s"$hostUrl$BASE_API_PATH")
+  
   private val previewRestClient = new RestJsonClient(s"$hostUrl$BASE_PREVIEW_API_PATH")
 
   override def listModels(): RestResponse[List[RegisteredModel]] =
@@ -26,6 +27,7 @@ class MLFRepositoryRestClient(hostUrl: URL) extends ModelRepository {
       getModelBody(name)).right.map(_.registered_model)
 
   private def getModelBody(name: String) = s"""{"name": "${name}"}"""
+
   private def listModelsBody(maxResults: Int, page: Int) = s"""{"max_results": ${maxResults}, "page_token": ${page}}"""
 }
 
