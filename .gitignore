@@ -14,7 +14,5 @@ project/plugins/project/
 *.log
 
 # Docker data
-dev-environment/minio/*
-!dev-environment/minio/.gitkeep
-dev-environment/minio/mlflow/*
+dev-environment/data
 dev-environment/mlflow/models/*/mlruns

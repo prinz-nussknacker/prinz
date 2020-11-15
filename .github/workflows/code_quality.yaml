@@ -7,7 +7,7 @@ on:
     branches:
       - master
 jobs:
-  check_cq:
+  check-code-quality:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
@@ -16,15 +16,18 @@ jobs:
         uses: harupy/find-trailing-whitespace@master
       - name: Check for missing newlines
         uses: fernandrone/linelint@master
+      - name: Verify YAML files
+        uses: ibiqlik/action-yamllint@v3
       - name: Set up Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '9.0.4'
-          java-package: jdk
-          architecture: x64
-      - name: Download Scalastyle
-        uses: wei/wget@v1
-        with:
-          args: -O scalastyle_2.12-1.0.0-batch.jar https://repo1.maven.org/maven2/org/scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar
+        run: |
+          wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
+          sudo add-apt-repository 'deb https://apt.corretto.aws stable main'
+          sudo apt-get update && \
+          sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Run Scalastyle
-        run: java -jar scalastyle_2.12-1.0.0-batch.jar --config project/scalastyle_config.xml ./
+        env:
+          SCALASTYLE_DOWNLOAD_LINK: "https://repo1.maven.org/maven2/org/\
+          scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar"
+        run: |
+          wget -O scalastyle.jar $SCALASTYLE_DOWNLOAD_LINK
+          java -jar scalastyle.jar --config project/scalastyle_config.xml ./

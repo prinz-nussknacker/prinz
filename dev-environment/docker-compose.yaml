@@ -20,7 +20,7 @@ services:
       - MODEL_PORT=1234
       - MLFLOW_WORK_DIR=/home/mlflow
     volumes:
-      - './mlflow/models:/home/mlflow/models'
+      - ./mlflow/models:/home/mlflow/models
     networks:
       - mlflow-backend
     depends_on:
@@ -35,35 +35,37 @@ services:
       - POSTGRES_DB=mlflow
       - POSTGRES_USER=mlflow
       - POSTGRES_PASSWORD=mlflow
+    volumes:
+      - ./data/postgres/mlflow/data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - mlflow-backend
 
   aws-mlflow:
+    build: ./minio
     container_name: aws-mlflow
-    image: minio/minio:latest
     volumes:
-      - ./minio/mlflow:/mlflow-storage
-    ports:
-      - "9000:9000"
+      - ./data/minio/mlflow:/mlflow-storage
     environment:
       - MINIO_ACCESS_KEY=mlflow-key
       - MINIO_SECRET_KEY=mlflow-secret
+      - BUCKET_NAME=mlflow
+      - STORAGE=mlflow-storage
+    ports:
+      - "9000:9000"
     networks:
       - mlflow-backend
-    entrypoint: sh
-    command: -c 'mkdir -p /mlflow-storage/mlflow && /usr/bin/minio server /mlflow-storage'
 
   nussknacker:
     build: ./nussknacker
     container_name: nussknacker
     restart: always
     ports:
-     - "3000:3000"
-     - "8080:8080"
+      - "3000:3000"
+      - "8080:8080"
     networks:
-     - mlflow-backend
+      - mlflow-backend
 
 networks:
   mlflow-backend:
