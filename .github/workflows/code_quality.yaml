@@ -25,9 +25,4 @@ jobs:
           sudo apt-get update && \
           sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Run Scalastyle
-        env:
-          SCALASTYLE_DOWNLOAD_LINK: "https://repo1.maven.org/maven2/org/\
-          scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar"
-        run: |
-          wget -O scalastyle.jar $SCALASTYLE_DOWNLOAD_LINK
-          java -jar scalastyle.jar --config project/scalastyle_config.xml ./
+        run: ./sbtwrapper scalastyle
