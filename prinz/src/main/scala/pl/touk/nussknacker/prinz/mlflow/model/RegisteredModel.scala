@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.model
 
-import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.model.{Model, ModelName}
 
 case class ModelVersionTag(key: String, value: String)
 
@@ -12,5 +12,5 @@ case class ModelVersion(name: String, version: String, creation_timestamp: Strin
 
 case class RegisteredModel(name: String, creation_timestamp: String, last_updated_timestamp: String,
                            latest_versions: List[ModelVersion], tags: List[RegisteredModelTag]) extends Model {
-  override def getName(): String = name
+  override def getName(): ModelName = ModelName(name)
 }

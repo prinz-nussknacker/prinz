@@ -1,6 +1,5 @@
 package pl.touk.nussknacker.prinz.mlflow
 
-//TODO: Read from config file
 object MlflowConstants {
   val DEFAULT_USER: String = "mlflow.user"
   val DEFAULT_PORT: Int = 5000

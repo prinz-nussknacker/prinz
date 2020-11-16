@@ -1,8 +1,10 @@
 package pl.touk.nussknacker.prinz.model.repository
 
-import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.model.{Model, ModelName}
 
 trait ModelRepository {
-  def listModels(): Either[Exception, List[Model]]
-  def getModel(key: String): Either[Exception, Model]
+  type RepositoryResponse[RESPONSE] = Either[ModelRepositoryException, RESPONSE]
+
+  def listModels(): RepositoryResponse[List[Model]]
+  def getModel(name: ModelName): RepositoryResponse[Model]
 }

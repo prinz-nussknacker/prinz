@@ -2,11 +2,11 @@ package pl.touk.nussknacker.prinz.util.http
 
 import org.json4s.native.Serialization
 import org.json4s.{DefaultFormats, Formats, Serialization}
+import pl.touk.nussknacker.prinz.model.repository.ModelRepositoryException
 import sttp.client3.json4s.SttpJson4sApi
 import sttp.client3.{HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest}
 import sttp.model.{Methods, Uri}
 
-//TODO: Parse object to JSON in body?
 class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) extends SttpJson4sApi with Methods {
 
   private implicit val SERIALIZATION: Serialization = Serialization
