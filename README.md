@@ -5,6 +5,7 @@
 ![nussknacker_operation_model](./imgs/nussknacker_operation_model.png)
 
 ## Configuring your own models
+
 Adding / configuring your own model consists of:
 * Implementing the ProcessConfigCreator interface, describing what items are available in the toolbox, what is the data model,
 etc. Some elements (filters, etc.) are predefined, others are common across different models (e.g. Integration with AVRO etc.)
@@ -60,9 +61,3 @@ Examples of model runtimes:
 * Model issued as a REST API in a container - then the model configuration / repository should know the API reference, the implementation of this runtime is an HTTP client that calls the appropriate service
 * PMML as a model description in the form of XML - model implementation in this runtime is XML + a library that allows its interpretation.
 * Generated code (e.g. via H2O or other custom solutions) - then the runtime of this model is a wrapper for the generated code
-
-
-
-
-
-
