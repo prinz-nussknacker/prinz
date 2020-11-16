@@ -4,7 +4,7 @@
 
 ![nussknacker_operation_model](./imgs/nussknacker_operation_model.png)
 
-##Configuring your own models
+## Configuring your own models
 Adding / configuring your own model consists of:
 * Implementing the ProcessConfigCreator interface, describing what items are available in the toolbox, what is the data model, 
 etc. Some elements (filters, etc.) are predefined, others are common across different models (e.g. Integration with AVRO etc.)
@@ -13,7 +13,7 @@ etc. Some elements (filters, etc.) are predefined, others are common across diff
     * References to external services
     * UI configuration: Links to the documentation, default values etc.
 
-##What will be the “product” - i.e. what will Prinz be?
+## What will be the “product” - i.e. what will Prinz be?
 
 Prinz will be a library of extensions for Nussknacker. Moreover, it should also provide an API that will allow adding new 
 integrations with model repositories / engines for ML models.
