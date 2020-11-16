@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -e
+
+# copy "-o -path ./docs/imgs \" to add another directory to exclude in checking
 files="$(find . -type d \( -path ./.git \
-  -o -path ./docs/imgs \                             # copy this line to add another directory to exclude in checking
+  -o -path ./docs/imgs \
   \) -prune -o -type f -exec egrep -l " +$" {} \;)"
 
 exit_code=0
