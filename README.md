@@ -2,7 +2,7 @@
 
 ## Nussknacker - operation model
 
-![nussknacker_operation_model](docs/imgs/nussknacker_operation_model.png)
+![nussknacker_operation_model](./docs/imgs/nussknacker_operation_model.png)
 
 ## Configuring your own models
 
@@ -39,7 +39,7 @@ some of the data for the model - e.g. from a database with a customer profile, p
 
 ## Prinz's internal model
 
-![prinz_internal_model](docs/imgs/prinz_internal_model.png)
+![prinz_internal_model](./docs/imgs/prinz_internal_model.png)
 
 We assume that an API that will enable relatively easy addition of further implementations of model repositories / runtime
 ML models will be created.
