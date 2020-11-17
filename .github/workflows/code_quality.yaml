@@ -18,13 +18,14 @@ jobs:
         uses: fernandrone/linelint@master
       - name: Verify YAML files
         uses: ibiqlik/action-yamllint@v3
-        config_data: |
-          extends: default
-          rules:
-            document-start:
-              present: false
-            truthy:
-              check-keys: false
+        with:
+          config_data: |
+            extends: default
+            rules:
+              document-start:
+                present: false
+              truthy:
+                check-keys: false
       - name: Set up Java
         run: |
           wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
