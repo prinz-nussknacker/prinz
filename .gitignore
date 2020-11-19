@@ -20,7 +20,8 @@ prinz_sample/work/*
 # Docker data
 dev-environment/data
 dev-environment/mlflow/models/*/mlruns
+dev-environment/nussknacker/opt/prinz/*.jar
 
-#IDE files
+# IDE files
 .idea/
 .bsp/

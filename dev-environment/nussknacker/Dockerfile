@@ -24,10 +24,10 @@ RUN wget https://www.npmjs.com/install.sh -O install.sh && \
 RUN cd /opt/nussknacker/ui/client && \
     npm install
 
+COPY opt/ /opt/
+RUN chmod +x /opt/nussknacker/run.sh
+
 RUN cd /opt/nussknacker/ui && \
     ./buildServer.sh
-
-COPY run.sh /opt/nussknacker/run.sh
-RUN chmod +x /opt/nussknacker/run.sh
 
 CMD ["/opt/nussknacker/run.sh"]
