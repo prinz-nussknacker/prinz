@@ -13,6 +13,10 @@ project/plugins/project/
 *.class
 *.log
 
+# Sample project working dir
+prinz_sample/work/*
+!prinz_sample/work/.gitkeep
+
 # Docker data
 dev-environment/data
 dev-environment/mlflow/models/*/mlruns

@@ -5,6 +5,7 @@ val sttpV = "3.0.0-RC7"
 val json4sV = "3.6.0"
 val scalatestV = "3.2.2"
 val testContainersV = "0.38.6"
+val circeV = "0.11.1"
 
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
@@ -22,6 +23,15 @@ lazy val commonSettings = Seq(
   },
   scalastyleConfig := file("project/scalastyle_config.xml"),
   (scalastyleConfig in Test) := file("project/scalastyle_test_config.xml"),
+)
+
+lazy val circeOverridesSettings = Seq(
+  dependencyOverrides ++= Seq(
+    "io.circe" %% "circe-core" % circeV,
+    "io.circe" %% "circe-parser" % circeV,
+    "io.circe" %% "circe-numbers" % circeV,
+    "io.circe" %% "circe-jawn" % circeV
+  )
 )
 
 lazy val root = (project in file("."))
@@ -46,11 +56,26 @@ lazy val prinz = (project in file("prinz"))
       )
     }
   )
+  .settings(circeOverridesSettings)
 
-
-lazy val prinz_sample = (project in file("prinz_sample"))
+lazy val prinz_sample_dir = file("prinz_sample")
+lazy val prinz_sample = (project in prinz_sample_dir)
   .settings(commonSettings)
   .settings(
     name := "prinz-sample",
+    libraryDependencies ++= {
+      Seq(
+        "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
+        )
+      },
+    run / fork := true,
+    run / baseDirectory := file(prinz_sample_dir.getAbsolutePath() + "/work"),
+    run / javaOptions ++= {
+      Seq(
+        "-Dconfig.file=../conf/application.conf",
+        "-Dlogback.configurationFile=../conf/logback.xml",
+      )
+    },
   )
+  .settings(circeOverridesSettings)
   .dependsOn(prinz)
