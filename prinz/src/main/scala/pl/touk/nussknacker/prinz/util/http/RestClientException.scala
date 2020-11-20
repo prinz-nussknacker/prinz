@@ -1,6 +1,5 @@
 package pl.touk.nussknacker.prinz.util.http
 
-case class RestClientException(message: String) extends Exception {
+import pl.touk.nussknacker.prinz.util.exceptions.PrinzException
 
-  override def toString: String = s"${this.getClass.getSimpleName}: ${this.message}"
-}
+class RestClientException(message: String) extends PrinzException(message)

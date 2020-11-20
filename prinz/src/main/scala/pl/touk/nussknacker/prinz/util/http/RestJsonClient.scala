@@ -16,6 +16,7 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
   (relativePath: String, body: BODY): Either[RestClientException, RESPONSE] = {
     val request = basicRequest
       .post(uriFromRelativePath(relativePath, EmptyRequestParams.getParamsMap))
+      .header("Content-Type", "application/json")
       .body(body)
       .response(asJson[RESPONSE])
     wrapCaughtException(() => request.send(backend)
@@ -39,11 +40,11 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
     uri"${s"$baseUrl$relativePath"}?$params"
 
   private def clientExceptionFromResponse(value: ResponseException[String, Exception]): RestClientException =
-    RestClientException(value.toString)
+    new RestClientException(value.toString)
 
   private def wrapCaughtException[RESPONSE: Manifest](requestAction: () => Either[RestClientException, RESPONSE]): Either[RestClientException, RESPONSE] = try {
     requestAction()
   } catch {
-    case e: SttpClientException => Left(RestClientException(e.getMessage))
+    case e: SttpClientException => Left(new RestClientException(e.getMessage))
   }
 }

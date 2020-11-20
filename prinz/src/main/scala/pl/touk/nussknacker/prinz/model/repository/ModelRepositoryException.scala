@@ -1,6 +1,5 @@
 package pl.touk.nussknacker.prinz.model.repository
 
-case class ModelRepositoryException(message: String) extends Exception {
+import pl.touk.nussknacker.prinz.util.exceptions.PrinzException
 
-  override def toString: String = s"[Model Repository error] ${this.getClass.getSimpleName}: ${this.message}"
-}
+class ModelRepositoryException(message: String) extends PrinzException(message)
