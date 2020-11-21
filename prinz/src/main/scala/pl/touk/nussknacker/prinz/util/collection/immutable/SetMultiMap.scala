@@ -53,17 +53,22 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
     get(key) match {
       case None =>
         val newSet = createSet(value)
-        new SetMultiMap(delegate.updated(key, newSet))
+        SetMultiMap(delegate.updated(key, newSet))
       case Some(oldSet) =>
         val newSet = oldSet + value
-        new SetMultiMap(delegate.updated(key, newSet))
+        SetMultiMap(delegate.updated(key, newSet))
     }
   }
 
   def addAll(elements: Iterable[(K, V)]): SetMultiMap[K, V] = {
-    val result = new SetMultiMap(delegate)
-    elements.foreach( tuple => result.add(tuple._1, tuple._2))
-    result
+    val created = new mutable.HashMap[K, Set[V]] ++ delegate
+    elements.foreach { case (key, value) =>
+      created.get(key) match {
+        case None => created(key) = Set(value)
+        case Some(set) => created(key) = set + value
+      }
+    }
+    SetMultiMap(Map.empty[K, Set[V]] ++ created)
   }
 
   def remove(key: K, value: V): SetMultiMap[K, V] = {
@@ -72,36 +77,38 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
       case Some(oldSet) =>
         val newSet = oldSet - value
         if (newSet.nonEmpty)
-          new SetMultiMap(delegate.updated(key, newSet))
+          SetMultiMap(delegate.updated(key, newSet))
         else
-          new SetMultiMap(delegate - key)
+          SetMultiMap(delegate - key)
     }
   }
 
   def removeAll(elements: Iterable[(K, V)]): SetMultiMap[K, V] = {
-    val result = new SetMultiMap(delegate)
-    elements.foreach( tuple => result.remove(tuple._1, tuple._2))
-    result
+    val created = new mutable.HashMap[K, Set[V]] ++ delegate
+    elements.foreach { case (key, value) =>
+      created.get(key) match {
+        case Some(set) => created(key) = set - value
+      }
+    }
+    SetMultiMap(Map.empty[K, Set[V]] ++ created)
   }
 
   def exists(key: K, p: V => Boolean): Boolean = {
-      get(key) match {
-        case None => false
-        case Some(set) => set exists p
-      }
+    get(key) match {
+      case None => false
+      case Some(set) => set exists p
     }
+  }
 
   def get(key: K): Option[Set[V]] = delegate.get(key)
 
-  def +(kv: (K, Set[V])): SetMultiMap[K, V] = new SetMultiMap(delegate + kv)
+  def +(kv: (K, Set[V])): SetMultiMap[K, V] = SetMultiMap(delegate + kv)
 
-  def ++(xs: GenTraversableOnce[(K, Set[V])]): SetMultiMap[K, V] =
-    new SetMultiMap(delegate ++ xs)
+  def ++(xs: GenTraversableOnce[(K, Set[V])]): SetMultiMap[K, V] = SetMultiMap(delegate ++ xs)
 
-  def -(key: K): SetMultiMap[K, V] = new SetMultiMap(delegate - key)
+  def -(key: K): SetMultiMap[K, V] = SetMultiMap(delegate - key)
 
-  def --(xs: GenTraversableOnce[K]): SetMultiMap[K, V] =
-    new SetMultiMap(delegate -- xs)
+  def --(xs: GenTraversableOnce[K]): SetMultiMap[K, V] = SetMultiMap(delegate -- xs)
 
   def values: Iterable[Set[V]] = delegate.values
 
@@ -127,4 +134,5 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
     case _ => false
     }
   }
+
 }
