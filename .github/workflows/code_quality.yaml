@@ -13,11 +13,19 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Test for trailing whitespace
-        uses: harupy/find-trailing-whitespace@master
+        run: ./.github/scripts/trailing_whitespace_check.sh
       - name: Check for missing newlines
         uses: fernandrone/linelint@master
       - name: Verify YAML files
         uses: ibiqlik/action-yamllint@v3
+        with:
+          config_data: |
+            extends: default
+            rules:
+              document-start:
+                present: false
+              truthy:
+                check-keys: false
       - name: Set up Java
         run: |
           wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
@@ -25,9 +33,4 @@ jobs:
           sudo apt-get update && \
           sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Run Scalastyle
-        env:
-          SCALASTYLE_DOWNLOAD_LINK: "https://repo1.maven.org/maven2/org/\
-          scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar"
-        run: |
-          wget -O scalastyle.jar $SCALASTYLE_DOWNLOAD_LINK
-          java -jar scalastyle.jar --config project/scalastyle_config.xml ./
+        run: ./sbtwrapper scalastyle

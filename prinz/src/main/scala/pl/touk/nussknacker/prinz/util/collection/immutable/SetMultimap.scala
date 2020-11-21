@@ -2,27 +2,27 @@ package pl.touk.nussknacker.prinz.util.collection.immutable
 
 import scala.collection._
 
-object SetMultiMap {
+object SetMultimap {
 
-  def empty[K, V](): SetMultiMap[K, V] =
-    new SetMultiMap[K,V](Map.empty[K, Set[V]])
+  def empty[K, V](): SetMultimap[K, V] =
+    new SetMultimap[K,V](Map.empty[K, Set[V]])
 
-  def apply[K,V](elements: (K, V)*): SetMultiMap[K, V] = {
+  def apply[K,V](elements: (K, V)*): SetMultimap[K, V] = {
     val builder = new SetMultiMapBuilder[K, V]()
     builder ++= elements
     builder.result()
   }
 
-  def apply[K,V](elements: Iterable[(K, V)]): SetMultiMap[K, V] = {
+  def apply[K,V](elements: Iterable[(K, V)]): SetMultimap[K, V] = {
     val builder = new SetMultiMapBuilder[K, V]()
     builder ++= elements
     builder.result()
   }
 
-  def apply[K,V](delegate: Map[K, Set[V]]): SetMultiMap[K, V] =
-    new SetMultiMap[K, V](delegate)
+  def apply[K,V](delegate: Map[K, Set[V]]): SetMultimap[K, V] =
+    new SetMultimap[K, V](delegate)
 
-  class SetMultiMapBuilder[K, V]() extends mutable.Builder[(K,V), SetMultiMap[K,V]] {
+  class SetMultiMapBuilder[K, V]() extends mutable.Builder[(K,V), SetMultimap[K,V]] {
     private val elements = new mutable.HashMap[K, Set[V]]
 
     override def +=(element: (K, V)): SetMultiMapBuilder.this.type = {
@@ -38,29 +38,29 @@ object SetMultiMap {
 
     override def clear(): Unit = elements.clear()
 
-    override def result(): SetMultiMap[K, V] = {
-      new SetMultiMap[K,V](Map.empty[K, Set[V]] ++ elements)
+    override def result(): SetMultimap[K, V] = {
+      new SetMultimap[K,V](Map.empty[K, Set[V]] ++ elements)
     }
   }
 
 }
 
-class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
+class SetMultimap[K,V](private val delegate: Map[K, Set[V]]) {
 
   protected def createSet(values: V*): Set[V] = Set(values: _*)
 
-  def add(key: K, value: V): SetMultiMap[K, V] = {
+  def add(key: K, value: V): SetMultimap[K, V] = {
     get(key) match {
       case None =>
         val newSet = createSet(value)
-        SetMultiMap(delegate.updated(key, newSet))
+        SetMultimap(delegate.updated(key, newSet))
       case Some(oldSet) =>
         val newSet = oldSet + value
-        SetMultiMap(delegate.updated(key, newSet))
+        SetMultimap(delegate.updated(key, newSet))
     }
   }
 
-  def addAll(elements: Iterable[(K, V)]): SetMultiMap[K, V] = {
+  def addAll(elements: Iterable[(K, V)]): SetMultimap[K, V] = {
     val created = new mutable.HashMap[K, Set[V]] ++ delegate
     elements.foreach { case (key, value) =>
       created.get(key) match {
@@ -68,29 +68,29 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
         case Some(set) => created(key) = set + value
       }
     }
-    SetMultiMap(Map.empty[K, Set[V]] ++ created)
+    SetMultimap(Map.empty[K, Set[V]] ++ created)
   }
 
-  def remove(key: K, value: V): SetMultiMap[K, V] = {
+  def remove(key: K, value: V): SetMultimap[K, V] = {
     get(key) match {
       case None => this
       case Some(oldSet) =>
         val newSet = oldSet - value
         if (newSet.nonEmpty)
-          SetMultiMap(delegate.updated(key, newSet))
+          SetMultimap(delegate.updated(key, newSet))
         else
-          SetMultiMap(delegate - key)
+          SetMultimap(delegate - key)
     }
   }
 
-  def removeAll(elements: Iterable[(K, V)]): SetMultiMap[K, V] = {
+  def removeAll(elements: Iterable[(K, V)]): SetMultimap[K, V] = {
     val created = new mutable.HashMap[K, Set[V]] ++ delegate
     elements.foreach { case (key, value) =>
       created.get(key) match {
         case Some(set) => created(key) = set - value
       }
     }
-    SetMultiMap(Map.empty[K, Set[V]] ++ created)
+    SetMultimap(Map.empty[K, Set[V]] ++ created)
   }
 
   def exists(key: K, p: V => Boolean): Boolean = {
@@ -100,15 +100,13 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
     }
   }
 
+  def contains(key: K, value: V): Boolean = {
+    exists(key, x => x equals value)
+  }
+
   def get(key: K): Option[Set[V]] = delegate.get(key)
 
-  def +(kv: (K, Set[V])): SetMultiMap[K, V] = SetMultiMap(delegate + kv)
-
-  def ++(xs: GenTraversableOnce[(K, Set[V])]): SetMultiMap[K, V] = SetMultiMap(delegate ++ xs)
-
-  def -(key: K): SetMultiMap[K, V] = SetMultiMap(delegate - key)
-
-  def --(xs: GenTraversableOnce[K]): SetMultiMap[K, V] = SetMultiMap(delegate -- xs)
+  def -(key: K): SetMultimap[K, V] = SetMultimap(delegate - key)
 
   def values: Iterable[Set[V]] = delegate.values
 
@@ -130,7 +128,7 @@ class SetMultiMap[K,V](private val delegate: Map[K, Set[V]]) {
 
   override def equals(obj: Any): Boolean = {
     obj match {
-    case m: SetMultiMap[K, V] => this.delegate.equals(m.delegate)
+    case m: SetMultimap[K, V] => this.delegate.equals(m.delegate)
     case _ => false
     }
   }
