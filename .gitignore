@@ -16,3 +16,7 @@ project/plugins/project/
 # Docker data
 dev-environment/data
 dev-environment/mlflow/models/*/mlruns
+
+#IDE files
+.idea/
+.bsp/
