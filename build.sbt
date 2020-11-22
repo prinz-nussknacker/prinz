@@ -1,6 +1,8 @@
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.2.2"
+val minioS3V = "8.0.0"
+val circeV = "0.13.1"
 val sttpV = "3.0.0-RC7"
 val json4sV = "3.6.0"
 val scalatestV = "3.2.2"
@@ -37,6 +39,8 @@ lazy val prinz = (project in file("prinz"))
     name := "prinz",
     libraryDependencies ++= {
       Seq(
+        "io.minio" % "minio" % minioS3V,
+        "io.circe" % "circe-yaml_2.12" % circeV,
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
         "com.softwaremill.sttp.client3" %% "json4s" % sttpV,
         "org.json4s" %% "json4s-native" % json4sV,

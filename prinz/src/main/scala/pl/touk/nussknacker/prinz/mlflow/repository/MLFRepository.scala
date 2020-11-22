@@ -8,13 +8,13 @@ import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.model.repository.{ModelRepository, ModelRepositoryException}
 import pl.touk.nussknacker.prinz.util.http.{RequestParams, RestJsonClient}
 
-class MLFRepositoryRestClient(hostUrl: URL) extends ModelRepository {
+class MLFRepository(hostUrl: URL) extends ModelRepository {
 
-  private val restClient = new RestJsonClient(s"$hostUrl$BASE_API_PATH")
+  private val restClient = RestJsonClient(s"$hostUrl$BASE_API_PATH")
 
-  private val previewRestClient = new RestJsonClient(s"$hostUrl$BASE_PREVIEW_API_PATH")
+  private val previewRestClient = RestJsonClient(s"$hostUrl$BASE_PREVIEW_API_PATH")
 
-  override def listModels(): RepositoryResponse[List[RegisteredModel]] =
+  override def listModels: RepositoryResponse[List[RegisteredModel]] =
     previewRestClient.getJson[GetAllRegisteredModelsResponse]("/registered-models/list")
       .right.map(_.registered_models)
       .left.map(new MLFRepositoryRestException(_))
@@ -32,8 +32,9 @@ class MLFRepositoryRestClient(hostUrl: URL) extends ModelRepository {
       .left.map(new MLFRepositoryRestException(_))
 }
 
-object MLFRepositoryRestClient {
-  def apply(hostUrl: URL): MLFRepositoryRestClient = new MLFRepositoryRestClient(hostUrl)
+object MLFRepository {
+
+  def apply(hostUrl: URL): MLFRepository = new MLFRepository(hostUrl)
 }
 
 case class GetAllRegisteredModelsRequest(max_results: Int, page_token: Int) extends RequestParams[GetAllRegisteredModelsRequest]

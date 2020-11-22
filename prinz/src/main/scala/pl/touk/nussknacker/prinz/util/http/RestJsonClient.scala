@@ -48,3 +48,9 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
     case e: SttpClientException => Left(new RestClientException(e.getMessage))
   }
 }
+
+object RestJsonClient {
+
+  def apply(baseUrl: String, backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()): RestJsonClient =
+    new RestJsonClient(baseUrl, backend)
+}
