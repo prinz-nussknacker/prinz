@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 class MapMultisetTest extends UnitTest {
 
   "MapMultiSet" should "be initialized as an empty structure" in {
-    val emptySet = MapMultiset.empty[Int]()
+    val emptySet = MapMultiset.empty[Int]
     val noArgsSet = MapMultiset[Int]()
 
     emptySet.size should equal (0)
@@ -64,17 +64,13 @@ class MapMultisetTest extends UnitTest {
 
   it should "return number of elements with repetitions in size() method" in {
     val set = MapMultiset[Int](1, 2)
-
-    set.size should equal (2)
-
     val extendedSet = set
       .add(1)
       .add(2)
-
-    extendedSet.size should equal (4)
-
     val shrunkSet = extendedSet - 1
 
+    set.size should equal (2)
+    extendedSet.size should equal (4)
     shrunkSet.size should equal (2)
   }
 
@@ -82,15 +78,12 @@ class MapMultisetTest extends UnitTest {
     val set = MapMultiset[Int](1, 1, 1, 2, 2, 3)
     val it = set.iterator
     val elements = new ListBuffer[Int]()
+    it.foreach(elem => elements += elem)
 
-    it.foreach( elem => elements += elem)
-
-    set.size should equal (6)
-    set.count(1) should equal (3)
-    set.count(2) should equal (2)
-    set.count(3) should equal (1)
-
-    elements.toList.sorted should equal (List(1, 1, 1, 2, 2, 3))
+    set.size should equal(6)
+    set.count(1) should equal(3)
+    set.count(2) should equal(2)
+    set.count(3) should equal(1)
+    elements.toList.sorted should equal(List(1, 1, 1, 2, 2, 3))
   }
-
 }

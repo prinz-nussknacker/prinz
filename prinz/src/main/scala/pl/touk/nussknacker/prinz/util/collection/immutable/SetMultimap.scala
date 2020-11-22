@@ -2,50 +2,7 @@ package pl.touk.nussknacker.prinz.util.collection.immutable
 
 import scala.collection._
 
-object SetMultimap {
-
-  def empty[K, V](): SetMultimap[K, V] =
-    new SetMultimap[K,V](Map.empty[K, Set[V]])
-
-  def apply[K,V](elements: (K, V)*): SetMultimap[K, V] = {
-    val builder = new SetMultiMapBuilder[K, V]()
-    builder ++= elements
-    builder.result()
-  }
-
-  def apply[K,V](elements: Iterable[(K, V)]): SetMultimap[K, V] = {
-    val builder = new SetMultiMapBuilder[K, V]()
-    builder ++= elements
-    builder.result()
-  }
-
-  def apply[K,V](delegate: Map[K, Set[V]]): SetMultimap[K, V] =
-    new SetMultimap[K, V](delegate)
-
-  class SetMultiMapBuilder[K, V]() extends mutable.Builder[(K,V), SetMultimap[K,V]] {
-    private val elements = new mutable.HashMap[K, Set[V]]
-
-    override def +=(element: (K, V)): SetMultiMapBuilder.this.type = {
-      element match {
-        case (key, value) =>
-          elements.get(key) match {
-            case None => elements(key) = Set(value)
-            case Some(set) => elements(key) = set + value
-          }
-      }
-      this
-    }
-
-    override def clear(): Unit = elements.clear()
-
-    override def result(): SetMultimap[K, V] = {
-      new SetMultimap[K,V](Map.empty[K, Set[V]] ++ elements)
-    }
-  }
-
-}
-
-class SetMultimap[K,V](private val delegate: Map[K, Set[V]]) {
+class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
 
   protected def createSet(values: V*): Set[V] = Set(values: _*)
 
@@ -100,9 +57,8 @@ class SetMultimap[K,V](private val delegate: Map[K, Set[V]]) {
     }
   }
 
-  def contains(key: K, value: V): Boolean = {
+  def contains(key: K, value: V): Boolean =
     exists(key, x => x equals value)
-  }
 
   def get(key: K): Option[Set[V]] = delegate.get(key)
 
@@ -126,11 +82,50 @@ class SetMultimap[K,V](private val delegate: Map[K, Set[V]]) {
 
   override def hashCode(): Int = delegate.hashCode()
 
-  override def equals(obj: Any): Boolean = {
+  override def equals(obj: Any): Boolean =
     obj match {
-    case m: SetMultimap[K, V] => this.delegate.equals(m.delegate)
-    case _ => false
+      case m: SetMultimap[K, V] => this.delegate.equals(m.delegate)
+      case _ => false
     }
+}
+
+object SetMultimap {
+
+  def empty[K, V]: SetMultimap[K, V] =
+    new SetMultimap[K,V](Map.empty[K, Set[V]])
+
+  def apply[K, V](elements: (K, V)*): SetMultimap[K, V] =
+    buildCollection(elements)
+
+  def apply[K, V](elements: Iterable[(K, V)]): SetMultimap[K, V] =
+    buildCollection(elements)
+
+  def apply[K, V](delegate: Map[K, Set[V]]): SetMultimap[K, V] =
+    new SetMultimap[K, V](delegate)
+
+  private def buildCollection[K, V](elements: Iterable[(K, V)]): SetMultimap[K, V] = {
+    val builder = new SetMultimapBuilder[K, V]
+    builder ++= elements
+    builder.result()
   }
 
+  private class SetMultimapBuilder[K, V] extends mutable.Builder[(K, V), SetMultimap[K, V]] {
+    private val elements = new mutable.HashMap[K, Set[V]]
+
+    override def +=(element: (K, V)): this.type = {
+      element match {
+        case (key, value) =>
+          elements.get(key) match {
+            case None => elements(key) = Set(value)
+            case Some(set) => elements(key) = set + value
+          }
+      }
+      this
+    }
+
+    override def clear(): Unit = elements.clear()
+
+    override def result(): SetMultimap[K, V] =
+      new SetMultimap[K, V](Map.empty[K, Set[V]] ++ elements)
+  }
 }
