@@ -27,14 +27,6 @@ class MlflowContainerTest extends UnitTest {
     assert(instance.map(_.getSignature).isDefined)
   }
 
-  it should "respond with some data when invoked" in {
-    val instance = getModelInstance.get
-
-    val result = instance.run[Double](List("a", "b", "c"), List(1.0, 2.0, 3.0))
-
-    assert(result.toOption.isDefined)
-  }
-
   private def getModelInstance = {
     val repository = MLFRepository(url("http://localhost:5000"))
     val model = repository.listModels.toOption.head.head
