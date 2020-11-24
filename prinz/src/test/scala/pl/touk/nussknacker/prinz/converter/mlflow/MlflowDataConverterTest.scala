@@ -1,7 +1,7 @@
 package pl.touk.nussknacker.prinz.converter.mlflow
 
 import pl.touk.nussknacker.prinz.UnitTest
-import pl.touk.nussknacker.prinz.util.collection.immutable.MultiTreeMap
+import pl.touk.nussknacker.prinz.util.collection.immutable.SetMultimap
 
 class MlflowDataConverterTest extends UnitTest {
 
@@ -15,7 +15,7 @@ class MlflowDataConverterTest extends UnitTest {
                       |    {"a": 4,"b": 5,"c": 6}
                       |]""".stripMargin
 
-    val expected = MultiTreeMap[String, Int](
+    val expected = SetMultimap[String, Int](
       "a" -> 1, "a" -> 4,
       "b" -> 2, "b" -> 5,
       "c" -> 3, "c" -> 6,
@@ -30,7 +30,7 @@ class MlflowDataConverterTest extends UnitTest {
                       |    "data": [[1, 2, 3], [4, 5, 6]]
                       |}""".stripMargin
 
-    val expected = MultiTreeMap[String, Int](
+    val expected = SetMultimap[String, Int](
       "a" -> 1, "a" -> 4,
       "b" -> 2, "b" -> 5,
       "c" -> 3, "c" -> 6,
