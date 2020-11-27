@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.util.collection.immutable
 
-import scala.collection._
+import scala.collection.mutable
 
 class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
 
@@ -33,10 +33,12 @@ class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
       case None => this
       case Some(oldSet) =>
         val newSet = oldSet - value
-        if (newSet.nonEmpty)
+        if (newSet.nonEmpty) {
           SetMultimap(delegate.updated(key, newSet))
-        else
+        }
+        else {
           SetMultimap(delegate - key)
+        }
     }
   }
 
