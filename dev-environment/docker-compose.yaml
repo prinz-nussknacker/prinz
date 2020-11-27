@@ -67,7 +67,8 @@ services:
     networks:
       - mlflow-backend
     environment:
-      NUSSKNACKER_CONFIG_FILE: ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
+      NUSSKNACKER_CONFIG_FILE: >-
+        ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
 
 networks:
   mlflow-backend:
