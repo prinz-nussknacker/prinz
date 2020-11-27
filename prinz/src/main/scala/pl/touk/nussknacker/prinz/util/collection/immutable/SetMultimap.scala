@@ -108,7 +108,7 @@ object SetMultimap {
   private class SetMultimapBuilder[K, V] extends mutable.Builder[(K, V), SetMultimap[K, V]] {
     private val elements = new mutable.HashMap[K, Set[V]]
 
-    override def +=(element: (K, V)): SetMultimapBuilder[K, V] = {
+    override def +=(element: (K, V)): this.type = {
       element match {
         case (key, value) =>
           elements.get(key) match {

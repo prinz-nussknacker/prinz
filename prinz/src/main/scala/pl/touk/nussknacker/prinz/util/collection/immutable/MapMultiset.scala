@@ -126,7 +126,7 @@ object MapMultiset {
   private class MapMultisetBuilder[T] extends mutable.Builder[T, MapMultiset[T]] {
     private val elements = new mutable.HashMap[T, Int].withDefaultValue(0)
 
-    override def +=(element: T): MapMultisetBuilder[T] = {
+    override def +=(element: T): this.type = {
       val count = elements(element)
       elements.update(element, count + 1)
       this
