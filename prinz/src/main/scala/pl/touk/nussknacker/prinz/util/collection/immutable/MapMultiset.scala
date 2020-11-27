@@ -4,7 +4,8 @@ import scala.collection.mutable
 
 class MapMultiset[T](private val delegate: Map[T, Int]) {
 
-  def count(element: T): Int = if (contains(element)) {
+  def count(element: T): Int =
+    if (contains(element)) {
       delegate(element)
     }
     else {
@@ -96,11 +97,10 @@ class MapMultiset[T](private val delegate: Map[T, Int]) {
 
   override def hashCode(): Int = delegate.hashCode()
 
-  override def equals(obj: Any): Boolean =
-    obj match {
-      case m: MapMultiset[T] => this.delegate.equals(m.delegate)
-      case _ => false
-    }
+  override def equals(obj: Any): Boolean = obj match {
+    case m: MapMultiset[T] => this.delegate.equals(m.delegate)
+    case _ => false
+  }
 }
 
 object MapMultiset {
@@ -126,7 +126,7 @@ object MapMultiset {
   private class MapMultisetBuilder[T] extends mutable.Builder[T, MapMultiset[T]] {
     private val elements = new mutable.HashMap[T, Int].withDefaultValue(0)
 
-    override def +=(element: T): this.type = {
+    override def +=(element: T): MapMultisetBuilder[T] = {
       val count = elements(element)
       elements.update(element, count + 1)
       this

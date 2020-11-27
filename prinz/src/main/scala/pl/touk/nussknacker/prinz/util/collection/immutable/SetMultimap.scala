@@ -6,15 +6,13 @@ class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
 
   protected def createSet(values: V*): Set[V] = Set(values: _*)
 
-  def add(key: K, value: V): SetMultimap[K, V] = {
-    get(key) match {
-      case None =>
-        val newSet = createSet(value)
-        SetMultimap(delegate.updated(key, newSet))
-      case Some(oldSet) =>
-        val newSet = oldSet + value
-        SetMultimap(delegate.updated(key, newSet))
-    }
+  def add(key: K, value: V): SetMultimap[K, V] = get(key) match {
+    case None =>
+      val newSet = createSet(value)
+      SetMultimap(delegate.updated(key, newSet))
+    case Some(oldSet) =>
+      val newSet = oldSet + value
+      SetMultimap(delegate.updated(key, newSet))
   }
 
   def addAll(elements: Iterable[(K, V)]): SetMultimap[K, V] = {
@@ -28,18 +26,16 @@ class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
     SetMultimap(Map.empty[K, Set[V]] ++ created)
   }
 
-  def remove(key: K, value: V): SetMultimap[K, V] = {
-    get(key) match {
-      case None => this
-      case Some(oldSet) =>
-        val newSet = oldSet - value
-        if (newSet.nonEmpty) {
-          SetMultimap(delegate.updated(key, newSet))
-        }
-        else {
-          SetMultimap(delegate - key)
-        }
-    }
+  def remove(key: K, value: V): SetMultimap[K, V] = get(key) match {
+    case None => this
+    case Some(oldSet) =>
+      val newSet = oldSet - value
+      if (newSet.nonEmpty) {
+        SetMultimap(delegate.updated(key, newSet))
+      }
+      else {
+        SetMultimap(delegate - key)
+      }
   }
 
   def removeAll(elements: Iterable[(K, V)]): SetMultimap[K, V] = {
@@ -52,11 +48,9 @@ class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
     SetMultimap(Map.empty[K, Set[V]] ++ created)
   }
 
-  def exists(key: K, p: V => Boolean): Boolean = {
-    get(key) match {
-      case None => false
-      case Some(set) => set exists p
-    }
+  def exists(key: K, p: V => Boolean): Boolean = get(key) match {
+    case None => false
+    case Some(set) => set exists p
   }
 
   def contains(key: K, value: V): Boolean =
@@ -114,7 +108,7 @@ object SetMultimap {
   private class SetMultimapBuilder[K, V] extends mutable.Builder[(K, V), SetMultimap[K, V]] {
     private val elements = new mutable.HashMap[K, Set[V]]
 
-    override def +=(element: (K, V)): this.type = {
+    override def +=(element: (K, V)): SetMultimapBuilder[K, V] = {
       element match {
         case (key, value) =>
           elements.get(key) match {
