@@ -7,9 +7,9 @@ import pl.touk.nussknacker.prinz.enrichers.IrisSpeciesEnricher
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
-  protected def defaultCategory[T](obj: T): WithCategories[T] = WithCategories(obj, "Default")
+  protected def allCategories[T](obj: T): WithCategories[T] = WithCategories(obj, "FraudDetection", "Recommendations")
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = Map(
-    "irisSpeciesEnricher" -> defaultCategory(new IrisSpeciesEnricher)
+    "irisSpeciesEnricher" -> allCategories(new IrisSpeciesEnricher)
   )
 }
