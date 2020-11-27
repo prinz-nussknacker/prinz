@@ -43,6 +43,7 @@ class SetMultimap[K, V](private val delegate: Map[K, Set[V]]) {
     elements.foreach { case (key, value) =>
       created.get(key) match {
         case Some(set) => created(key) = set - value
+        case None => Unit
       }
     }
     SetMultimap(Map.empty[K, Set[V]] ++ created)
