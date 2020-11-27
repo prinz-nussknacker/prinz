@@ -58,24 +58,10 @@ lazy val prinz = (project in file("prinz"))
   )
   .settings(circeOverridesSettings)
 
-lazy val prinz_sample_dir = file("prinz_sample")
-lazy val prinz_sample = (project in prinz_sample_dir)
+lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
-    name := "prinz-sample",
-    libraryDependencies ++= {
-      Seq(
-        "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
-        )
-      },
-    run / fork := true,
-    run / baseDirectory := file(prinz_sample_dir.getAbsolutePath() + "/work"),
-    run / javaOptions ++= {
-      Seq(
-        "-Dconfig.file=../conf/application.conf",
-        "-Dlogback.configurationFile=../conf/logback.xml",
-      )
-    },
+    name := "prinz-sample"
   )
   .settings(circeOverridesSettings)
   .dependsOn(prinz)
