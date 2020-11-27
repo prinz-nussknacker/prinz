@@ -16,4 +16,4 @@ class MLFModelInstance(runUrl: URL) extends ModelInstance {
   override def getSignature(): List[(String, String)] = ("Not", "implemented")::("yet", ".")::Nil
 }
 
-case class RunBody[DATA_TYPE](columns: List[String], data: List[List[DATA_TYPE]])
+case class RunBody[D](columns: List[String], data: List[List[D]])

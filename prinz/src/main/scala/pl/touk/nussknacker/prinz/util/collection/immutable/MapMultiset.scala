@@ -1,14 +1,16 @@
 package pl.touk.nussknacker.prinz.util.collection.immutable
 
-import scala.collection._
+import scala.collection.mutable
 
 class MapMultiset[T](private val delegate: Map[T, Int]) {
 
   def count(element: T): Int =
-    if (contains(element))
+    if (contains(element)) {
       delegate(element)
-    else
+    }
+    else {
       0
+    }
 
   def contains(element: T): Boolean = delegate.contains(element)
 
@@ -30,10 +32,12 @@ class MapMultiset[T](private val delegate: Map[T, Int]) {
     }
 
   def add(element: T, count: Int = 1): MapMultiset[T] =
-    if (count > 0)
+    if (count > 0) {
       MapMultiset(delegate.updated(element, delegate(element) + count))
-    else
+    }
+    else {
       this
+    }
 
   def addAll(elements: Iterable[T]): MapMultiset[T] = {
     val created = new mutable.HashMap[T, Int].withDefaultValue(0) ++ delegate
@@ -49,21 +53,27 @@ class MapMultiset[T](private val delegate: Map[T, Int]) {
     if (contains(element) && count > 0) {
       val newCount = delegate(element) - count
 
-      if (newCount > 0)
+      if (newCount > 0) {
         MapMultiset(delegate.updated(element, newCount))
-      else
+      }
+      else {
         MapMultiset(delegate - element)
-    } else
+      }
+    }
+    else {
       this
+    }
 
   def removeAll(elements: Iterable[T]): MapMultiset[T] = {
     val created = new mutable.HashMap[T, Int].withDefaultValue(0) ++ delegate
     elements.foreach { element => {
       val count = created(element)
-      if (count > 0)
+      if (count > 0) {
         created.update(element, count - 1)
-      else
+      }
+      else {
         created.remove(element)
+      }
       }
     }
     MapMultiset(Map.empty[T, Int].withDefaultValue(0) ++ created)
@@ -87,11 +97,10 @@ class MapMultiset[T](private val delegate: Map[T, Int]) {
 
   override def hashCode(): Int = delegate.hashCode()
 
-  override def equals(obj: Any): Boolean =
-    obj match {
-      case m: MapMultiset[T] => this.delegate.equals(m.delegate)
-      case _ => false
-    }
+  override def equals(obj: Any): Boolean = obj match {
+    case m: MapMultiset[T] => this.delegate.equals(m.delegate)
+    case _ => false
+  }
 }
 
 object MapMultiset {

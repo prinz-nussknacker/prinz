@@ -33,4 +33,6 @@ jobs:
           sudo apt-get update && \
           sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Run Scalastyle
-        run: ./sbtwrapper scalastyle
+        run: |
+          ./sbtwrapper prinz/scalastyle &&
+          ./sbtwrapper prinz_sample/scalastyle
