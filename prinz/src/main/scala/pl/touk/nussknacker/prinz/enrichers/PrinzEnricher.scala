@@ -6,7 +6,7 @@ import pl.touk.nussknacker.engine.api.{MetaData, MethodToInvoke, ParamName, Serv
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class IrisSpeciesEnricher extends Service {
+class PrinzEnricher extends Service {
 
   @MethodToInvoke
   def invoke(@ParamName("sepalLength") @NotBlank sepalLength: Float,
