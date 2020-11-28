@@ -47,7 +47,6 @@ lazy val prinz = (project in file("prinz"))
     }
   )
 
-
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(

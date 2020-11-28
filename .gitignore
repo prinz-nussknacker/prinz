@@ -16,7 +16,9 @@ project/plugins/project/
 # Docker data
 dev-environment/data
 dev-environment/mlflow/models/*/mlruns
+dev-environment/nussknacker/opt/prinz/*.jar
+dev-environment/nussknacker/opt/prinz-sample/*.jar
 
-#IDE files
+# IDE files
 .idea/
 .bsp/
