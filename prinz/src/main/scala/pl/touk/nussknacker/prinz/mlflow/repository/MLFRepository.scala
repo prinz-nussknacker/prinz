@@ -35,5 +35,3 @@ object MLFRepository {
     MLFRegisteredModelVersion(ver.name, ver.version, instant(ver.creation_timestamp),
       instant(ver.last_updated_timestamp), ver.current_stage, ver.source, ver.run_id, ver.status)
 }
-
-

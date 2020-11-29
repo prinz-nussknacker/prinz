@@ -16,8 +16,8 @@ from sklearn.linear_model import ElasticNet
 from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
-# from mlflow.models.signature import ModelSignature
-# from mlflow.types.schema import Schema, ColSpec
+from mlflow.models.signature import ModelSignature
+from mlflow.types.schema import Schema, ColSpec
 
 import logging
 
@@ -53,13 +53,13 @@ if __name__ == "__main__":
     l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
 
     with mlflow.start_run():
-        # input_schema = Schema([
-        #     ColSpec("double", "a"),
-        #     ColSpec("double", "b"),
-        #     ColSpec("double", "c"),
-        # ])
-        # output_schema = Schema([ColSpec("double")])
-        # signature = ModelSignature(inputs=input_schema, outputs=output_schema)
+        input_schema = Schema([
+            ColSpec("double", "a"),
+            ColSpec("double", "b"),
+            ColSpec("double", "c"),
+        ])
+        output_schema = Schema([ColSpec("double")])
+        signature = ModelSignature(inputs=input_schema, outputs=output_schema)
 
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
         lr.fit(train_x, train_y)
@@ -80,6 +80,6 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}".format(uuid4()))
+            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}".format(uuid4()), signature=signature)
         else:
             mlflow.sklearn.log_model(lr, "model")
