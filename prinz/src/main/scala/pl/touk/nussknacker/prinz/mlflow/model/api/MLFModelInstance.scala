@@ -14,4 +14,3 @@ case class MLFModelInstance(runUrl: String, model: MLFRegisteredModel) extends M
 
   override def getSignature: List[(String, String)] = ("Not", "implemented")::("yet", ".")::Nil
 }
-

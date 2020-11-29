@@ -2,7 +2,6 @@
 val scalaV = "2.12.10"
 val nussknackerV = "0.2.2"
 val sttpV = "3.0.0-RC7"
-val json4sV = "3.6.0"
 val scalatestV = "3.2.2"
 val circeV = "0.12.3"
 val testContainersV = "0.38.6"
