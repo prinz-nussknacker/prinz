@@ -1,33 +1,27 @@
 package pl.touk.nussknacker.prinz.util.http
 
-import org.json4s.native.Serialization
-import org.json4s.{DefaultFormats, Formats, Serialization}
-import pl.touk.nussknacker.prinz.model.repository.ModelRepositoryException
-import sttp.client3.json4s.SttpJson4sApi
-import sttp.client3.{HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest}
-import sttp.model.{Methods, Uri}
+import io.circe.{Decoder, Encoder}
+import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
+import sttp.client3.circe.asJson
+import sttp.client3.{BodySerializer, HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest, circe}
+import sttp.model.Uri
 
-class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) extends SttpJson4sApi with Methods {
+class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) {
 
-  private implicit val SERIALIZATION: Serialization = Serialization
-  private implicit val FORMATS: Formats = DefaultFormats
-
-  def postJsonBody[BODY <: AnyRef, RESPONSE: Manifest]
-  (relativePath: String, body: BODY): Either[RestClientException, RESPONSE] = {
+  def postJsonBody[BODY, RESPONSE: Manifest](relativePath: String, body: BODY, params: RestRequestParams = EmptyRestRequestParams)
+                                            (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
     val request = basicRequest
-      .post(uriFromRelativePath(relativePath, EmptyRequestParams.getParamsMap))
+      .post(uriFromRelativePath(relativePath, params.getParamsMap))
       .header("Content-Type", "application/json")
-      .body(body)
+      .body(encoder(body).toString())
       .response(asJson[RESPONSE])
     wrapCaughtException(() => request.send(backend)
       .body.left.map(clientExceptionFromResponse)
     )
   }
 
-  def getJson[RESPONSE: Manifest](relativePath: String): Either[RestClientException, RESPONSE] =
-    getJson[Any, RESPONSE](relativePath, EmptyRequestParams)
-
-  def getJson[PARAMS, RESPONSE: Manifest](relativePath: String, params: RequestParams[PARAMS]): Either[RestClientException, RESPONSE] = {
+  def getJson[RESPONSE: Manifest](relativePath: String, params: RestRequestParams = EmptyRestRequestParams)
+                                 (implicit decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
     val request = basicRequest
       .get(uriFromRelativePath(relativePath, params.getParamsMap))
       .response(asJson[RESPONSE])
@@ -47,4 +41,9 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
   } catch {
     case e: SttpClientException => Left(new RestClientException(e.getMessage))
   }
+}
+
+object RestJsonClient {
+
+  type RestClientResponse[RESPONSE] = Either[RestClientException, RESPONSE]
 }
