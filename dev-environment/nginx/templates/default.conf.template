@@ -1,0 +1,19 @@
+upstream mlflow {
+    server ${MLFLOW_URL};
+}
+
+upstream model {
+    server ${MODEL_URL};
+}
+
+server {
+    listen ${NGINX_PORT};
+
+    location ~* \/invocations$ {
+        proxy_pass      http://model;
+    }
+
+    location / {
+        proxy_pass      http://mlflow;
+    }
+}

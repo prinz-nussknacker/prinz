@@ -18,6 +18,7 @@ dev-environment/data
 dev-environment/mlflow/models/*/mlruns
 dev-environment/nussknacker/opt/prinz/*.jar
 dev-environment/nussknacker/opt/prinz-sample/*.jar
+dev-environment/minio/mlflow
 
 # IDE files
 .idea/
