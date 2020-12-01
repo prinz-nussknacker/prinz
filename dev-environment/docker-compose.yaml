@@ -68,7 +68,7 @@ services:
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
 
   proxy:
-    image: nginx
+    image: nginx:alpine
     container_name: proxy-server
     restart: always
     volumes:
