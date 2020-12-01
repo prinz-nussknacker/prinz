@@ -1,16 +1,19 @@
 package pl.touk.nussknacker.prinz.model
 
-case class ModelName(name: String) {
+trait Model {
+
+  def getName: ModelName
+
+  def getVersion: ModelVersion
+
+  def toModelInstance: ModelInstance
+}
+
+abstract class ModelName(name: String) {
+
+  def internal: String = name
+
   override def toString: String = name
 }
 
-abstract class ModelVersion {
-  def getModelInstance(): ModelInstance
-}
-
-abstract class Model {
-  def getName(): ModelName
-
-  def getLatestVersion(): ModelVersion
-  def getVersions(): List[ModelVersion]
-}
+trait ModelVersion

@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.model
 
-abstract class ModelInstance {
-  def run[DATA_TYPE](columns: List[String], data: List[DATA_TYPE]): Either[ModelRunException, Float]
+trait ModelInstance {
 
-  def getSignature(): List[(String, String)]
+  def run(columns: List[String], data: List[List[Double]]): Either[ModelRunException, Double]
+
+  def getSignature: List[(String, String)]
 }
