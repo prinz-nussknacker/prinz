@@ -18,5 +18,5 @@ jobs:
           sudo add-apt-repository 'deb https://apt.corretto.aws stable main'
           sudo apt-get update && \
           sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
-      - name: Run Scalastyle
+      - name: Run Unit Tests
         run: ./sbtwrapper prinz/test
