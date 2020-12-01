@@ -1,0 +1,21 @@
+upstream mlflow {
+    server ${MLFLOW_URL};
+}
+
+upstream model {
+    server ${MODEL_URL};
+}
+
+server {
+    listen ${NGINX_PORT};
+    gzip on;
+
+    location ~* \/invocations$ {
+        client_max_body_size 16m;
+        proxy_pass      http://model;
+    }
+
+    location / {
+        proxy_pass      http://mlflow;
+    }
+}

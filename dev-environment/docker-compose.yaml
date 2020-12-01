@@ -6,9 +6,6 @@ services:
     build: ./mlflow
     container_name: mlflow-server
     restart: always
-    ports:
-      - "5000:5000"
-      - "1234:1234"
     environment:
       - BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
       - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
@@ -22,7 +19,7 @@ services:
     volumes:
       - ./mlflow/models:/home/mlflow/models
     networks:
-      - mlflow-backend
+      - mlflow-net
     depends_on:
       - postgres-mlflow
       - aws-mlflow
@@ -40,7 +37,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - mlflow-backend
+      - mlflow-net
 
   aws-mlflow:
     build: ./minio
@@ -55,7 +52,7 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - mlflow-backend
+      - mlflow-net
 
   nussknacker:
     build: ./nussknacker
@@ -65,11 +62,28 @@ services:
       - "3000:3000"
       - "8080:8080"
     networks:
-      - mlflow-backend
+      - mlflow-net
     environment:
       NUSSKNACKER_CONFIG_FILE: >-
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
 
+  proxy:
+    image: nginx:alpine
+    container_name: proxy-server
+    restart: always
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates
+    ports:
+      - "5000:5000"
+    environment:
+      - NGINX_PORT=5000
+      - MLFLOW_URL=mlflow-server:5000
+      - MODEL_URL=mlflow-server:1234
+    networks:
+      - mlflow-net
+    depends_on:
+      - mlflow
+
 networks:
-  mlflow-backend:
+  mlflow-net:
     driver: bridge
