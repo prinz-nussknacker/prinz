@@ -19,8 +19,7 @@ services:
     volumes:
       - ./mlflow/models:/home/mlflow/models
     networks:
-      - mlflow-internal-net
-      - proxy-net
+      - mlflow-net
     depends_on:
       - postgres-mlflow
       - aws-mlflow
@@ -38,7 +37,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - mlflow-internal-net
+      - mlflow-net
 
   aws-mlflow:
     build: ./minio
@@ -53,7 +52,7 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - mlflow-internal-net
+      - mlflow-net
 
   nussknacker:
     build: ./nussknacker
@@ -63,7 +62,7 @@ services:
       - "3000:3000"
       - "8080:8080"
     networks:
-      - mlflow-internal-net
+      - mlflow-net
     environment:
       NUSSKNACKER_CONFIG_FILE: >-
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
@@ -74,8 +73,6 @@ services:
     restart: always
     volumes:
       - ./nginx/templates:/etc/nginx/templates
-    expose:
-      - "5000"
     ports:
       - "5000:5000"
     environment:
@@ -83,12 +80,10 @@ services:
       - MLFLOW_URL=mlflow-server:5000
       - MODEL_URL=mlflow-server:1234
     networks:
-      - proxy-net
+      - mlflow-net
     depends_on:
       - mlflow
 
 networks:
-  mlflow-internal-net:
-    driver: bridge
-  proxy-net:
+  mlflow-net:
     driver: bridge

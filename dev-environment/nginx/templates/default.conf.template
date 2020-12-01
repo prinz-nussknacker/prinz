@@ -8,8 +8,10 @@ upstream model {
 
 server {
     listen ${NGINX_PORT};
+    gzip on;
 
     location ~* \/invocations$ {
+        client_max_body_size 16m;
         proxy_pass      http://model;
     }
 
