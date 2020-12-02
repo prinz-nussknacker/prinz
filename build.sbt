@@ -39,6 +39,7 @@ lazy val prinz = (project in file("prinz"))
   .settings(
     name := "prinz",
     addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
+    Test / fork := true,
     libraryDependencies ++= {
       Seq(
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
