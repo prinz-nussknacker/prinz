@@ -7,7 +7,7 @@ import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.{ContainerDef, WaitingForService}
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.{DOCKER_COMPOSE_FILE, MLFLOW_SERVER_SERVICE_NAME, MODEL_SERVED_READY_REGEX}
-import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.{DEFAULT_SERVE_PORT}
+import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.DEFAULT_SERVE_PORT
 
 abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
