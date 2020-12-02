@@ -13,7 +13,7 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - run: |
-          cd prinz/dev-environment
+          cd dev-environment
           docker-compose pull
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
