@@ -8,7 +8,8 @@ import io.circe.parser.decode
 import io.circe.yaml.parser.{parse => parseYaml}
 import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.{BUCKET_NAME, EXPERIMENT_ID}
 import pl.touk.nussknacker.prinz.mlflow.model.api.MLFModelInstance.downloadSignature
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition, RestMLFInvokeBody}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFYamlInputDefinition,
+  MLFYamlModelDefinition, MLFYamlOutputDefinition, RestMLFInvokeBody}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketRestClient, MLFInvokeRestClient}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException, ModelSignature, SignatureName, SignatureType}
 

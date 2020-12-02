@@ -3,7 +3,9 @@ package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 import java.net.URL
 
 import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.{BASE_API_PATH, BASE_PREVIEW_API_PATH}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api._
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{
+  GetAllRegisteredModelsRequest, GetAllRegisteredModelsResponse, GetRegisteredModelRequest,
+  GetRegisteredModelResponse, RestMLFModelName, RestRegisteredModel}
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import pl.touk.nussknacker.prinz.util.http.RestRequestParams.extractRequestParams
