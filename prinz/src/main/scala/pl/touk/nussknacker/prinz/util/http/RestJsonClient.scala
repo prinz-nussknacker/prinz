@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.util.http
 import io.circe.{Decoder, Encoder}
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import sttp.client3.circe.asJson
-import sttp.client3.{BodySerializer, HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest, circe}
+import sttp.client3.{HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest}
 import sttp.model.Uri
 
 class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) {

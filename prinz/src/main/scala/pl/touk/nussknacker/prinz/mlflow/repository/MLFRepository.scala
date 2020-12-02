@@ -4,6 +4,7 @@ import java.net.URL
 
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFRegisteredModelName, MLFRegisteredModelVersion}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{RestMLFModelName, RestRegisteredModel, RestRegisteredModelVersion}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository.toApi
 import pl.touk.nussknacker.prinz.model.{Model, ModelName}
@@ -12,7 +13,7 @@ import pl.touk.nussknacker.prinz.util.time.Timestamp.instant
 
 case class MLFRepository(hostUrl: URL) extends ModelRepository {
 
-  private val restClient = MLFRestClient(hostUrl)
+  private val restClient = client.MLFRestClient(hostUrl)
 
   override def listModels: RepositoryResponse[List[Model]] =
     restClient.listModels()

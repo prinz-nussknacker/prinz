@@ -1,9 +1,10 @@
 #!/bin/sh
 
 # Compile and package prinz if not packaged yet
-cd '..' &&
+cd .. &&
 ./sbtwrapper prinz/package prinz_sample/package &&
 cd - &&
+mkdir -p nussknacker/opt/prinz/ &&
 cp ../prinz/target/scala-2.12/prinz_2.12-0.0.1-SNAPSHOT.jar nussknacker/opt/prinz/ &&
 cp ../prinz_sample/target/scala-2.12/prinz-sample_2.12-0.0.1-SNAPSHOT.jar nussknacker/opt/prinz-sample/ &&
 
