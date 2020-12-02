@@ -5,7 +5,7 @@ val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
 val circeV = "0.13.0"
-val testContainersV = "0.38.6"
+val testContainersV = "0.38.7"
 val paradiseV = "2.1.1"
 val slf4jV = "1.7.30"
 

@@ -7,6 +7,7 @@ import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.{ContainerDef, WaitingForService}
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.{DOCKER_COMPOSE_FILE, MLFLOW_SERVER_SERVICE_NAME, MODEL_SERVED_READY_REGEX}
+import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.{DEFAULT_SERVE_PORT}
 
 abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
@@ -23,7 +24,7 @@ object UnitIntegrationTest {
 
   private val DOCKER_COMPOSE_FILE = new File("../dev-environment/docker-compose.yaml")
 
-  private val MODEL_SERVED_READY_REGEX = ".*Listening at.*"
+  private val MODEL_SERVED_READY_REGEX = s".*Listening at.*$DEFAULT_SERVE_PORT.*"
 
   private val MLFLOW_SERVER_SERVICE_NAME = "mlflow-server"
 }

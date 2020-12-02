@@ -5,6 +5,7 @@ import java.net.URL
 object MlflowConstants {
   val DEFAULT_HOST: String = "http://localhost"
   val DEFAULT_PORT: Int = 5000
+  val DEFAULT_SERVE_PORT: Int = 1234
   val DEFAULT_URL: URL = new URL(s"$DEFAULT_HOST:$DEFAULT_PORT")
   val DEFAULT_USER: String = "mlflow.user"
   val BASE_API_PATH: String = s"/api/2.0/mlflow"
