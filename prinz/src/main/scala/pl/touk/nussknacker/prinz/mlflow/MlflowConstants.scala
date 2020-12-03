@@ -12,7 +12,8 @@ object MlflowConstants {
   val BASE_PREVIEW_API_PATH: String = s"/api/2.0/preview/mlflow"
   val S3_ACCESS_KEY: String = "mlflow-key"
   val S3_SECRET_KEY: String = "mlflow-secret"
-  val S3_URL: URL = new URL("http://localhost:9000")
+  val S3_PORT: Int = 9000
+  val S3_URL: URL = new URL(s"$DEFAULT_HOST:$S3_PORT")
   val S3_MODEL_REL_PATH: String = "/artifacts/model/MLmodel"
   val BUCKET_NAME: String = "mlflow"
   val EXPERIMENT_ID: Int = 0

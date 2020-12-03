@@ -11,34 +11,34 @@ class MLFContainerTest extends UnitIntegrationTest {
     val repository = MLFRepository(DEFAULT_URL)
     val models = repository.listModels.toOption
 
-    assert(models.isDefined)
-    assert(models.exists(_.nonEmpty))
+    models.isDefined shouldBe true
+    models.exists(_.nonEmpty) shouldBe true
   }
 
   it should "have model instance available" in {
     val instance = getModelInstance
 
-    assert(instance.isDefined)
+    instance.isDefined shouldBe true
   }
 
-  it should "have model instance that have signature defined" in {
+  it should "have model instance that has signature defined" in {
     val instance = getModelInstance
     val signature = instance.map(_.getSignature)
 
-    assert(signature.isDefined)
+    signature.isDefined shouldBe true
   }
 
   it should "have specific for tests model signature" in {
     val instance = getModelInstance
     val signature = instance.map(_.getSignature).get
 
-    assertResult(1)(signature.getOutputType.size)
-    assertResult(SignatureType("double"))(signature.getOutputType.head)
+    signature.getOutputType.size should equal (1)
+    signature.getOutputType.head should equal (SignatureType("double"))
 
-    assertResult(3)(signature.getInputDefinition.size)
-    assert(signature.getInputDefinition.contains(input("a")("double")))
-    assert(signature.getInputDefinition.contains(input("b")("double")))
-    assert(signature.getInputDefinition.contains(input("c")("double")))
+    signature.getInputDefinition.size should equal (3)
+    signature.getInputDefinition.contains(input("a")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("b")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("c")("double")) shouldBe true
   }
 
   private def getModelInstance = {
@@ -47,6 +47,6 @@ class MLFContainerTest extends UnitIntegrationTest {
     model.map(_.toModelInstance)
   }
 
-  private def input(name: String)(`type`: String) =
-    (SignatureName(name), SignatureType(`type`))
+  private def input(name: String)(inputType: String) =
+    (SignatureName(name), SignatureType(inputType))
 }
