@@ -3,9 +3,11 @@ val scalaV = "2.12.10"
 val nussknackerV = "0.2.2"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
-val circeV = "0.12.3"
-val testContainersV = "0.38.6"
+val minioS3V = "8.0.0"
+val circeV = "0.13.0"
+val testContainersV = "0.38.7"
 val paradiseV = "2.1.1"
+val slf4jV = "1.7.30"
 
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
@@ -37,17 +39,21 @@ lazy val prinz = (project in file("prinz"))
   .settings(
     name := "prinz",
     addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
+    Test / fork := true,
     libraryDependencies ++= {
       Seq(
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
         "com.softwaremill.sttp.client3" %% "circe" % sttpV,
+        "io.minio" % "minio" % minioS3V,
         "io.circe" %% "circe-core" % circeV,
         "io.circe" %% "circe-generic" % circeV,
         "io.circe" %% "circe-parser" % circeV,
+        "io.circe" %% "circe-yaml" % circeV,
         "org.scala-lang" % "scala-reflect" % scalaV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
+        "org.slf4j" % "slf4j-simple" % slf4jV % Test,
       )
     }
   )

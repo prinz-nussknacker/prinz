@@ -12,6 +12,11 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
+      - run: |
+          cd dev-environment
+          docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+        continue-on-error: true
       - name: Set up Java
         run: |
           wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add -
