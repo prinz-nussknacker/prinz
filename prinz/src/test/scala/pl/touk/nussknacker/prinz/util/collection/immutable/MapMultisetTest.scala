@@ -80,10 +80,10 @@ class MapMultisetTest extends UnitTest {
     val elements = new ListBuffer[Int]()
     it.foreach(elem => elements += elem)
 
-    set.size should equal(6)
-    set.count(1) should equal(3)
-    set.count(2) should equal(2)
-    set.count(3) should equal(1)
-    elements.toList.sorted should equal(List(1, 1, 1, 2, 2, 3))
+    set.size should equal (6)
+    set.count(1) should equal (3)
+    set.count(2) should equal (2)
+    set.count(3) should equal (1)
+    elements.toList.sorted should equal (List(1, 1, 1, 2, 2, 3))
   }
 }
