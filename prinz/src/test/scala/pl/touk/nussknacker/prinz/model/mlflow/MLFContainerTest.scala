@@ -36,9 +36,17 @@ class MLFContainerTest extends UnitIntegrationTest {
     signature.getOutputType.head should equal (SignatureType("double"))
 
     signature.getInputDefinition.size should equal (3)
-    signature.getInputDefinition.contains(input("a")("double")) shouldBe true
-    signature.getInputDefinition.contains(input("b")("double")) shouldBe true
-    signature.getInputDefinition.contains(input("c")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("fixed acidity")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("volatile acidity")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("citric acid")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("residual sugar")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("chlorides")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("free sulfur dioxide")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("total sulfur dioxide")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("density")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("pH")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("sulphates")("double")) shouldBe true
+    signature.getInputDefinition.contains(input("alcohol")("double")) shouldBe true
   }
 
   private def getModelInstance = {
