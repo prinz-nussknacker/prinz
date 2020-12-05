@@ -54,9 +54,17 @@ if __name__ == "__main__":
 
     with mlflow.start_run():
         input_schema = Schema([
-            ColSpec("double", "a"),
-            ColSpec("double", "b"),
-            ColSpec("double", "c"),
+            ColSpec("double", "fixed acidity"),
+            ColSpec("double", "volatile acidity"),
+            ColSpec("double", "citric acid"),
+            ColSpec("double", "residual sugar"),
+            ColSpec("double", "chlorides"),
+            ColSpec("double", "free sulfur dioxide"),
+            ColSpec("double", "total sulfur dioxide"),
+            ColSpec("double", "density"),
+            ColSpec("double", "pH"),
+            ColSpec("double", "sulphates"),
+            ColSpec("double", "alcohol")
         ])
         output_schema = Schema([ColSpec("double")])
         signature = ModelSignature(inputs=input_schema, outputs=output_schema)
