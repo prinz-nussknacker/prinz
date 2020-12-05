@@ -35,7 +35,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     signature.getOutputType.size should equal (1)
     signature.getOutputType.head should equal (SignatureType("double"))
 
-    signature.getInputDefinition.size should equal (3)
+    signature.getInputDefinition.size should equal (11)
     signature.getInputDefinition.contains(input("fixed acidity")("double")) shouldBe true
     signature.getInputDefinition.contains(input("volatile acidity")("double")) shouldBe true
     signature.getInputDefinition.contains(input("citric acid")("double")) shouldBe true
