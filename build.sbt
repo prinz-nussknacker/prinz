@@ -7,7 +7,9 @@ val minioS3V = "8.0.0"
 val circeV = "0.13.0"
 val testContainersV = "0.38.7"
 val paradiseV = "2.1.1"
-val slf4jV = "1.7.30"
+val typesafeConfigV = "1.4.1"
+val typesafeLogV = "3.9.2"
+val logbackV = "1.2.3"
 
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
@@ -49,11 +51,13 @@ lazy val prinz = (project in file("prinz"))
         "io.circe" %% "circe-generic" % circeV,
         "io.circe" %% "circe-parser" % circeV,
         "io.circe" %% "circe-yaml" % circeV,
+        "com.typesafe" % "config" % typesafeConfigV,
+        "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
         "org.scala-lang" % "scala-reflect" % scalaV,
+        "ch.qos.logback" % "logback-classic" % logbackV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
-        "org.slf4j" % "slf4j-simple" % slf4jV % Test,
       )
     }
   )
