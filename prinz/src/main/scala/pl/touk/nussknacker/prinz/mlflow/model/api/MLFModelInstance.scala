@@ -6,7 +6,7 @@ import java.net.URL
 import io.circe.Decoder
 import io.circe.parser.decode
 import io.circe.yaml.parser.{parse => parseYaml}
-import pl.touk.nussknacker.prinz.mlflow.MlflowConstants.{BUCKET_NAME, EXPERIMENT_ID}
+import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.MLFModelInstance.downloadSignature
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFYamlInputDefinition,
   MLFYamlModelDefinition, MLFYamlOutputDefinition, RestMLFInvokeBody}
@@ -21,7 +21,7 @@ case class MLFModelInstance(runUrl: URL, model: MLFRegisteredModel) extends Mode
     restClient.invoke(RestMLFInvokeBody(columns, data))
       .left.map(new ModelRunException(_))
 
-  override def getSignature: ModelSignature = downloadSignature(EXPERIMENT_ID, model.getVersion.runId) match {
+  override def getSignature: ModelSignature = downloadSignature(MLFConfig.experimentId, model.getVersion.runId) match {
     case Some(value) => value
     case None => throw MLFSignatureNotFoundException(model)
   }
@@ -30,7 +30,7 @@ case class MLFModelInstance(runUrl: URL, model: MLFRegisteredModel) extends Mode
 object MLFModelInstance {
 
   private def downloadSignature(experimentId: Int, runId: String): Option[ModelSignature] = {
-    val s3Client = new MLFBucketRestClient(BUCKET_NAME)
+    val s3Client = new MLFBucketRestClient(MLFConfig.s3BucketName)
     val stream = s3Client.getMLModelFile(experimentId, runId)
     extractDefinition(new InputStreamReader(stream))
       .map(definitionToSignature)
