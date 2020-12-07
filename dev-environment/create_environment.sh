@@ -1,12 +1,22 @@
-#!/bin/sh
+#!/bin/bash
+
+scalaV="2.12"
+nussknackerV="0.2.2"
+
+sampleDeps=(
+    "../prinz_sample/target/pack/lib/nussknacker-flink-api_${scalaV}-${nussknackerV}.jar"
+    "../prinz_sample/target/pack/lib/nussknacker-flink-util_${scalaV}-${nussknackerV}.jar"
+    "../prinz_sample/target/pack/lib/nussknacker-model-flink-util_${scalaV}-${nussknackerV}.jar"
+)
 
 # Compile and package prinz if not packaged yet
 cd .. &&
-./sbtwrapper prinz/package prinz_sample/package &&
+./sbtwrapper prinz/package prinz_sample/pack &&
 cd - &&
 mkdir -p nussknacker/opt/prinz/ &&
-cp ../prinz/target/scala-2.12/prinz_2.12-0.0.1-SNAPSHOT.jar nussknacker/opt/prinz/ &&
-cp ../prinz_sample/target/scala-2.12/prinz-sample_2.12-0.0.1-SNAPSHOT.jar nussknacker/opt/prinz-sample/ &&
+cp "../prinz/target/scala-${scalaV}/prinz_${scalaV}-0.0.1-SNAPSHOT.jar" "nussknacker/opt/prinz/" &&
+cp "../prinz_sample/target/scala-${scalaV}/prinz-sample_${scalaV}-0.0.1-SNAPSHOT.jar" "nussknacker/opt/prinz-sample/" &&
+cp "${sampleDeps[@]}" "nussknacker/opt/prinz-sample/" &&
 
 # Add -d flag to hide environment startup
 docker-compose up --build

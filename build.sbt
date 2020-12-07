@@ -66,5 +66,13 @@ lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
     name := "prinz-sample",
+    libraryDependencies ++= {
+      Seq(
+        "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
+      )
+    }
   )
   .dependsOn(prinz)
+  .enablePlugins(PackPlugin)
