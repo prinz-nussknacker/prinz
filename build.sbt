@@ -1,3 +1,5 @@
+enablePlugins(PackPlugin)
+
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.2.2"
@@ -22,7 +24,7 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= {
     Seq(
-      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV
+      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
     )
   },
   scalastyleConfig := file("project/scalastyle_config.xml"),
@@ -66,5 +68,11 @@ lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
     name := "prinz-sample",
+    libraryDependencies ++= {
+      Seq(
+        "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
+      )
+    }
   )
   .dependsOn(prinz)
