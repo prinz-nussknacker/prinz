@@ -1,5 +1,3 @@
-enablePlugins(PackPlugin)
-
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.2.2"
@@ -72,7 +70,9 @@ lazy val prinz_sample = (project in file("prinz_sample"))
       Seq(
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
       )
     }
   )
   .dependsOn(prinz)
+  .enablePlugins(PackPlugin)
