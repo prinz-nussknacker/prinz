@@ -22,7 +22,7 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= {
     Seq(
-      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV
     )
   },
   scalastyleConfig := file("project/scalastyle_config.xml"),
