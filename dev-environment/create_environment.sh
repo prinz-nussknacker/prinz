@@ -1,7 +1,7 @@
 #!/bin/bash
 
 scalaV="2.12"
-nussknackerV="0.2.2"
+nussknackerV="0.3.0"
 
 sampleDeps=(
     "../prinz_sample/target/pack/lib/nussknacker-flink-api_${scalaV}-${nussknackerV}.jar"

@@ -1,6 +1,6 @@
 // Dependency versions
 val scalaV = "2.12.10"
-val nussknackerV = "0.2.2"
+val nussknackerV = "0.3.0"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"

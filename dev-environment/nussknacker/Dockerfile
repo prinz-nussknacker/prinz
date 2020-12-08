@@ -1,4 +1,4 @@
-FROM touk/nussknacker:latest
+FROM touk/nussknacker:0.3.0
 
 COPY opt/ /opt/
 
