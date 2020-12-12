@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker-compose stop
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml stop

@@ -19,4 +19,4 @@ cp "../prinz_sample/target/scala-${scalaV}/prinz-sample_${scalaV}-0.0.1-SNAPSHOT
 cp "${sampleDeps[@]}" "nussknacker/opt/prinz-sample/" &&
 
 # Add -d flag to hide environment startup
-docker-compose up --build
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml up --build

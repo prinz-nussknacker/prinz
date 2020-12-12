@@ -51,18 +51,6 @@ services:
     networks:
       - mlflow-net
 
-  nussknacker:
-    build: ./nussknacker
-    restart: always
-    ports:
-      - "3000:3000"
-      - "8080:8080"
-    networks:
-      - mlflow-net
-    environment:
-      NUSSKNACKER_CONFIG_FILE: >-
-        ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
-
   proxy:
     image: nginx:alpine
     restart: always
