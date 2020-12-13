@@ -57,6 +57,13 @@ services:
     networks:
       - nussknacker-net
 
+  telegraf:
+    image: telegraf:1.14.5-alpine
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - nussknacker-net
+
   jobmanager:
     image: flink:scala_2.12-java8
     ports:

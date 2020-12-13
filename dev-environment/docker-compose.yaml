@@ -31,7 +31,7 @@ services:
       - POSTGRES_USER=mlflow
       - POSTGRES_PASSWORD=mlflow
     volumes:
-      - ./data/postgres/mlflow/data:/var/lib/postgresql/data
+      - nussknacker_storage_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -40,7 +40,7 @@ services:
   aws-mlflow:
     build: ./minio
     volumes:
-      - ./data/minio/mlflow:/mlflow-storage
+      - mlflow_storage_minio_data:/mlflow-storage
     environment:
       - MINIO_ACCESS_KEY=mlflow-key
       - MINIO_SECRET_KEY=mlflow-secret
@@ -70,3 +70,7 @@ services:
 networks:
   mlflow-net:
     driver: bridge
+
+volumes:
+  mlflow_storage_minio_data:
+  nussknacker_storage_postgres_data:
