@@ -17,13 +17,14 @@
 ################################################################################
 
 
-#==============================================================================
+################################################################################
 # Common
-#==============================================================================
+################################################################################
 
-# The host on which the JobManager runs. Only used in non-high-availability mode.
-# The JobManager process will use this hostname to bind the listening servers to.
-# The TaskManagers will try to connect to the JobManager on that host.
+# The host on which the JobManager runs. Only used in
+# non-high-availability mode. The JobManager process will use
+# this hostname to bind the listening servers to. The TaskManagers
+# will try to connect to the JobManager on that host.
 
 taskmanager.hostname: taskmanager
 
@@ -34,7 +35,8 @@ taskmanager.memory.managed.size: 204m
 
 env.java.opts.taskmanager: "-Dcom.sun.management.jmxremote -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.port=9009 -Dcom.sun.management.jmxremote.rmi.port=9008 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
 
-# The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
+# The number of task slots that each TaskManager offers.
+# Each slot runs one parallel pipeline.
 
 taskmanager.numberOfTaskSlots: 40
 
@@ -52,9 +54,9 @@ jobmanager.heap.size: 256m
 
 parallelism.default: 8
 
-#==============================================================================
+################################################################################
 # Web Frontend
-#==============================================================================
+################################################################################
 
 # The port under which the web-based runtime monitor listens.
 # A value of -1 deactivates the web server.
