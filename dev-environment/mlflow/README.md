@@ -9,3 +9,23 @@ To use it on CI the `secrets.GITHUB_TOKEN` is used to authenticate to repository
 cat ~/token.txt | docker login https://docker.pkg.github.com -u YOUR_GITHUB_USERNAME --password-stdin
 ```
 to login to Github Docker Registry and use the prepared version.
+
+## Publish updated MLflow image
+To publish updated version of this image you should build new version locally with command
+```
+docker build .
+```
+then find IMAGE_ID with command
+```
+docker images
+```
+and tag the specified image with command
+```
+docker tag IMAGE_ID docker.pkg.github.com/prinz-nussknacker/prinz/mlflow_server:TAG_VERSION
+```
+where TAG_VERSION should be changed as described [here](https://semver.org/).
+Finally, to publish tagged image use command
+```
+docker push docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:TAG_VERSION
+```
+and check the result on status page.
