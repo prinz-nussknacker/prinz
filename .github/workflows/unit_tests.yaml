@@ -20,7 +20,7 @@ jobs:
           sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
       - name: Login to Docker
         run: |
-	  echo "${{ secrets.GITHUB_TOKEN }}" | \
-	  docker login https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
+	  echo "${{ secrets.GITHUB_TOKEN }}" | docker login \
+	  https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
       - name: Run Unit Tests
         run: ./sbtwrapper prinz/test
