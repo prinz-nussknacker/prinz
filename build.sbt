@@ -43,7 +43,6 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(prinz, prinz_sample)
-  .settings(commonSettings: _*)
   .settings(commonSettings)
   .settings(
     publishArtifact := false,
