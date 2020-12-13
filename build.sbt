@@ -83,7 +83,6 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
       )
     }
   )

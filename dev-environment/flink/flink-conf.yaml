@@ -33,7 +33,13 @@ taskmanager.data.port: 6126
 taskmanager.memory.task.heap.size: 256m
 taskmanager.memory.managed.size: 204m
 
-env.java.opts.taskmanager: "-Dcom.sun.management.jmxremote -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.port=9009 -Dcom.sun.management.jmxremote.rmi.port=9008 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+env.java.opts.taskmanager: "
+  -Dcom.sun.management.jmxremote 
+  -Djava.rmi.server.hostname=localhost
+  -Dcom.sun.management.jmxremote.port=9009
+  -Dcom.sun.management.jmxremote.rmi.port=9008
+  -Dcom.sun.management.jmxremote.authenticate=false
+  -Dcom.sun.management.jmxremote.ssl=false"
 
 # The number of task slots that each TaskManager offers.
 # Each slot runs one parallel pipeline.
@@ -77,7 +83,8 @@ state.savepoints.dir: file:///opt/flink/data/savepoints
 
 metrics.reporters: influxdb_reporter
 
-metrics.reporter.influxdb_reporter.class: org.apache.flink.metrics.influxdb.InfluxdbReporter
+metrics.reporter.influxdb_reporter.class:
+  org.apache.flink.metrics.influxdb.InfluxdbReporter
 metrics.reporter.influxdb_reporter.host: telegraf
 metrics.reporter.influxdb_reporter.port: 8087
 metrics.reporter.influxdb_reporter.db: esp
@@ -86,8 +93,10 @@ metrics.scope.jm: demo.<host>.jobmanagerGlobal
 metrics.scope.jm.job: demo.<host>.jobmanagerJob.<job_name>
 metrics.scope.tm: demo.<host>.taskmanagerGlobal.<tm_id>
 metrics.scope.tm.job: demo.<host>.taskmanagerJob.<tm_id>.<job_name>
-metrics.scope.task: demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<task_name>.<subtask_index>
-metrics.scope.operator: demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<operator_name>.<subtask_index>
+metrics.scope.task:
+  demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<task_name>.<subtask_index>
+metrics.scope.operator:
+  demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<operator_name>.<subtask_index>
 
 classloader.resolve-order: parent-first
 akka.framesize: 209715200b
