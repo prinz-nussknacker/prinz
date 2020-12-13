@@ -21,6 +21,9 @@ ThisBuild / scalaVersion := scalaV
 def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
   case PathList(ps@_*) if ps.last == "module-info.class" => MergeStrategy.first
+  case PathList(ps@_*) if ps.last == "io.netty.versions.properties" => MergeStrategy.first
+  case PathList("org", "w3c", "dom", "events", xs @ _*) => MergeStrategy.first
+  case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
   case x: Any => MergeStrategy.defaultMergeStrategy(x)
 }
 
@@ -80,9 +83,13 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     name := "prinz-sample",
     libraryDependencies ++= {
       Seq(
+        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-manager" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
       )
     }
   )
