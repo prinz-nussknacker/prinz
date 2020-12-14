@@ -1,10 +1,10 @@
-package pl.touk.nussknacker.prinz.util.converter.mlflow
+package pl.touk.nussknacker.prinz.mlflow.converter
 
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.generic.auto.{exportDecoder, exportEncoder}
 import io.circe.jawn.{parse, decode}
 import io.circe.syntax.EncoderOps
-import pl.touk.nussknacker.prinz.util.collection.immutable.SetMultimap
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 object MlflowDataConverter {
 
@@ -20,7 +20,7 @@ object MlflowDataConverter {
       (for (i <- columns.indices; record <- data) yield (columns(i), record(i))).toList
   }
 
-  def toMultimap(data: String): SetMultimap[String, Either[BigDecimal, String]] = {
+  def toMultimap(data: String): VectorMultimap[String, Either[BigDecimal, String]] = {
     val parsedData = parse(data).getOrElse(Json.Null).noSpaces
     val dataframe = decode[Dataframe](parsedData)
       .getOrElse(throw new IllegalArgumentException("Invalid data"))
@@ -30,10 +30,10 @@ object MlflowDataConverter {
     }
 
     val list = dataframe.toList
-    SetMultimap(list)
+    VectorMultimap(list)
   }
 
-  def toJsonString(multimap: SetMultimap[String, Either[BigDecimal, String]]): String = {
+  def toJsonString(multimap: VectorMultimap[String, Either[BigDecimal, String]]): String = {
     if (!isMultimapConvertible(multimap)) {
       throw new IllegalArgumentException("Invalid multimap")
     }
@@ -42,8 +42,8 @@ object MlflowDataConverter {
     val data = multimap
       .values
       .flatMap(_.zipWithIndex)
-      .groupBy{case (num, idx) => idx}
-      .map{case (k, v) => v.map(_._1).toList}
+      .groupBy { case (num, idx) => idx }
+      .map { case (k, v) => v.map(_._1).toList }
       .toList
 
     Dataframe(columns, data).asJson.toString()
@@ -52,6 +52,6 @@ object MlflowDataConverter {
   private def isDataframeConvertible(dataframe: Dataframe): Boolean =
     !dataframe.data.exists(record => record.length != dataframe.columns.length)
 
-  private def isMultimapConvertible(multimap: SetMultimap[String, Either[BigDecimal, String]]): Boolean =
+  private def isMultimapConvertible(multimap: VectorMultimap[String, Either[BigDecimal, String]]): Boolean =
     multimap.values.map(_.size).toSet.size <= 1
 }
