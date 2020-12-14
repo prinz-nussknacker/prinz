@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   mlflow-server:
-    build: ./mlflow
+    image: docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:0.0.1
     restart: always
     environment:
       - BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
@@ -50,18 +50,6 @@ services:
       - "9000:9000"
     networks:
       - mlflow-net
-
-  nussknacker:
-    build: ./nussknacker
-    restart: always
-    ports:
-      - "3000:3000"
-      - "8080:8080"
-    networks:
-      - mlflow-net
-    environment:
-      NUSSKNACKER_CONFIG_FILE: >-
-        ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
 
   proxy:
     image: nginx:alpine
