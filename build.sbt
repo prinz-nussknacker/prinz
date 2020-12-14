@@ -1,3 +1,5 @@
+import sbtassembly.MergeStrategy
+
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.3.0"
@@ -16,7 +18,20 @@ ThisBuild / organization := "pl.touk.nussknacker.prinz"
 ThisBuild / version      := "0.0.1-SNAPSHOT"
 ThisBuild / scalaVersion := scalaV
 
+def prinzMergeStrategy: String => MergeStrategy = {
+  case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
+  case PathList(ps@_*) if ps.last == "module-info.class" => MergeStrategy.first
+  case PathList(ps@_*) if ps.last == "io.netty.versions.properties" => MergeStrategy.first
+  case PathList("org", "w3c", "dom", "events", xs @ _*) => MergeStrategy.first
+  case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
+  case x: Any => MergeStrategy.defaultMergeStrategy(x)
+}
+
 lazy val commonSettings = Seq(
+  test in assembly := {},
+  assemblyMergeStrategy in assembly := prinzMergeStrategy,
+  scalaVersion := scalaV,
+  addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
   resolvers ++= Seq(
     "Sonatype snaphots" at "https://oss.sonatype.org/content/groups/public/",
   ),
@@ -30,6 +45,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
+  .aggregate(prinz, prinz_sample)
   .settings(commonSettings)
   .settings(
     publishArtifact := false,
@@ -40,7 +56,6 @@ lazy val prinz = (project in file("prinz"))
   .settings(commonSettings)
   .settings(
     name := "prinz",
-    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
     Test / fork := true,
     libraryDependencies ++= {
       Seq(
@@ -68,11 +83,14 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     name := "prinz-sample",
     libraryDependencies ++= {
       Seq(
+        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-manager" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
       )
     }
   )
   .dependsOn(prinz)
-  .enablePlugins(PackPlugin)

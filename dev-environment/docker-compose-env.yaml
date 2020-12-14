@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+
+  nussknacker:
+    build: ./nussknacker
+    restart: always
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+    environment:
+      NUSSKNACKER_CONFIG_FILE: >-
+        ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
+    networks:
+      - nussknacker-net
+    depends_on:
+      - jobmanager
+
+  zookeeper:
+    image: zookeeper:3.5
+    environment:
+      JVMFLAGS: "-Xms64m -Xmx128m"
+    volumes:
+      - nussknacker_storage_zookeeper_datalog:/datalog
+      - nussknacker_storage_zookeeper_data:/data
+    networks:
+      - nussknacker-net
+
+  kafka:
+    image: wurstmeister/kafka:2.12-2.3.1
+    ports:
+      - "3032:9092"
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "processedEvents:1:1"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx512m
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - nussknacker_storage_kafka_data:/kafka
+    networks:
+      - nussknacker-net
+    depends_on:
+      - zookeeper
+
+  influxdb:
+    image: influxdb:1.7.10-alpine
+    environment:
+      INFLUXDB_DB: esp
+    volumes:
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
+      - nussknacker_storage_influxdb:/var/lib/influxdb
+    networks:
+      - nussknacker-net
+
+  telegraf:
+    image: telegraf:1.14.5-alpine
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - nussknacker-net
+
+  jobmanager:
+    image: flink:scala_2.12-java8
+    ports:
+      - "3031:8081"
+    entrypoint: /flink-entrypoint.sh
+    command: jobmanager
+    depends_on:
+      - zookeeper
+      - kafka
+      - influxdb
+    volumes:
+      - ./flink/flink-conf.yaml:/tmp/flink-conf.yaml
+      - ./flink/flink-entrypoint.sh:/flink-entrypoint.sh
+      - nussknacker_storage_jobmanager:/opt/flink/data
+    networks:
+      - nussknacker-net
+
+networks:
+  nussknacker-net:
+    driver: bridge
+
+volumes:
+  nussknacker_storage_zookeeper_datalog:
+  nussknacker_storage_zookeeper_data:
+  nussknacker_storage_kafka_data:
+  nussknacker_storage_jobmanager:
+  nussknacker_storage_influxdb:
