@@ -29,6 +29,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
     val repo = MLFRepository(new URL(MLFConfig.mlflowProxyUrl))
     val response = repo.listModels
+    logger.debug(response.toString)
 
     if(response.isRight) {
       val modelsList = response.right.get
