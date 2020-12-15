@@ -1,19 +1,28 @@
 package pl.touk.nussknacker.prinz.enrichers
 
-import javax.validation.constraints.NotBlank
-import pl.touk.nussknacker.engine.api.{MetaData, MethodToInvoke, ParamName, Service}
+import pl.touk.nussknacker.engine.api.definition.{Parameter, ServiceWithExplicitMethod}
+import pl.touk.nussknacker.engine.api.test.InvocationCollectors
+import pl.touk.nussknacker.engine.api.typed.typing
+import pl.touk.nussknacker.engine.api.typed.typing.Typed
+import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class PrinzEnricher extends Service {
+class PrinzEnricher extends ServiceWithExplicitMethod {
 
-  @MethodToInvoke
-  def invoke(@ParamName("sepalLength") @NotBlank sepalLength: Float,
-             @ParamName("sepalWidth") @NotBlank sepalWidth: Float,
-             @ParamName("petalLength") @NotBlank petalLength: Float,
-             @ParamName("petalWidth") @NotBlank petalWidth: Float)
-            (implicit ec: ExecutionContext, metaData: MetaData): Future[String] = {
-    Future { "setosa" }
+  override def invokeService(params: List[AnyRef])
+                            (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
+                             metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
+    val res = ().asInstanceOf[AnyRef]
+    Future.successful(res)
   }
+
+  override def parameterDefinition: List[Parameter] =
+    List(
+      Parameter[Float]("inputA"),
+      Parameter[Float]("inputB")
+    )
+
+  override def returnType: typing.TypingResult = Typed[Unit]
 }
