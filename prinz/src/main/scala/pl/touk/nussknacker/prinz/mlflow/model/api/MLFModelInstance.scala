@@ -17,7 +17,7 @@ case class MLFModelInstance(runUrl: URL, model: MLFRegisteredModel) extends Mode
 
   private val restClient = new MLFInvokeRestClient(runUrl.toString, model)
 
-  override def run(columns: List[String], data: List[List[Double]]): Either[ModelRunException, Double] =
+  override def run(columns: List[String], data: List[List[Double]]): Either[ModelRunException, List[Double]] =
     restClient.invoke(RestMLFInvokeBody(columns, data))
       .left.map(new ModelRunException(_))
 
