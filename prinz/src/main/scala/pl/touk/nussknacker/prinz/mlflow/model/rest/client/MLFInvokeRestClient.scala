@@ -11,7 +11,6 @@ class MLFInvokeRestClient(baseUrl: String, model: MLFRegisteredModel) {
 
   private val strategy: MLFModelLocationStrategy = LocalMLFModelLocation
 
-  def invoke(body: RestMLFInvokeBody): RestClientResponse[Double] =
+  def invoke(body: RestMLFInvokeBody): RestClientResponse[List[Double]] =
     restClient.postJsonBody[RestMLFInvokeBody, List[Double]](strategy.createModelRelativeUrl(model), body)
-      .right.map(_.head)
 }
