@@ -6,7 +6,7 @@ class ModelSignature private(signatureInputs: List[(SignatureName, SignatureType
 
   private val signatureMap = signatureInputs.groupBy(_._1).mapValues(_.head._2)
 
-  def getSignatureNames: Iterable[SignatureName] = signatureMap.keys
+  def getSignatureNames: List[SignatureName] = signatureMap.keys.toList
 
   def getValueType(valueName: SignatureName): Option[SignatureType] = signatureMap.get(valueName)
 
