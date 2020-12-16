@@ -86,41 +86,4 @@ class MlflowDataConverterTest extends UnitTest {
       MlflowDataConverter.toMultimap(missingData)
     }
   }
-
-  it should "convert data sent to a served model" in {
-    val getInstance = getModelInstance
-    getInstance should be ('defined)
-    val instance = getInstance.get
-
-    val inputData = """{
-                      |    "columns": ["fixed acidity", "volatile acidity", "citric acid", "residual sugar",
-                      |    "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH",
-                      |    "sulphates", "alcohol"],
-                      |    "data": [[6.7, 0.23, 0.31, 2.1, 0.046, 30, 96, 0.9926, 3.33, 0.64, 11.7]]
-                      |}""".stripMargin
-
-    val correctColumns = List("fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides",
-      "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol")
-    val correctData = List(List(6.7, 0.23, 0.31, 2.1, 0.046, 30, 96, 0.9926, 3.33, 0.64, 11.7))
-    val correctResult = instance.run(correctColumns, correctData)
-    correctResult should be ('right)
-
-    val parsedMultimap = MlflowDataConverter.toMultimap(inputData)
-    val parsedColumns = parsedMultimap.keys.toList
-    val parsedData = List(parsedMultimap
-      .mapValues(value => value.left.get.toDouble)
-      .values
-      .toList
-      .map(_(0)))
-    val multimapResult = instance.run(parsedColumns, parsedData)
-    multimapResult should be ('right)
-
-    correctResult shouldEqual multimapResult
-  }
-
-  private def getModelInstance: Option[ModelInstance] = {
-    val repository = MLFRepository(MLFConfig.serverUrl)
-    val model = repository.listModels.toOption.map(_.head)
-    model.map(_.toModelInstance)
-  }
 }
