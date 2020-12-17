@@ -34,8 +34,10 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
   }
 
   def mapValues[B](f: V => B): VectorMultimap[K, B] = {
-    val mapped = for (key <- keys.toList; value <- get(key).get)
-      yield (key, f(value))
+    val mapped = for {
+      key <- keys.toList
+      value <- get(key).get
+    } yield (key, f(value))
     VectorMultimap(mapped)
   }
 
