@@ -1,3 +1,4 @@
+import sbt.Keys.dependencyOverrides
 import sbtassembly.MergeStrategy
 
 // Dependency versions
@@ -6,7 +7,7 @@ val nussknackerV = "0.3.0"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
-val circeV = "0.13.0"
+val circeV = "0.11.1"
 val testContainersV = "0.38.7"
 val paradiseV = "2.1.1"
 val typesafeConfigV = "1.4.1"
@@ -42,6 +43,11 @@ lazy val commonSettings = Seq(
   },
   scalastyleConfig := file("project/scalastyle_config.xml"),
   (scalastyleConfig in Test) := file("project/scalastyle_test_config.xml"),
+  dependencyOverrides ++= Seq(
+    "io.circe" %% "circe-core" % circeV,
+    "io.circe" %% "circe-generic" % circeV,
+    "io.circe" %% "circe-parser" % circeV
+  )
 )
 
 lazy val root = (project in file("."))
@@ -65,7 +71,7 @@ lazy val prinz = (project in file("prinz"))
         "io.circe" %% "circe-core" % circeV,
         "io.circe" %% "circe-generic" % circeV,
         "io.circe" %% "circe-parser" % circeV,
-        "io.circe" %% "circe-yaml" % circeV,
+        "io.circe" %% "circe-yaml" % "0.11.0-M1",
         "com.typesafe" % "config" % typesafeConfigV,
         "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
         "org.scala-lang" % "scala-reflect" % scalaV,
