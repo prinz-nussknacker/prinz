@@ -66,9 +66,13 @@ services:
       - MODEL_2_URL=mlflow-server:4321
     networks:
       - mlflow-net
+      - dev-bridge-net
     depends_on:
       - mlflow-server
 
 networks:
   mlflow-net:
     driver: bridge
+  dev-bridge-net:
+    driver: bridge
+    external: true
