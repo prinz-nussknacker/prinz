@@ -49,8 +49,9 @@ if __name__ == "__main__":
     train_y = train[["quality"]]
     test_y = test[["quality"]]
 
-    alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5
-    l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
+    alpha = float(sys.argv[1])
+    l1_ratio = float(sys.argv[2])
+    model_id = int(sys.argv[4])
 
     with mlflow.start_run():
         input_schema = Schema([
@@ -88,6 +89,6 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}".format(uuid4()), signature=signature)
+            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}-{}".format(model_id, uuid4()), signature=signature)
         else:
             mlflow.sklearn.log_model(lr, "model")

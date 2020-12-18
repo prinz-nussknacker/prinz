@@ -2,17 +2,28 @@ upstream mlflow {
     server ${MLFLOW_URL};
 }
 
-upstream model {
-    server ${MODEL_URL};
+upstream model1 {
+    server ${MODEL_1_URL};
+}
+
+upstream model2 {
+    server ${MODEL_2_URL};
 }
 
 server {
     listen ${NGINX_PORT};
     gzip on;
 
-    location ~* \/invocations$ {
+    location /1/invocations {
         client_max_body_size 16m;
-        proxy_pass      http://model;
+        rewrite /1/invocations /invocations break;
+        proxy_pass      http://model1;
+    }
+
+    location /2/invocations {
+        client_max_body_size 16m;
+        rewrite /2/invocations /invocations break;
+        proxy_pass      http://model2;
     }
 
     location / {

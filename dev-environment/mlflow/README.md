@@ -24,6 +24,13 @@ and tag the specified image with command
 docker tag IMAGE_ID docker.pkg.github.com/prinz-nussknacker/prinz/mlflow_server:TAG_VERSION
 ```
 where TAG_VERSION should be changed as described [here](https://semver.org/).
+
+Rebuild with tag using
+
+```
+docker build -t docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:TAG_VERSION .
+```
+
 Finally, to publish tagged image use command
 ```
 docker push docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:TAG_VERSION

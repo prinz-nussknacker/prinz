@@ -17,11 +17,13 @@ case class MLFModelInstance(runUrl: URL, model: MLFRegisteredModel) extends Mode
 
   private val restClient = new MLFInvokeRestClient(runUrl.toString, model)
 
+  private val strategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy
+
   override def run(columns: List[String], data: List[List[Double]]): Either[ModelRunException, List[Double]] =
-    restClient.invoke(RestMLFInvokeBody(columns, data))
+    restClient.invoke(RestMLFInvokeBody(columns, data), strategy)
       .left.map(new ModelRunException(_))
 
-  override def getSignature: ModelSignature = downloadSignature(MLFConfig.experimentId, model.getVersion.runId) match {
+  override def getSignature: ModelSignature = downloadSignature(strategy.getModelExperimentId(model), model.getVersion.runId) match {
     case Some(value) => value
     case None => throw MLFSignatureNotFoundException(model)
   }

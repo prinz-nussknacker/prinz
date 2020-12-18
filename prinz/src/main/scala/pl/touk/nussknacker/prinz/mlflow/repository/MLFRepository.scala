@@ -15,12 +15,12 @@ case class MLFRepository(hostUrl: URL) extends ModelRepository {
 
   private val restClient = client.MLFRestClient(hostUrl)
 
-  override def listModels: RepositoryResponse[List[Model]] =
+  override def listModels: RepositoryResponse[List[MLFRegisteredModel]] =
     restClient.listModels()
       .left.map(new MLFRepositoryException(_))
       .right.map(_.map(toApi))
 
-  override def getModel(name: ModelName): RepositoryResponse[Model] =
+  override def getModel(name: ModelName): RepositoryResponse[MLFRegisteredModel] =
     restClient.getModel(RestMLFModelName(name.internal))
       .left.map(new MLFRepositoryException(_))
       .right.map(toApi)
