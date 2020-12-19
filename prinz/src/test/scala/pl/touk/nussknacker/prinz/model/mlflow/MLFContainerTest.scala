@@ -11,7 +11,7 @@ import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, Signature
 class MLFContainerTest extends UnitIntegrationTest {
 
   "Mlflow container" should "list some models" in {
-    val repository = MLFRepository()
+    val repository = new MLFRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -19,7 +19,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   it should "list at least two different models" in {
-    val repository = MLFRepository()
+    val repository = new MLFRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -28,7 +28,7 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   it should "list model run info with artifact location" in {
     val client = MLFRestClient(MLFConfig.serverUrl)
-    val repository = MLFRepository()
+    val repository = new MLFRepository
     val modelRunId = repository
       .listModels.toOption.get.head
       .latestVersions.head.runId
@@ -98,7 +98,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = _.head) = {
-    val repository = MLFRepository()
+    val repository = new MLFRepository
     val model = repository.listModels.toOption.map(extract)
     model.map(_.toModelInstance)
   }
