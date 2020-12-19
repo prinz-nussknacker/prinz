@@ -5,11 +5,12 @@ import pl.touk.nussknacker.engine.api.test.InvocationCollectors
 import pl.touk.nussknacker.engine.api.typed.typing
 import pl.touk.nussknacker.engine.api.typed.typing.Typed
 import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
+import pl.touk.nussknacker.prinz.model.Model
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class PrinzEnricher extends ServiceWithExplicitMethod {
+class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod {
 
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
