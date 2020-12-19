@@ -29,7 +29,7 @@ class MLFRestAPITest extends UnitIntegrationTest {
   private def listModelsOrThrow(client: MLFRestClient): List[MLFRestRegisteredModel] = {
     val models = client.listModels()
     if (models.isLeft) {
-      throw models.left.get
+      throw new AssertionError(models.left.get.message)
     }
     else {
       models.right.get
