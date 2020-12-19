@@ -2,22 +2,21 @@ package pl.touk.nussknacker.prinz.model.mlflow
 
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFRestRegisteredModel, MLFRestRunId}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
 
 class MLFRestAPITest extends UnitIntegrationTest {
 
   "Mlflow REST API" should "list some models" in {
     val client = getClient
-    val models = client.listModels().toOption
+    val models = listModelsOrThrow(client)
 
-    models.isDefined shouldBe true
-    models.exists(_.nonEmpty) shouldBe true
+    models.length should be > 0
   }
 
   it should "get model run info with artifact location" in {
     val client = getClient
-    val model = client.listModels().toOption.get.head
+    val model = listModelsOrThrow(client).head
     val latestModelVersion = model.latest_versions.head
     val runInfo = client.getRunInfo(MLFRestRunId(latestModelVersion.run_id)).toOption
 
@@ -25,5 +24,15 @@ class MLFRestAPITest extends UnitIntegrationTest {
     runInfo.get.info.artifact_uri.length should be > 0
   }
 
-  private def getClient = MLFRestClient(MLFConfig.serverUrl)
+  private def getClient: MLFRestClient = MLFRestClient(MLFConfig.serverUrl)
+
+  private def listModelsOrThrow(client: MLFRestClient): List[MLFRestRegisteredModel] = {
+    val models = client.listModels()
+    if (models.isLeft) {
+      throw models.left.get
+    }
+    else {
+      models.right.get
+    }
+  }
 }
