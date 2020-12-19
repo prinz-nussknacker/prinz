@@ -11,7 +11,6 @@ object ConfigReader {
 
   def getConfigValue[T](path: String, default: T, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T = {
     val fullPath = s"$basePath$path"
-    logger.info(s"Config used is ${config.toString}")
     if (config.hasPath(fullPath)) {
       val extracted = extractor(config, fullPath)
       logger.info("Config value {} defined with value {}", fullPath, extracted)
