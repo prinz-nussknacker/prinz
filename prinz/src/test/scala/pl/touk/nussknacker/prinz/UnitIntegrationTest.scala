@@ -1,12 +1,14 @@
 package pl.touk.nussknacker.prinz
 
 import java.io.File
+import java.time.Duration
 
 import com.dimafeng.testcontainers.DockerComposeContainer.{ComposeFile, Def}
 import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.{ContainerDef, WaitingForService}
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.{DOCKER_COMPOSE_FILE, MLFLOW_SERVER_SERVICE_NAME, MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX}
+import pl.touk.nussknacker.prinz.UnitIntegrationTest.{DOCKER_COMPOSE_FILE, MLFLOW_SERVER_SERVICE_NAME,
+  MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX, TIMEOUT_MINUTES}
 
 abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
@@ -15,7 +17,8 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
     waitingFor = Some(
       WaitingForService(MLFLOW_SERVER_SERVICE_NAME, new LogMessageWaitStrategy()
         .withRegEx(MODEL_1_SERVED_READY_REGEX)
-        .withRegEx(MODEL_2_SERVED_READY_REGEX))
+        .withRegEx(MODEL_2_SERVED_READY_REGEX)
+        .withStartupTimeout(Duration.ofMinutes(TIMEOUT_MINUTES)))
     )
   )
 }
@@ -23,6 +26,8 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 object UnitIntegrationTest {
 
   private val DOCKER_COMPOSE_FILE = new File("../dev-environment/docker-compose.yaml")
+
+  private val TIMEOUT_MINUTES = 1
 
   private val MODEL_1_SERVED_READY_REGEX = s".*Listening at.*1234.*"
 

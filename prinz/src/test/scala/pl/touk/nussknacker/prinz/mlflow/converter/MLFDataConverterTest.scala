@@ -7,7 +7,7 @@ import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.ModelInstance
 
-class MlflowDataConverterTest extends UnitTest {
+class MLFDataConverterTest extends UnitTest {
 
   "MlflowDataConverter" should "convert empty data input" in {
     val bothEmpty = """{
@@ -22,8 +22,8 @@ class MlflowDataConverterTest extends UnitTest {
 
     val expected = VectorMultimap.empty[String, Either[BigDecimal, String]]
 
-    MlflowDataConverter.toMultimap(bothEmpty) should equal (expected)
-    MlflowDataConverter.toMultimap(dataEmpty) should equal (expected)
+    MLFDataConverter.toMultimap(bothEmpty) should equal (expected)
+    MLFDataConverter.toMultimap(dataEmpty) should equal (expected)
   }
 
   it should "convert data in split format and maintain ordering" in {
@@ -44,7 +44,7 @@ class MlflowDataConverterTest extends UnitTest {
       "c" -> 6, "c" -> 3,
     )
 
-    val converted = MlflowDataConverter.toMultimap(inputData)
+    val converted = MLFDataConverter.toMultimap(inputData)
     val expectedDecimals = expected.mapValues(value => BigDecimal(value).asLeft[String])
     val wrongDataOrderingDecimals = wrongDataOrdering.mapValues(value => BigDecimal(value).asLeft[String])
 
@@ -74,16 +74,16 @@ class MlflowDataConverterTest extends UnitTest {
 
 
     assertThrows[IllegalArgumentException] {
-      MlflowDataConverter.toMultimap(wrongNumberOfColumns)
+      MLFDataConverter.toMultimap(wrongNumberOfColumns)
     }
     assertThrows[IllegalArgumentException] {
-      MlflowDataConverter.toMultimap(invalidColumnNames)
+      MLFDataConverter.toMultimap(invalidColumnNames)
     }
     assertThrows[IllegalArgumentException] {
-      MlflowDataConverter.toMultimap(missingColumns)
+      MLFDataConverter.toMultimap(missingColumns)
     }
     assertThrows[IllegalArgumentException] {
-      MlflowDataConverter.toMultimap(missingData)
+      MLFDataConverter.toMultimap(missingData)
     }
   }
 }

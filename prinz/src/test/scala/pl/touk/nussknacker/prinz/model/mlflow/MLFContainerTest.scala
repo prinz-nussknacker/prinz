@@ -9,7 +9,7 @@ import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, Signature
 class MLFContainerTest extends UnitIntegrationTest {
 
   "Mlflow container" should "list some models" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -17,21 +17,11 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   it should "list at least two different models" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
     models.get.groupBy(_.getName).size should be > 1
-  }
-
-  it should "list models with names mapable to experiment ids" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
-    val models = repository.listModels.toOption
-    val strategy = LocalMLFModelLocationStrategy
-
-    models.isDefined shouldBe true
-    models.get.map(strategy.getModelExperimentId) should contain (1)
-    models.get.map(strategy.getModelExperimentId) should contain (2)
   }
 
   it should "have model instance available" in {
@@ -94,7 +84,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = _.head) = {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val model = repository.listModels.toOption.map(extract)
     model.map(_.toModelInstance)
   }

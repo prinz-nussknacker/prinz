@@ -3,23 +3,21 @@ package pl.touk.nussknacker.prinz.mlflow.model.api
 abstract sealed class MLFModelLocationStrategy {
 
   def createModelRelativeUrl(model: MLFRegisteredModel): String
-
-  def getModelExperimentId(model: MLFRegisteredModel): Int
 }
 
 object LocalMLFModelLocationStrategy extends MLFModelLocationStrategy {
 
-  private val EXPERIMENT_ID_INDEX_IN_NAME: Int = 1
-
   private val MODEL_NAME_SPLIT_BY: Char = '-'
 
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
-    val experimentId = getModelExperimentId(model)
-    s"/$experimentId/invocations"
+    val localModelBaseName = getLocalModelBaseName(model)
+    s"/$localModelBaseName/invocations"
   }
 
-  override def getModelExperimentId(model: MLFRegisteredModel): Int =
-    model.name.name.split(MODEL_NAME_SPLIT_BY)(EXPERIMENT_ID_INDEX_IN_NAME).toInt
+  private def getLocalModelBaseName(model: MLFRegisteredModel): String = {
+    val nameParts = model.name.name.split(MODEL_NAME_SPLIT_BY)
+    s"${nameParts(0)}$MODEL_NAME_SPLIT_BY${nameParts(1)}"
+  }
 }
 
 object AzureDataBricksMLFModelLocationStrategy extends MLFModelLocationStrategy {
@@ -27,7 +25,4 @@ object AzureDataBricksMLFModelLocationStrategy extends MLFModelLocationStrategy 
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
     s"/model/${model.name.name}/${model.getVersion.name}/invocations"
   }
-
-  override def getModelExperimentId(model: MLFRegisteredModel): Int =
-    throw new NotImplementedError("Not implemented yet")
 }

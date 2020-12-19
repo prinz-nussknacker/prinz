@@ -6,7 +6,7 @@ import io.circe.jawn.{parse, decode}
 import io.circe.syntax.EncoderOps
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-object MlflowDataConverter {
+object MLFDataConverter {
 
   implicit private val encodeDecimalOrString: Encoder[Either[BigDecimal, String]] =
     Encoder.instance(_.fold(_.asJson, _.asJson))
