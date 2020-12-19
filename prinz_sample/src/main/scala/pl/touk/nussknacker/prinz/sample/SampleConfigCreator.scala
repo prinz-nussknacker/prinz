@@ -27,13 +27,13 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
-    val repo = MLFRepository(new URL(MLFConfig.mlflowProxyUrl))
+    val repo = MLFRepository(MLFConfig.proxyUrl)
     val response = repo.listModels
 
     if(response.isRight) {
       val modelsList = response.right.get
       modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
-        (s, m) => s + (m.getName.toString -> allCategories(new PrinzEnricher(m)))
+        (services, model) => services + (model.getName.toString -> allCategories(new PrinzEnricher(model)))
       )
     }
     else {

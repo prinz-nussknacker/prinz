@@ -2,6 +2,7 @@ package pl.touk.nussknacker.prinz
 
 import java.io.File
 import java.time.Duration
+import scala.sys.process.Process
 
 import com.dimafeng.testcontainers.DockerComposeContainer.{ComposeFile, Def}
 import com.dimafeng.testcontainers.scalatest.TestContainerForAll
@@ -11,6 +12,11 @@ import pl.touk.nussknacker.prinz.UnitIntegrationTest.{DOCKER_COMPOSE_FILE, MLFLO
   MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX, TIMEOUT_MINUTES}
 
 abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
+
+  override def startContainers(): containerDef.Container = {
+    Process("docker network create dev-bridge-net").!
+    super.startContainers()
+  }
 
   override val containerDef: ContainerDef = Def(
     composeFiles = ComposeFile(Left(DOCKER_COMPOSE_FILE)),

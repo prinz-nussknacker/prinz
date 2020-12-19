@@ -31,5 +31,5 @@ object MLFConfig {
 
   val experimentId: Int = getConfigValue("experimentId", 0, getInt)
 
-  val mlflowProxyUrl: String = getConfigValue("mlflowProxyUrl", "http://proxy:5000", getString)
+  val proxyUrl: URL = getConfigValue("mlflowProxyUrl", url("http://proxy:5000"), getUrl)
 }
