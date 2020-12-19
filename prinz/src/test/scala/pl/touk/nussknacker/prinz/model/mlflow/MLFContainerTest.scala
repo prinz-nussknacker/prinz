@@ -3,13 +3,15 @@ package pl.touk.nussknacker.prinz.model.mlflow
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFRegisteredModel}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, SignatureType}
 
 class MLFContainerTest extends UnitIntegrationTest {
 
   "Mlflow container" should "list some models" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -17,21 +19,23 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   it should "list at least two different models" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
     models.get.groupBy(_.getName).size should be > 1
   }
 
-  it should "list models with names mapable to experiment ids" in {
-    val repository = MLFRepository(MLFConfig.serverUrl)
-    val models = repository.listModels.toOption
-    val strategy = LocalMLFModelLocationStrategy
+  it should "list model run info with artifact location" in {
+    val client = MLFRestClient(MLFConfig.serverUrl)
+    val repository = MLFRepository()
+    val modelRunId = repository
+      .listModels.toOption.get.head
+      .latestVersions.head.runId
+    val runInfo = client.getRunInfo(MLFRestRunId(modelRunId)).toOption
 
-    models.isDefined shouldBe true
-    models.get.map(strategy.getModelExperimentId) should contain (1)
-    models.get.map(strategy.getModelExperimentId) should contain (2)
+    runInfo.isDefined shouldBe true
+    runInfo.map(_.info).map(_.artifact_uri).isDefined shouldBe true
   }
 
   it should "have model instance available" in {
@@ -94,7 +98,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = _.head) = {
-    val repository = MLFRepository(MLFConfig.serverUrl)
+    val repository = MLFRepository()
     val model = repository.listModels.toOption.map(extract)
     model.map(_.toModelInstance)
   }

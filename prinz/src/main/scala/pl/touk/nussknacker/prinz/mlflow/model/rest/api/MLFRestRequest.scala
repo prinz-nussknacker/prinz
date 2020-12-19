@@ -5,3 +5,5 @@ import pl.touk.nussknacker.prinz.util.http.RestRequestParams
 case class GetAllRegisteredModelsRequest(max_results: Int, page_token: Int) extends RestRequestParams
 
 case class GetRegisteredModelRequest(name: String) extends RestRequestParams
+
+case class GetRunRequest(run_id: String) extends RestRequestParams

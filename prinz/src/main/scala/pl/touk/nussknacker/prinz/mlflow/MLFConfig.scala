@@ -25,9 +25,7 @@ object MLFConfig {
 
   val s3Url: URL = getConfigValue("s3Url", url("http://localhost:9000"), getUrl)
 
-  val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", "/artifacts/model/MLmodel", getString)
+  val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", "/model/MLmodel", getString)
 
   val s3BucketName: String = getConfigValue("s3BucketName", "mlflow", getString)
-
-  val experimentId: Int = getConfigValue("experimentId", 0, getInt)
 }

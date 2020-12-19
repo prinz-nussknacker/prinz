@@ -14,15 +14,15 @@ server {
     listen ${NGINX_PORT};
     gzip on;
 
-    location /1/invocations {
+    location /ElasticnetWineModel-1/invocations {
         client_max_body_size 16m;
-        rewrite /1/invocations /invocations break;
+        rewrite /ElasticnetWineModel-1/invocations /invocations break;
         proxy_pass      http://model1;
     }
 
-    location /2/invocations {
+    location /ElasticnetWineModel-2/invocations {
         client_max_body_size 16m;
-        rewrite /2/invocations /invocations break;
+        rewrite /ElasticnetWineModel-2/invocations /invocations break;
         proxy_pass      http://model2;
     }
 
