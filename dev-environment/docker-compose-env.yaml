@@ -13,6 +13,7 @@ services:
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
     networks:
       - nussknacker-net
+      - dev-bridge-net
     depends_on:
       - jobmanager
 
@@ -84,6 +85,9 @@ services:
 networks:
   nussknacker-net:
     driver: bridge
+  dev-bridge-net:
+    driver: bridge
+    external: true
 
 volumes:
   nussknacker_storage_zookeeper_datalog:

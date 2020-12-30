@@ -9,5 +9,8 @@ cd - &&
 mkdir -p nussknacker/opt/prinz/ &&
 cp "../prinz_sample/target/scala-${scalaV}/prinz-sample-assembly-0.0.1-SNAPSHOT.jar" "./nussknacker/opt/prinz-sample/" &&
 
+# Create external network to communication between nussknacker and mlflow proxy
+docker network create dev-bridge-net
+
 # Add -d flag to hide environment startup
 docker-compose -f docker-compose.yaml -f docker-compose-env.yaml up --build

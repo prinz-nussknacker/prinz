@@ -9,7 +9,7 @@ import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.util.time.Timestamp.instant
 
-case class MLFRepository() extends ModelRepository {
+class MLFRepository extends ModelRepository {
 
   private val restClient = MLFRestClient(MLFConfig.serverUrl)
 
