@@ -22,12 +22,11 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def sinkFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SinkFactory]] = Map(
-    "empty" -> allCategories(SinkFactory.noParam(EmptySink)),
-    "logging" -> allCategories(SinkFactory.noParam(LoggingSink))
+    "empty" -> allCategories(SinkFactory.noParam(EmptySink))
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
-    val repo = new MLFRepository
+    val repo = new MLFRepository()
     val response = repo.listModels
 
     if(response.isRight) {
