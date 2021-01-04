@@ -24,5 +24,5 @@ jobs:
           https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
       - name: Run Unit Tests
         run: >
-          cd dev-environment/ && ./clear_environment.sh && cd ..
+          cd dev-environment/ && ./clear_environment.sh && cd .. &&
           ./sbtwrapper prinz/test
