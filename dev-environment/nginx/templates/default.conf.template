@@ -10,8 +10,12 @@ upstream model2 {
     server ${MODEL_2_URL};
 }
 
+upstream bucket {
+    server ${BUCKET_URL};
+}
+
 server {
-    listen ${NGINX_PORT};
+    listen ${NGINX_MLFLOW_PORT};
     gzip on;
 
     location /ElasticnetWineModel-1/invocations {
@@ -28,5 +32,27 @@ server {
 
     location / {
         proxy_pass      http://mlflow;
+    }
+}
+
+server {
+    listen ${NGINX_BUCKET_PORT};
+    server_name aws-mlflow;
+    ignore_invalid_headers off;
+    client_max_body_size 0;
+    proxy_buffering off;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+
+        proxy_connect_timeout 300;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        chunked_transfer_encoding off;
+
+        proxy_pass http://bucket;
     }
 }

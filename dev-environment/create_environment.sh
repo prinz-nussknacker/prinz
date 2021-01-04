@@ -13,4 +13,7 @@ cp "../prinz_sample/target/scala-${scalaV}/prinz-sample-assembly-0.0.1-SNAPSHOT.
 docker network create dev-bridge-net
 
 # Add -d flag to hide environment startup
-docker-compose -f docker-compose.yaml -f docker-compose-env.yaml up --build
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml kill
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml rm -f -v
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml build
+docker-compose -f docker-compose.yaml -f docker-compose-env.yaml up --always-recreate-deps

@@ -5,25 +5,33 @@ import pl.touk.nussknacker.engine.api.test.InvocationCollectors
 import pl.touk.nussknacker.engine.api.typed.typing
 import pl.touk.nussknacker.engine.api.typed.typing.Typed
 import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
-import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher.extractNussknackerSignature
+import pl.touk.nussknacker.prinz.model.{Model, SignatureName, SignatureType}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod {
+case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod {
+
+  private val modelInstance = model.toModelInstance
 
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
                              metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
-    val res = ().asInstanceOf[AnyRef]
+    val res = params.head.asInstanceOf[Double].toString
     Future.successful(res)
   }
 
-  override def parameterDefinition: List[Parameter] =
-    List(
-      Parameter[Float]("inputA"),
-      Parameter[Float]("inputB")
-    )
+  override def parameterDefinition: List[Parameter] = {
+    modelInstance.getSignature.getInputDefinition
+      .map(extractNussknackerSignature)
+  }
 
-  override def returnType: typing.TypingResult = Typed[Unit]
+  override def returnType: typing.TypingResult = Typed[Double]
+}
+
+object PrinzEnricher {
+
+  private def extractNussknackerSignature(input: (SignatureName, SignatureType)): Parameter =
+    Parameter[Double](input._1.name)
 }
