@@ -6,4 +6,6 @@ import pl.touk.nussknacker.prinz.util.http.RestClientException
 class MLFRepositoryException(message: String) extends ModelRepositoryException(message) {
 
   def this(ex: RestClientException) = this(ex.getMessage)
+
+  override def toString: String = s"${getClass.getSimpleName}: $message"
 }

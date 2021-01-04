@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.util.http
 
+import com.typesafe.scalalogging.Logger
 import io.circe.{Decoder, Encoder}
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import sttp.client3.circe.asJson
@@ -7,6 +8,8 @@ import sttp.client3.{HttpURLConnectionBackend, Identity, ResponseException, Sttp
 import sttp.model.Uri
 
 class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) {
+
+  private val logger = Logger[this.type]
 
   def postJsonBody[BODY, RESPONSE: Manifest](relativePath: String, body: BODY, params: RestRequestParams = EmptyRestRequestParams)
                                             (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
@@ -39,7 +42,9 @@ class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Ident
   private def wrapCaughtException[RESPONSE: Manifest](requestAction: () => Either[RestClientException, RESPONSE]): Either[RestClientException, RESPONSE] = try {
     requestAction()
   } catch {
-    case e: SttpClientException => Left(new RestClientException(e.getMessage))
+    case e: SttpClientException =>
+      logger.error(e.toString)
+      Left(RestClientException(e.getMessage))
   }
 }
 

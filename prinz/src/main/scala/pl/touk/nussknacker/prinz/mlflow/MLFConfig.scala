@@ -15,9 +15,9 @@ object MLFConfig {
 
   val basePreviewApiPath: String = s"/api/2.0/preview/mlflow"
 
-  val serverUrl: URL = getConfigValue("serverUrl", url("http://localhost:5000"), getUrl)
+  val serverUrl: URL = getConfigValue("serverUrl", url("http://proxy:5000"), getUrl)
 
-  val servedModelsUrl: URL = getConfigValue("servedModelsUrl", url("http://localhost:5000"), getUrl)
+  val servedModelsUrl: URL = getConfigValue("servedModelsUrl", url("http://proxy:5000"), getUrl)
 
   val s3AccessKey: String = getConfigValue("s3AccessKey", "mlflow-key", getString)
 
@@ -28,6 +28,4 @@ object MLFConfig {
   val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", "/model/MLmodel", getString)
 
   val s3BucketName: String = getConfigValue("s3BucketName", "mlflow", getString)
-
-  val proxyUrl: URL = getConfigValue("mlflowProxyUrl", url("http://proxy:5000"), getUrl)
 }
