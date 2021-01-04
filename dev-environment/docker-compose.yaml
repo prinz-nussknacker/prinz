@@ -31,8 +31,6 @@ services:
       - POSTGRES_DB=mlflow
       - POSTGRES_USER=mlflow
       - POSTGRES_PASSWORD=mlflow
-    volumes:
-      - mlflow_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -80,4 +78,3 @@ networks:
 
 volumes:
   mlflow_aws_data:
-  mlflow_postgres_data:
