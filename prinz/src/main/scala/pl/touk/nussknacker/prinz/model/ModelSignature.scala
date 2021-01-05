@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.model
 
+import pl.touk.nussknacker.engine.api.typed.typing.TypingResult
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
 class ModelSignature private(signatureInputs: List[(SignatureName, SignatureType)], signatureOutputs: List[SignatureType]) {
@@ -17,7 +18,7 @@ class ModelSignature private(signatureInputs: List[(SignatureName, SignatureType
 
 case class SignatureName(name: String)
 
-case class SignatureType(typeName: String)
+case class SignatureType(typingResult: TypingResult)
 
 object ModelSignature {
 
