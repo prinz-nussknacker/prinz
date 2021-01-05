@@ -28,6 +28,4 @@ object MLFConfig {
   val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", "/model/MLmodel", getString)
 
   val s3BucketName: String = getConfigValue("s3BucketName", "mlflow", getString)
-
-  val proxyUrl: URL = getConfigValue("mlflowProxyUrl", url("http://proxy:5000"), getUrl)
 }

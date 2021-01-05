@@ -1,10 +1,5 @@
 #!/bin/sh
 
-echo "Starting Mlflow UI on port $SERVER_PORT"
-
-cd $MLFLOW_HOME &&
-mlflow server --backend-store-uri $BACKEND_STORE_URI --default-artifact-root $ARTIFACT_LOCATION --host $SERVER_HOST --port $SERVER_PORT &
-
 create_mlflow_run() { # alpha l1_ratio model_serve_port experiment_id
   sleep 5 &&
   echo "Starting new mlflow run..." &&
@@ -26,6 +21,15 @@ create_experiment_if_not_exists() { # experiment_id
     mlflow experiments create --experiment-name "Test experiment $1" --artifact-location "s3://mlflow/$1"
   fi
 }
+
+echo "Starting Mlflow UI on port $SERVER_PORT"
+
+cd $MLFLOW_HOME &&
+mlflow server --backend-store-uri $BACKEND_STORE_URI --default-artifact-root $ARTIFACT_LOCATION --host $SERVER_HOST --port $SERVER_PORT &
+
+# wait for database of mlflow to set up before starting experiment
+echo "Sleeping before starting first mlflow experiments..."
+sleep 10
 
 create_experiment_if_not_exists 1 &&
 create_experiment_if_not_exists 2
