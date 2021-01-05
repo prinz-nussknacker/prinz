@@ -14,7 +14,6 @@ import pl.touk.nussknacker.prinz.UnitIntegrationTest.{BRIDGE_NET_NAME, DOCKER_CO
 abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
   override def startContainers(): containerDef.Container = {
-    //we want to remove bridge network if exists (so we're ignoring command's result)
     Process(s"docker network rm $BRIDGE_NET_NAME").!
     val res = Process(s"docker network create $BRIDGE_NET_NAME").!
     if(res != 0) {
@@ -39,7 +38,7 @@ object UnitIntegrationTest {
 
   private val DOCKER_COMPOSE_FILE = new File("../dev-environment/docker-compose.yaml")
 
-  private val TIMEOUT_MINUTES = 1
+  private val TIMEOUT_MINUTES = 2
 
   private val MODEL_1_SERVED_READY_REGEX = s".*Listening at.*1234.*"
 

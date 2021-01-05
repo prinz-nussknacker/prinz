@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.repository
 
+import com.typesafe.scalalogging.Logger
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFRegisteredModelName, MLFRegisteredModelVersion}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFRestModelName, MLFRestRegisteredModel, MLFRestRegisteredModelVersion}
