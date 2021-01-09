@@ -1,6 +1,5 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFSignatureInterpreter.downloadSignature
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestInvokeBody
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFInvokeRestClient
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException, ModelSignature}

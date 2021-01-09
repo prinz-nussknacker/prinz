@@ -10,9 +10,9 @@ import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.util.time.Timestamp.instant
 
-class MLFRepository extends ModelRepository {
+case class MLFRepository(private val config: MLFConfig) extends ModelRepository {
 
-  private val restClient = MLFRestClient(MLFConfig.serverUrl)
+  private val restClient = MLFRestClient()
 
   override def listModels: RepositoryResponse[List[MLFRegisteredModel]] =
     restClient.listModels()

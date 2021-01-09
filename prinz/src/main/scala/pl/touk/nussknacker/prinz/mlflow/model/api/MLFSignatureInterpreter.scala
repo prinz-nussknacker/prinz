@@ -6,18 +6,17 @@ import io.circe.yaml.parser.{parse => parseYaml}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketRestClient, MLFRestClient}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureInterpreter, SignatureName, SignatureType}
-
 import java.io.{InputStream, InputStreamReader, Reader}
 
-object MLFSignatureInterpreter extends SignatureInterpreter {
+case class MLFSignatureInterpreter(private val config: MLFBucketClientConfig) extends SignatureInterpreter {
 
-  private val s3Client = new MLFBucketRestClient(MLFConfig.s3BucketName)
+  private val bucketClient = new MLFBucketClient(config)
 
   override def downloadSignature(runId: String): Option[ModelSignature] =
     getLatestModelVersionArtifactLocation(runId)
-      .map(s3Client.getMLModelFile)
+      .map(bucketClient.getMLModelFile)
       .flatMap(extractDefinitionAndCloseStream)
       .map(definitionToSignature)
 

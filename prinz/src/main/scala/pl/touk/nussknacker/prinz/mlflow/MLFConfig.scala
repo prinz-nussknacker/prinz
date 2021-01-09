@@ -2,12 +2,11 @@ package pl.touk.nussknacker.prinz.mlflow
 
 import java.net.URL
 
-import com.typesafe.config.{Config, ConfigFactory}
-import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getInt, getString, getUrl, url}
+import com.typesafe.config.Config
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClientConfig
+import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl, url}
 
-object MLFConfig {
-
-  private implicit val CONFIG: Config = ConfigFactory.load()
+case class MLFConfig(private implicit val config: Config) {
 
   private implicit val BASE_CONFIG_PATH: String = "mlflow."
 

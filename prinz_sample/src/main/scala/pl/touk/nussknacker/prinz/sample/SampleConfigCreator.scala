@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.sample
 
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import pl.touk.nussknacker.engine.api.Service
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
@@ -9,6 +10,7 @@ import pl.touk.nussknacker.engine.flink.util.sink.EmptySink
 import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
 import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
+import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
@@ -26,19 +28,13 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
+    val mlfConfig = MLFConfig()(processObjectDependencies.config)
     val repo = new MLFRepository()
     val response = repo.listModels
 
-    if(response.isRight) {
-      val modelsList = response.right.get
-      modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
-        (services, model) => services + (model.getName.toString -> allCategories(new PrinzEnricher(model)))
-      )
-    }
-    else {
-      logger.error(s"Unable to download available models: ${response.left.get.toString}")
-      Map()
-    }
+    response.right.map(modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
+      (services, model) => services + (model.getName.toString -> allCategories(new PrinzEnricher(model)))
+    )).right.get
   }
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
