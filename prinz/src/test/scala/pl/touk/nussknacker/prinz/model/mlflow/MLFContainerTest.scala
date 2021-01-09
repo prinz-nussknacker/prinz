@@ -2,7 +2,8 @@ package pl.touk.nussknacker.prinz.model.mlflow
 
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFRegisteredModel}
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFSignatureInterpreter.fromMLFDataType
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
@@ -69,7 +70,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     val signature = instance.map(_.getSignature).get
 
     signature.getOutputType.size should equal (1)
-    signature.getOutputType.head should equal (SignatureType("double"))
+    signature.getOutputType.head should equal (SignatureType(fromMLFDataType("double")))
 
     signature.getInputDefinition.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
@@ -104,7 +105,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def input(definition: (String, String)) =
-    (SignatureName(definition._1), SignatureType(definition._2))
+    (SignatureName(definition._1), SignatureType(fromMLFDataType(definition._2)))
 
   private def sampleInputForSignature(signature: ModelSignature) =
     List(Seq.tabulate(signature.getInputDefinition.size)(_.toDouble).toList)
