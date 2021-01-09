@@ -1,8 +1,9 @@
 package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 
+import pl.touk.nussknacker.prinz.mlflow.MLFConfig
+
 import java.io.InputStream
 import java.net.URL
-
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFBucketClient.extractBucketRelativePath
 import pl.touk.nussknacker.prinz.util.amazon.S3Client
 
@@ -27,3 +28,9 @@ case class MLFBucketClientConfig(bucketName: String,
                                  s3ModelRelativePath: String,
                                  s3Url: URL,
                                  s3AccessKey: String, s3SecretKey: String)
+
+object MLFBucketClientConfig {
+
+  def fromMLFConfig(config: MLFConfig): MLFBucketClientConfig =
+    MLFBucketClientConfig(config.s3BucketName, config.s3ModelRelativePath, config.s3Url, config.s3AccessKey, config.s3SecretKey)
+}

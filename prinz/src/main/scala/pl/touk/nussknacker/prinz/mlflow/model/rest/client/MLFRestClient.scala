@@ -1,10 +1,9 @@
 package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 
-import java.net.URL
+import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{GetAllRegisteredModelsRequest,
-  GetAllRegisteredModelsResponse, GetRegisteredModelRequest, GetRegisteredModelResponse,
-  GetRunRequest, GetRunResponse, MLFRestModelName, MLFRestRegisteredModel, MLFRestRun, MLFRestRunId}
+import java.net.URL
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{GetAllRegisteredModelsRequest, GetAllRegisteredModelsResponse, GetRegisteredModelRequest, GetRegisteredModelResponse, GetRunRequest, GetRunResponse, MLFRestModelName, MLFRestRegisteredModel, MLFRestRun, MLFRestRunId}
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import pl.touk.nussknacker.prinz.util.http.RestRequestParams.extractRequestParams
@@ -13,7 +12,7 @@ case class MLFRestClient(config: MLFRestClientConfig) {
 
   private val restClient = new RestJsonClient(config.getBaseApiBaseUrl)
 
-  private val previewRestClient = new RestJsonClient(config.getPreviewApliBaseUrl)
+  private val previewRestClient = new RestJsonClient(config.getPreviewApiBaseUrl)
 
   def listModels(params: Option[GetAllRegisteredModelsRequest] = None): RestClientResponse[List[MLFRestRegisteredModel]] =
     previewRestClient.getJson[GetAllRegisteredModelsResponse]("/registered-models/list", extractRequestParams(params))
@@ -36,5 +35,11 @@ case class MLFRestClientConfig(private val hostUrl: URL,
 
   def getBaseApiBaseUrl: String = s"$hostUrl$baseApiPath"
 
-  def getPreviewApliBaseUrl: String = s"$hostUrl$basePreviewApiPath"
+  def getPreviewApiBaseUrl: String = s"$hostUrl$basePreviewApiPath"
+}
+
+object MLFRestClientConfig {
+
+  def fromMLFConfig(config: MLFConfig):MLFRestClientConfig =
+    MLFRestClientConfig(config.serverUrl, config.baseApiPath, config.basePreviewApiPath)
 }

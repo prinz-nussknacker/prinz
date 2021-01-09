@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.Logger
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFRegisteredModelName, MLFRegisteredModelVersion}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFRestModelName, MLFRestRegisteredModel, MLFRestRegisteredModelVersion}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository.toApi
 import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
@@ -12,7 +12,7 @@ import pl.touk.nussknacker.prinz.util.time.Timestamp.instant
 
 case class MLFRepository(private val config: MLFConfig) extends ModelRepository {
 
-  private val restClient = MLFRestClient()
+  private val restClient = MLFRestClient(MLFRestClientConfig.fromMLFConfig(config))
 
   override def listModels: RepositoryResponse[List[MLFRegisteredModel]] =
     restClient.listModels()
