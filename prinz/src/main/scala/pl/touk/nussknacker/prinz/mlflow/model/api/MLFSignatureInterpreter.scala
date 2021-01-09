@@ -6,19 +6,25 @@ import io.circe.yaml.parser.{parse => parseYaml}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient}
-import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureInterpreter, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
+import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureInterpreter, SignatureName, SignatureType}
+
 import java.io.{InputStream, InputStreamReader, Reader}
 
-case class MLFSignatureInterpreter(private val config: MLFBucketClientConfig) extends SignatureInterpreter {
+case class MLFSignatureInterpreter(private val config: MLFConfig)
+  extends SignatureInterpreter {
 
-  private val bucketClient = new MLFBucketClient(config)
+  private val bucketClient = MLFBucketClient(MLFBucketClientConfig.fromMLFConfig(config))
 
-  override def downloadSignature(runId: String): Option[ModelSignature] =
-    getLatestModelVersionArtifactLocation(runId)
+  private val restClient = MLFRestClient(MLFRestClientConfig.fromMLFConfig(config))
+
+  override def downloadSignature(model: Model): Option[ModelSignature] = model match {
+    case model: MLFRegisteredModel => getLatestModelVersionArtifactLocation(model.getVersion.runId)
       .map(bucketClient.getMLModelFile)
       .flatMap(extractDefinitionAndCloseStream)
       .map(definitionToSignature)
+    case _ => throw new IllegalArgumentException("MLFSignatureInterpreter can interpret only MLFRegisteredModels")
+  }
 
   def fromMLFDataType(typeName: String): TypingResult = typeName match {
     case "boolean" => Typed[Boolean]
@@ -36,12 +42,10 @@ case class MLFSignatureInterpreter(private val config: MLFBucketClientConfig) ex
     definition
   }
 
-  private def getLatestModelVersionArtifactLocation(runId: String): Option[String] = {
-    val client = MLFRestClient(MLFConfig.serverUrl)
-    client.getRunInfo(MLFRestRunId(runId))
+  private def getLatestModelVersionArtifactLocation(runId: String): Option[String] =
+    restClient.getRunInfo(MLFRestRunId(runId))
       .toOption
       .map(_.info.artifact_uri)
-  }
 
   private def extractDefinition(yamlFile: Reader): Option[MLFYamlModelDefinition] = for {
     model <- parseYaml(yamlFile).flatMap(_.as[MLFJsonMLModel]).toOption

@@ -28,7 +28,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
-    val mlfConfig = MLFConfig()(processObjectDependencies.config)
+    implicit val mlfConfig: MLFConfig = MLFConfig()(processObjectDependencies.config)
     val repo = new MLFRepository()
     val response = repo.listModels
 
