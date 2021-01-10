@@ -1,11 +1,10 @@
 package pl.touk.nussknacker.prinz.enrichers
 
-import pl.touk.nussknacker.engine.api.definition.{Parameter, ServiceWithExplicitMethod}
+import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter, ServiceWithExplicitMethod}
 import pl.touk.nussknacker.engine.api.test.InvocationCollectors
 import pl.touk.nussknacker.engine.api.typed.typing
-import pl.touk.nussknacker.engine.api.typed.typing.Typed
 import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
-import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher.extractNussknackerSignature
+import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher.toNussknackerParameter
 import pl.touk.nussknacker.prinz.model.{Model, SignatureName, SignatureType}
 
 import scala.concurrent.ExecutionContext
@@ -24,14 +23,20 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
 
   override def parameterDefinition: List[Parameter] = {
     modelInstance.getSignature.getInputDefinition
-      .map(extractNussknackerSignature)
+      .map(toNussknackerParameter)
   }
 
-  override def returnType: typing.TypingResult = Typed[Double]
+  override def returnType: typing.TypingResult = {
+    val output = modelInstance.getSignature.getOutputType
+    if (output.size != 1) {
+      throw new IllegalStateException("Model output signature supports only single value (for now)")
+    }
+    output.head.typingResult
+  }
 }
 
 object PrinzEnricher {
 
-  private def extractNussknackerSignature(input: (SignatureName, SignatureType)): Parameter =
-    Parameter[Double](input._1.name)
+  private def toNussknackerParameter(input: (SignatureName, SignatureType)): Parameter =
+    NotBlankParameter(input._1.name, input._2.typingResult)
 }

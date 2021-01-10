@@ -32,9 +32,14 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
     val repo = new MLFRepository()
     val response = repo.listModels
 
-    response.right.map(modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
-      (services, model) => services + (model.getName.toString -> allCategories(new PrinzEnricher(model)))
-    )).right.get
+    val result = response.right.map(
+      modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
+        (services, model) => services + (model.getName.name -> allCategories(new PrinzEnricher(model)))
+    ))
+    result match {
+      case Left(exception) => throw exception
+      case Right(services) => services
+    }
   }
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =

@@ -45,6 +45,7 @@ services:
       - nussknacker_storage_kafka_data:/kafka
     networks:
       - nussknacker-net
+      - dev-bridge-net
     depends_on:
       - zookeeper
 
@@ -81,6 +82,7 @@ services:
       - nussknacker_storage_jobmanager:/opt/flink/data
     networks:
       - nussknacker-net
+      - dev-bridge-net
 
 networks:
   nussknacker-net:
