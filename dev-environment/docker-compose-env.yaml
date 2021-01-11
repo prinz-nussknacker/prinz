@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   nussknacker:
+    container_name: nussknacker
     build: ./nussknacker
     restart: always
     ports:
@@ -12,23 +13,42 @@ services:
       NUSSKNACKER_CONFIG_FILE: >-
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
     networks:
-      - nussknacker-net
       - dev-bridge-net
     depends_on:
       - jobmanager
 
   zookeeper:
-    image: zookeeper:3.5
+    container_name: nussknacker_zookeeper
+    image: zookeeper:3.5.5
     environment:
+      ZOO_MY_ID: 1
       JVMFLAGS: "-Xms64m -Xmx128m"
     volumes:
       - nussknacker_storage_zookeeper_datalog:/datalog
       - nussknacker_storage_zookeeper_data:/data
     networks:
-      - nussknacker-net
+      - dev-bridge-net
+
+  schemaregistry:
+    container_name: nussknacker_schemaregistry
+    image: confluentinc/cp-schema-registry:5.5.0
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+    ports:
+      - 3082:8081
+    depends_on:
+      - zookeeper
+      - kafka
+    # schema registry needs running kafka, depends_on is not enough,
+    # so let's restart when schema registry fails...
+    restart: on-failure
+    networks:
+      - dev-bridge-net
 
   kafka:
-    image: wurstmeister/kafka:2.12-2.3.1
+    container_name: nussknacker_kafka
+    image: wurstmeister/kafka:2.12-2.3.0
     ports:
       - "3032:9092"
     environment:
@@ -44,11 +64,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - nussknacker_storage_kafka_data:/kafka
     networks:
-      - nussknacker-net
+      - dev-bridge-net
     depends_on:
       - zookeeper
 
   influxdb:
+    container_name: nussknacker_influxdb
     image: influxdb:1.7.10-alpine
     environment:
       INFLUXDB_DB: esp
@@ -56,17 +77,19 @@ services:
       - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
       - nussknacker_storage_influxdb:/var/lib/influxdb
     networks:
-      - nussknacker-net
+      - dev-bridge-net
 
   telegraf:
-    image: telegraf:1.14.5-alpine
+    container_name: nussknacker_telegraf
+    image: telegraf:1.14.1-alpine
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
     networks:
-      - nussknacker-net
+      - dev-bridge-net
 
   jobmanager:
-    image: flink:scala_2.12-java8
+    container_name: nussknacker_jobmanager
+    image: flink:1.11.2-scala_2.12-java11
     ports:
       - "3031:8081"
     entrypoint: /flink-entrypoint.sh
@@ -80,11 +103,35 @@ services:
       - ./flink/flink-entrypoint.sh:/flink-entrypoint.sh
       - nussknacker_storage_jobmanager:/opt/flink/data
     networks:
-      - nussknacker-net
+      - dev-bridge-net
+
+  taskmanager:
+    container_name: nussknacker_taskmanager
+    image: flink:1.11.2-scala_2.12-java11
+    ports:
+      - "3063:9069"
+      - "9009:9009"
+      - "9008:9008"
+    entrypoint: /flink-entrypoint.sh
+    command: taskmanager
+    depends_on:
+      - zookeeper
+      - kafka
+      - jobmanager
+      - influxdb
+    volumes:
+      - ./flink/flink-conf.yaml:/tmp/flink-conf.yaml
+      - ./flink/flink-entrypoint.sh:/flink-entrypoint.sh
+      - nussknacker_storage_taskmanager:/opt/flink/data
+    ulimits:
+      nproc: 70000
+      nofile:
+        soft: 70000
+        hard: 70000
+    networks:
+      - dev-bridge-net
 
 networks:
-  nussknacker-net:
-    driver: bridge
   dev-bridge-net:
     driver: bridge
     external: true
@@ -94,4 +141,5 @@ volumes:
   nussknacker_storage_zookeeper_data:
   nussknacker_storage_kafka_data:
   nussknacker_storage_jobmanager:
+  nussknacker_storage_taskmanager:
   nussknacker_storage_influxdb:

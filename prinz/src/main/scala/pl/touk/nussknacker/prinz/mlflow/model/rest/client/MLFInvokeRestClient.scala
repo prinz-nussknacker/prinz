@@ -1,11 +1,11 @@
 package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 
-import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFModelLocationStrategy, MLFRegisteredModel}
+import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelLocationStrategy, MLFRegisteredModel}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestInvokeBody
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 
-class MLFInvokeRestClient(baseUrl: String, model: MLFRegisteredModel) {
+case class MLFInvokeRestClient(baseUrl: String, model: MLFRegisteredModel) {
 
   private val restClient = new RestJsonClient(baseUrl)
 

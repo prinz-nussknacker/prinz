@@ -1,15 +1,21 @@
 package pl.touk.nussknacker.prinz.model.mlflow
 
+import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFSignatureInterpreter.fromMLFDataType
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel
+import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureInterpreter}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
-import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClient
+import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, SignatureType}
 
 class MLFContainerTest extends UnitIntegrationTest {
+
+  private implicit val config: Config = ConfigFactory.load()
+
+  private implicit val mlfConfig: MLFConfig = MLFConfig()
+
+  private val interpreter: MLFSignatureInterpreter = MLFSignatureInterpreter(mlfConfig)
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFRepository
@@ -28,7 +34,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   it should "list model run info with artifact location" in {
-    val client = MLFRestClient(MLFConfig.serverUrl)
+    val client = MLFRestClient(MLFRestClientConfig.fromMLFConfig(mlfConfig))
     val repository = new MLFRepository
     val modelRunId = repository
       .listModels.toOption.get.head
@@ -70,7 +76,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     val signature = instance.map(_.getSignature).get
 
     signature.getOutputType.size should equal (1)
-    signature.getOutputType.head should equal (SignatureType(fromMLFDataType("double")))
+    signature.getOutputType.head should equal (SignatureType(interpreter.fromMLFDataType("double")))
 
     signature.getInputDefinition.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
@@ -105,7 +111,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def input(definition: (String, String)) =
-    (SignatureName(definition._1), SignatureType(fromMLFDataType(definition._2)))
+    (SignatureName(definition._1), SignatureType(interpreter.fromMLFDataType(definition._2)))
 
   private def sampleInputForSignature(signature: ModelSignature) =
     List(Seq.tabulate(signature.getInputDefinition.size)(_.toDouble).toList)

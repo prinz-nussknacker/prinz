@@ -1,8 +1,8 @@
 package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 
-import java.net.URL
+import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 
-import pl.touk.nussknacker.prinz.mlflow.MLFConfig.{baseApiPath, basePreviewApiPath}
+import java.net.URL
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{GetAllRegisteredModelsRequest,
   GetAllRegisteredModelsResponse, GetRegisteredModelRequest, GetRegisteredModelResponse,
   GetRunRequest, GetRunResponse, MLFRestModelName, MLFRestRegisteredModel, MLFRestRun, MLFRestRunId}
@@ -10,11 +10,11 @@ import pl.touk.nussknacker.prinz.util.http.RestJsonClient
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import pl.touk.nussknacker.prinz.util.http.RestRequestParams.extractRequestParams
 
-case class MLFRestClient(hostUrl: URL) {
+case class MLFRestClient(config: MLFRestClientConfig) {
 
-  private val restClient = new RestJsonClient(s"$hostUrl$baseApiPath")
+  private val restClient = new RestJsonClient(config.getBaseApiBaseUrl)
 
-  private val previewRestClient = new RestJsonClient(s"$hostUrl$basePreviewApiPath")
+  private val previewRestClient = new RestJsonClient(config.getPreviewApiBaseUrl)
 
   def listModels(params: Option[GetAllRegisteredModelsRequest] = None): RestClientResponse[List[MLFRestRegisteredModel]] =
     previewRestClient.getJson[GetAllRegisteredModelsResponse]("/registered-models/list", extractRequestParams(params))
@@ -29,4 +29,19 @@ case class MLFRestClient(hostUrl: URL) {
     restClient.getJson[GetRunResponse]("/runs/get", GetRunRequest(id.id))
       .right.map(_.run)
   }
+}
+
+case class MLFRestClientConfig(private val hostUrl: URL,
+                               private val baseApiPath: String,
+                               private val basePreviewApiPath: String) {
+
+  def getBaseApiBaseUrl: String = s"$hostUrl$baseApiPath"
+
+  def getPreviewApiBaseUrl: String = s"$hostUrl$basePreviewApiPath"
+}
+
+object MLFRestClientConfig {
+
+  def fromMLFConfig(config: MLFConfig):MLFRestClientConfig =
+    MLFRestClientConfig(config.serverUrl, config.baseApiPath, config.basePreviewApiPath)
 }
