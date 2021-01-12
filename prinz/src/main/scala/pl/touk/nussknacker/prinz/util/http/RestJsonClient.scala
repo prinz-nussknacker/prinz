@@ -1,54 +1,28 @@
 package pl.touk.nussknacker.prinz.util.http
 
-import com.typesafe.scalalogging.Logger
 import io.circe.{Decoder, Encoder}
-import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
-import sttp.client3.circe.asJson
-import sttp.client3.{HttpURLConnectionBackend, Identity, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest}
-import sttp.model.Uri
+import pl.touk.nussknacker.prinz.util.http.AbstractRestJsonClient.RestClientResponse
+import sttp.client3.{HttpURLConnectionBackend, Identity, SttpBackend}
 
-class RestJsonClient(val baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()) {
-
-  private val logger = Logger[this.type]
+class RestJsonClient(baseUrl: String, private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend())
+  extends AbstractRestJsonClient(baseUrl) {
 
   def postJsonBody[BODY, RESPONSE: Manifest](relativePath: String, body: BODY, params: RestRequestParams = EmptyRestRequestParams)
                                             (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
-    val request = basicRequest
-      .post(uriFromRelativePath(relativePath, params.getParamsMap))
-      .header("Content-Type", "application/json")
-      .body(encoder(body).toString())
-      .response(asJson[RESPONSE])
-    wrapCaughtException(() => request.send(backend)
-      .body.left.map(clientExceptionFromResponse)
+    val request = createPostJsonRequest(relativePath, body, params)
+    wrapCaughtException(
+      () => request.send(backend).body.left.map(clientExceptionFromResponse),
+      e => Left(RestClientException(e.getMessage))
     )
   }
 
   def getJson[RESPONSE: Manifest](relativePath: String, params: RestRequestParams = EmptyRestRequestParams)
                                  (implicit decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
-    val request = basicRequest
-      .get(uriFromRelativePath(relativePath, params.getParamsMap))
-      .response(asJson[RESPONSE])
-    wrapCaughtException(() => request.send(backend)
-      .body.left.map(clientExceptionFromResponse)
+    val request = createGetRequest(relativePath, params)
+    wrapCaughtException(
+      () => request.send(backend).body.left.map(clientExceptionFromResponse),
+      e => Left(RestClientException(e.getMessage))
     )
   }
-
-  private def uriFromRelativePath(relativePath: String, params: Map[String, String]): Uri =
-    uri"${s"$baseUrl$relativePath"}?$params"
-
-  private def clientExceptionFromResponse(value: ResponseException[String, Exception]): RestClientException =
-    new RestClientException(value.toString)
-
-  private def wrapCaughtException[RESPONSE: Manifest](requestAction: () => Either[RestClientException, RESPONSE]): Either[RestClientException, RESPONSE] = try {
-    requestAction()
-  } catch {
-    case e: SttpClientException =>
-      logger.error(e.toString)
-      Left(RestClientException(e.getMessage))
-  }
 }
 
-object RestJsonClient {
-
-  type RestClientResponse[RESPONSE] = Either[RestClientException, RESPONSE]
-}

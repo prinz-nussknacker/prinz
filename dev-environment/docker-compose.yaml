@@ -3,7 +3,8 @@ version: '3.8'
 services:
 
   mlflow-server:
-    image: docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:0.1.1
+    build: ./mlflow
+#    image: docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:0.1.1
     restart: always
     environment:
       - BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow

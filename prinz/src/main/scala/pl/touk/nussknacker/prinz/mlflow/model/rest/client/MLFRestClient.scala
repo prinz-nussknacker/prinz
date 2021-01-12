@@ -3,11 +3,9 @@ package pl.touk.nussknacker.prinz.mlflow.model.rest.client
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 
 import java.net.URL
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{GetAllRegisteredModelsRequest,
-  GetAllRegisteredModelsResponse, GetRegisteredModelRequest, GetRegisteredModelResponse,
-  GetRunRequest, GetRunResponse, MLFRestModelName, MLFRestRegisteredModel, MLFRestRun, MLFRestRunId}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{GetAllRegisteredModelsRequest, GetAllRegisteredModelsResponse, GetRegisteredModelRequest, GetRegisteredModelResponse, GetRunRequest, GetRunResponse, MLFRestModelName, MLFRestRegisteredModel, MLFRestRun, MLFRestRunId}
+import pl.touk.nussknacker.prinz.util.http.AbstractRestJsonClient.RestClientResponse
 import pl.touk.nussknacker.prinz.util.http.RestJsonClient
-import pl.touk.nussknacker.prinz.util.http.RestJsonClient.RestClientResponse
 import pl.touk.nussknacker.prinz.util.http.RestRequestParams.extractRequestParams
 
 case class MLFRestClient(config: MLFRestClientConfig) {

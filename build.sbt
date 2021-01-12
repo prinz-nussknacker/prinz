@@ -69,6 +69,7 @@ lazy val prinz = (project in file("prinz"))
       Seq(
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
         "com.softwaremill.sttp.client3" %% "circe" % sttpV,
+        "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % sttpV,
         "io.minio" % "minio" % minioS3V,
         "io.circe" %% "circe-core" % circeV,
         "io.circe" %% "circe-generic" % circeV,
