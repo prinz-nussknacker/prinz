@@ -25,4 +25,3 @@ class RestJsonClient(baseUrl: String, private val backend: SttpBackend[Identity,
     )
   }
 }
-

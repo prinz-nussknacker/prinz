@@ -20,5 +20,3 @@ class AsyncRestJsonClient(baseUrl: String, private val backend: SttpBackend[Futu
     )
   }
 }
-
-
