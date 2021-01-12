@@ -26,6 +26,8 @@ jobs:
                 present: false
               truthy:
                 check-keys: false
+              line-length:
+                max: 120
       - name: Set up Java
         run: |
           wget https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.deb
