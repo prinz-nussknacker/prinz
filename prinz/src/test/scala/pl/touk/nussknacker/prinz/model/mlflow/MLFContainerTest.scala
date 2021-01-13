@@ -1,6 +1,8 @@
 package pl.touk.nussknacker.prinz.model.mlflow
 
 import com.typesafe.config.{Config, ConfigFactory}
+import org.scalatest.concurrent.ScalaFutures.whenReady
+import org.scalatest.flatspec.AsyncFlatSpec
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureInterpreter}
@@ -8,6 +10,10 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, SignatureType}
+
+import java.util.concurrent.TimeUnit
+import scala.concurrent.Await
+import scala.concurrent.duration.FiniteDuration
 
 class MLFContainerTest extends UnitIntegrationTest {
 
@@ -88,7 +94,9 @@ class MLFContainerTest extends UnitIntegrationTest {
     val signature = instance.getSignature
     val sampleInput = sampleInputForSignature(signature)
 
-    instance.run(signature.getSignatureNames.map(_.name), sampleInput).isRight shouldBe true
+    whenReady(instance.run(signature.getSignatureNames.map(_.name), sampleInput)) { response =>
+      response.isRight shouldBe true
+    }
   }
 
   it should "have models that returns different values for the same input" in {
@@ -99,6 +107,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     (instances, signatures, sampleInputs)
       .zipped
       .map { case (instance, signature, input) => instance.run(signature.getSignatureNames.map(_.name), input) }
+      .map { future => Await.result(future, FiniteDuration(500, TimeUnit.MILLISECONDS)) }
       .map(_.right.get)
       .groupBy(_.toString())
       .size should be > 1

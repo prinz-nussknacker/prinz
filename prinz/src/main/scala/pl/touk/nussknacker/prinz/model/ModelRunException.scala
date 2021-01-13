@@ -5,5 +5,5 @@ import pl.touk.nussknacker.prinz.util.http.RestClientException
 
 class ModelRunException(message: String) extends PrinzException(message) {
 
-  def this(e: RestClientException) = this(e.message)
+  def this(e: Exception) = this(e.getMessage)
 }

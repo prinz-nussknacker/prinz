@@ -9,7 +9,7 @@ val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
 val circeV = "0.11.1"
 val circeYamlV = "0.11.0-M1"
-val testContainersV = "0.38.7"
+val testContainersV = "0.38.8"
 val paradiseV = "2.1.1"
 val typesafeConfigV = "1.4.1"
 val typesafeLogV = "3.9.2"
@@ -69,6 +69,7 @@ lazy val prinz = (project in file("prinz"))
       Seq(
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
         "com.softwaremill.sttp.client3" %% "circe" % sttpV,
+        "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % sttpV,
         "io.minio" % "minio" % minioS3V,
         "io.circe" %% "circe-core" % circeV,
         "io.circe" %% "circe-generic" % circeV,

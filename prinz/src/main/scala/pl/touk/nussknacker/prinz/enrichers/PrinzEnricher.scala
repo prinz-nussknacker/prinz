@@ -14,11 +14,16 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
 
   private val modelInstance = model.toModelInstance
 
+  private val inputNames = modelInstance
+    .getSignature
+    .getInputDefinition
+    .map(_._1.name)
+
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
                              metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
-    val res = params.head.asInstanceOf[Double].toString
-    Future.successful(res)
+    // TODO map params list and collect them according to columns order
+    modelInstance.run(inputNames, List())
   }
 
   override def parameterDefinition: List[Parameter] = {
