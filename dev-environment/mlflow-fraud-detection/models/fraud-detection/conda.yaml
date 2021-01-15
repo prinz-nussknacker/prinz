@@ -1,0 +1,7 @@
+name: fraud-detection
+channels:
+  - anaconda
+  - conda-forge
+dependencies:
+  - mlflow=1.13.1
+  - scikit-learn=0.23.2
