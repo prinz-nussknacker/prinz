@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.model
 
+import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter}
 import pl.touk.nussknacker.engine.api.typed.typing.{TypedObjectTypingResult, TypingResult}
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
@@ -15,24 +16,28 @@ class ModelSignature private(signatureInputs: List[SignatureField], signatureOut
   def getOutputDefinition: TypedObjectTypingResult =
     TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)))
 
-  def getSignatureInputNames: List[SignatureName] = signatureInputMap.keys.toList
+  def getInputNames: List[SignatureName] = signatureInputMap.keys.toList
 
-  def getSignatureOutputNames: List[SignatureName] = signatureOutputMap.keys.toList
+  def getOutputNames: List[SignatureName] = signatureOutputMap.keys.toList
 
   def getInputValueType(valueName: SignatureName): Option[SignatureType] = signatureInputMap.get(valueName)
 
   def getOutputValueType(valueName: SignatureName): Option[SignatureType] = signatureOutputMap.get(valueName)
 
-  def getInputList: List[SignatureField] = signatureInputs
+  def toInputParameterDefinition: List[Parameter] = signatureInputs.map(field => field.toNussknackerParameter)
 
-  def getOutputList: List[SignatureField] = signatureOutputs
+  def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
 }
 
 case class SignatureName(name: String)
 
 case class SignatureType(typingResult: TypingResult)
 
-case class SignatureField(signatureName: SignatureName, signatureType: SignatureType)
+case class SignatureField(signatureName: SignatureName, signatureType: SignatureType) {
+
+  def toNussknackerParameter: Parameter =
+    NotBlankParameter(signatureName.name, signatureType.typingResult)
+}
 
 object ModelSignature {
 
