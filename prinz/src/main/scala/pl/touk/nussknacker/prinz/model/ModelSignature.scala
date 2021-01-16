@@ -1,34 +1,53 @@
 package pl.touk.nussknacker.prinz.model
 
-import pl.touk.nussknacker.engine.api.typed.typing.TypingResult
+import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter}
+import pl.touk.nussknacker.engine.api.typed.typing.{TypedObjectTypingResult, TypingResult}
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
-class ModelSignature private(signatureInputs: List[(SignatureName, SignatureType)], signatureOutputs: List[SignatureType]) {
+class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
 
-  private val signatureMap = signatureInputs.groupBy(_._1).mapValues(_.head._2)
+  private val signatureInputMap = signatureInputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
-  def getSignatureNames: List[SignatureName] = signatureMap.keys.toList
+  private val signatureOutputMap = signatureOutputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
-  def getValueType(valueName: SignatureName): Option[SignatureType] = signatureMap.get(valueName)
+  def getInputDefinition: TypedObjectTypingResult =
+    TypedObjectTypingResult(signatureInputMap.map(kv => (kv._1.name, kv._2.typingResult)))
 
-  def getOutputType: List[SignatureType] = signatureOutputs
+  def getOutputDefinition: TypedObjectTypingResult =
+    TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)))
 
-  def getInputDefinition: List[(SignatureName, SignatureType)] = signatureInputs
+  def getInputNames: List[SignatureName] = signatureInputMap.keys.toList
+
+  def getOutputNames: List[SignatureName] = signatureOutputMap.keys.toList
+
+  def getInputValueType(valueName: SignatureName): Option[SignatureType] = signatureInputMap.get(valueName)
+
+  def getOutputValueType(valueName: SignatureName): Option[SignatureType] = signatureOutputMap.get(valueName)
+
+  def toInputParameterDefinition: List[Parameter] = signatureInputs.map(field => field.toNussknackerParameter)
+
+  def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
 }
 
 case class SignatureName(name: String)
 
 case class SignatureType(typingResult: TypingResult)
 
+case class SignatureField(signatureName: SignatureName, signatureType: SignatureType) {
+
+  def toNussknackerParameter: Parameter =
+    NotBlankParameter(signatureName.name, signatureType.typingResult)
+}
+
 object ModelSignature {
 
-  def apply(signatureInputs: List[(SignatureName, SignatureType)], signatureOutputs: List[SignatureType]): ModelSignature = {
+  def apply(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]): ModelSignature = {
     verifyInitData(signatureInputs)
     new ModelSignature(signatureInputs, signatureOutputs)
   }
 
-  private def verifyInitData(init: List[(SignatureName, SignatureType)]): Unit = {
-    val foundInvalid = init.groupBy(_._1).values.map(_.size).exists(_ > 1)
+  private def verifyInitData(init: List[SignatureField]): Unit = {
+    val foundInvalid = init.groupBy(_.signatureName).values.map(_.size).exists(_ > 1)
     assertIllegal(!foundInvalid, "Model signature must consist of different keys names")
   }
 }

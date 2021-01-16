@@ -1,11 +1,10 @@
 package pl.touk.nussknacker.prinz.enrichers
 
-import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter, ServiceWithExplicitMethod}
+import pl.touk.nussknacker.engine.api.definition.{Parameter, ServiceWithExplicitMethod}
 import pl.touk.nussknacker.engine.api.test.InvocationCollectors
 import pl.touk.nussknacker.engine.api.typed.typing
 import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
-import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher.toNussknackerParameter
-import pl.touk.nussknacker.prinz.model.{Model, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.Model
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -16,8 +15,8 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
 
   private val inputNames = modelInstance
     .getSignature
-    .getInputDefinition
-    .map(_._1.name)
+    .getInputNames
+    .map(_.name)
 
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
@@ -26,22 +25,7 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
     modelInstance.run(inputNames, List())
   }
 
-  override def parameterDefinition: List[Parameter] = {
-    modelInstance.getSignature.getInputDefinition
-      .map(toNussknackerParameter)
-  }
+  override def parameterDefinition: List[Parameter] = modelInstance.getSignature.toInputParameterDefinition
 
-  override def returnType: typing.TypingResult = {
-    val output = modelInstance.getSignature.getOutputType
-    if (output.size != 1) {
-      throw new IllegalStateException("Model output signature supports only single value (for now)")
-    }
-    output.head.typingResult
-  }
-}
-
-object PrinzEnricher {
-
-  private def toNussknackerParameter(input: (SignatureName, SignatureType)): Parameter =
-    NotBlankParameter(input._1.name, input._2.typingResult)
+  override def returnType: typing.TypingResult = modelInstance.getSignature.getOutputDefinition
 }

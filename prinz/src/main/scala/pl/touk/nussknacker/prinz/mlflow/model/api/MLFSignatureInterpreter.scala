@@ -7,7 +7,7 @@ import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
-import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureInterpreter, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureInterpreter, SignatureName, SignatureType}
 
 import java.io.{InputStream, InputStreamReader, Reader}
 
@@ -58,7 +58,7 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
 
   private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature =
     ModelSignature(
-      definition.inputs.map(i => (SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
-      definition.output.map(o => SignatureType(fromMLFDataType(o.`type`)))
+      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
+      for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"), SignatureType(fromMLFDataType(o.`type`)))
     )
 }
