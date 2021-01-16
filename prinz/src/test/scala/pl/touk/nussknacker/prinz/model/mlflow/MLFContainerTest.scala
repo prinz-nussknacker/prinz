@@ -89,7 +89,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     expectedSignatureInput.map(input)
       .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
     expectedSignatureInput.map(input)
-      .foreach(field => signature.getOutputValueType(field.signatureName) should equal (Some(field.signatureType)))
+      .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
   }
 
   it should "allow to run model with sample data" in {
