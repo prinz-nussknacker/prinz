@@ -9,7 +9,7 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignat
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
-import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
@@ -81,12 +81,12 @@ class MLFContainerTest extends UnitIntegrationTest {
     val instance = getModelInstance()
     val signature = instance.map(_.getSignature).get
 
-    signature.getOutputType.size should equal (1)
-    signature.getOutputType.head should equal (SignatureType(interpreter.fromMLFDataType("double")))
+    signature.getOutputList.size should equal (1)
+    signature.getOutputList.head.signatureType should equal (SignatureType(interpreter.fromMLFDataType("double")))
 
-    signature.getInputDefinition.size should equal (expectedSignatureInput.size)
+    signature.getInputList.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
-      .foreach(signature.getInputDefinition.contains(_) shouldBe true)
+      .foreach(signature.getInputList.contains(_) shouldBe true)
   }
 
   it should "allow to run model with sample data" in {
@@ -94,7 +94,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     val signature = instance.getSignature
     val sampleInput = sampleInputForSignature(signature)
 
-    whenReady(instance.run(signature.getSignatureNames.map(_.name), sampleInput)) { response =>
+    whenReady(instance.run(signature.getSignatureInputNames.map(_.name), sampleInput)) { response =>
       response.isRight shouldBe true
     }
   }
@@ -106,7 +106,7 @@ class MLFContainerTest extends UnitIntegrationTest {
 
     (instances, signatures, sampleInputs)
       .zipped
-      .map { case (instance, signature, input) => instance.run(signature.getSignatureNames.map(_.name), input) }
+      .map { case (instance, signature, input) => instance.run(signature.getSignatureInputNames.map(_.name), input) }
       .map { future => Await.result(future, FiniteDuration(500, TimeUnit.MILLISECONDS)) }
       .map(_.right.get)
       .groupBy(_.toString())
@@ -120,8 +120,8 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def input(definition: (String, String)) =
-    (SignatureName(definition._1), SignatureType(interpreter.fromMLFDataType(definition._2)))
+    SignatureField(SignatureName(definition._1), SignatureType(interpreter.fromMLFDataType(definition._2)))
 
   private def sampleInputForSignature(signature: ModelSignature) =
-    List(Seq.tabulate(signature.getInputDefinition.size)(_.toDouble).toList)
+    List(Seq.tabulate(signature.getInputList.size)(_.toDouble).toList)
 }
