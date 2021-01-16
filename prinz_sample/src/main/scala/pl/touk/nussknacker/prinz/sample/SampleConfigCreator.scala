@@ -1,7 +1,5 @@
 package pl.touk.nussknacker.prinz.sample
 
-import com.typesafe.config.Config
-import com.typesafe.scalalogging.Logger
 import pl.touk.nussknacker.engine.api.Service
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
 import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
@@ -15,8 +13,6 @@ import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
-  private val logger = Logger[this.type]
-
   protected def allCategories[T](obj: T): WithCategories[T] = WithCategories(obj, "FraudDetection", "Recommendations")
 
   override def sourceFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SourceFactory[_]]] = Map(
@@ -24,7 +20,9 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def sinkFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SinkFactory]] = Map(
-    "empty" -> allCategories(SinkFactory.noParam(EmptySink))
+    "empty" -> allCategories(SinkFactory.noParam(EmptySink)),
+    "fraudDetected" -> allCategories(SinkFactory.noParam(LoggingSink("FRAUD DETECTED"))),
+    "fraudNotDetected" -> allCategories(SinkFactory.noParam(LoggingSink("FRAUD NOT DETECTED")))
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {

@@ -1,13 +1,10 @@
 package pl.touk.nussknacker.prinz.util.config
 
 import java.net.URL
-
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.Logger
+import com.typesafe.scalalogging.{LazyLogging, Logger}
 
-object ConfigReader {
-
-  private val logger = Logger[this.type]
+object ConfigReader extends LazyLogging {
 
   def getConfigValue[T](path: String, default: T, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T = {
     val fullPath = s"$basePath$path"
