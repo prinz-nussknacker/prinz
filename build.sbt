@@ -1,4 +1,3 @@
-import sbt.Keys.dependencyOverrides
 import sbtassembly.MergeStrategy
 
 // Dependency versions
@@ -79,11 +78,23 @@ lazy val prinz = (project in file("prinz"))
         "org.scala-lang" % "scala-reflect" % scalaV,
         "ch.qos.logback" % "logback-classic" % logbackV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
-        "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
+        "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test
+      )
+    }
+  )
+
+lazy val prinz_mlflow = (project in file("prinz_mlflow"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-mlflow",
+    Test / fork := true,
+    libraryDependencies ++= {
+      Seq(
         "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
       )
     }
   )
+  .dependsOn(prinz % "compile->compile;test->test")
 
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
@@ -102,3 +113,4 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     }
   )
   .dependsOn(prinz)
+  .dependsOn(prinz_mlflow)

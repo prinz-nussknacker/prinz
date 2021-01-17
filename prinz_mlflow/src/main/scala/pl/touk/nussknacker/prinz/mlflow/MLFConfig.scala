@@ -3,7 +3,6 @@ package pl.touk.nussknacker.prinz.mlflow
 import java.net.URL
 import com.typesafe.config.Config
 import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFModelLocationStrategy}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFRestClientConfig
 import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl, url}
 
 case class MLFConfig(private implicit val config: Config) {
