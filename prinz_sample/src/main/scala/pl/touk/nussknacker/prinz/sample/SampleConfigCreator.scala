@@ -32,7 +32,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
     val result = response.right.map(
       modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
-        (services, model) => services + (model.getName.name -> allCategories(new PrinzEnricher(model)))
+        (services, model) => services + (model.getName.name -> allCategories(PrinzEnricher(model)))
     ))
     result match {
       case Left(exception) => throw exception
