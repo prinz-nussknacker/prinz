@@ -27,6 +27,16 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
     case _ => throw new IllegalArgumentException("MLFSignatureInterpreter can interpret only MLFRegisteredModels")
   }
 
+  def fromMLFDataType(typeName: String): TypingResult = typeName match {
+    case "boolean" => Typed[Boolean]
+    case "integer" => Typed[Int]
+    case "long" => Typed[Long]
+    case "float" => Typed[Float]
+    case "double" => Typed[Double]
+    case "string" => Typed[String]
+    case "binary" => Typed[Array[Byte]]
+  }
+
   private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {
     val definition = extractDefinition(new InputStreamReader(stream))
     stream.close()
@@ -49,8 +59,8 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
 
   private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature =
     ModelSignature(
-      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(NKConverter.toTypingResult(i.`type`)))),
+      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
       for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"),
-        SignatureType(NKConverter.toTypingResult(o.`type`)))
+        SignatureType(fromMLFDataType(o.`type`)))
     )
 }
