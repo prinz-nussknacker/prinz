@@ -12,9 +12,10 @@ ENV MLFLOW_HOME=/opt/mlflow \
 EXPOSE ${MLFLOW_SERVER_PORT}/tcp
 
 WORKDIR ${MLFLOW_WORK_DIR}
-COPY models/ models/
+COPY deps/ deps/
 RUN conda install --yes -q -c anaconda --file=deps/anaconda-deps.txt && \
     conda install --yes -q -c conda-forge --file=deps/conda-forge-deps.txt
+COPY models/ models/
 
 WORKDIR ${MLFLOW_HOME}
 COPY run.sh ./run.sh
