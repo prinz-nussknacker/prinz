@@ -16,10 +16,11 @@ services:
       - MLFLOW_SERVER_PORT=5000
       - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
       - MLFLOW_WORK_DIR=/home/mlflow
-      - MODEL_PORT=1234
+      - MODEL_1_PORT=1234
+      - MODEL_2_PORT=4321
+      - MODEL_3_PORT=4322
     volumes:
       - ./mlflow/models:/home/mlflow/models
-      - ./mlflow/scripts:/opt/mlflow/scripts
     networks:
       - mlflow-net
     depends_on:

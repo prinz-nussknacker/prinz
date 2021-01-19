@@ -1,6 +1,20 @@
 #!/bin/sh
 
-create_mlflow_run() {
+fit_wine() { # alpha l1_ratio model_serve_port experiment_id
+  sleep 5 &&
+  echo "Starting new mlflow run..." &&
+  cd $MLFLOW_HOME &&
+  mlflow run --no-conda --experiment-id "$4" $MLFLOW_WORK_DIR/models/sklearn_elasticnet_wine -P alpha="$1" -P l1_ratio="$2" -P model_id="$4" 2>&1 | tee "run$3.out" &&
+  echo "Mlflow run finished" &&
+  RUN_ID="$(cat "run$3.out" | tail -n 1 | grep -oP "(?<=').*?(?=')")" &&
+  rm -f "run$3.out" &&
+  echo "Mlflow run id: $RUN_ID" &&
+  echo "Serving trained model in Mlflow registry on port $3" &&
+  cd $MLFLOW_HOME &&
+  mlflow models serve --no-conda --model-uri "s3://mlflow/$4/$RUN_ID/artifacts/model" --host $MLFLOW_SERVER_HOST --port "$3"
+}
+
+fit_fraud_detection() { # serving_port experiment_id
   serving_port=$1
   experiment_id=$2
   sleep 5 &&
@@ -35,5 +49,10 @@ mlflow server \
 echo "Waiting for MLflow server to start up..."
 sleep 10
 
-create_experiment_if_not_exists 1
-create_mlflow_run $MODEL_PORT 1
+create_experiment_if_not_exists 1 &&
+create_experiment_if_not_exists 2 &&
+create_experiment_if_not_exists 3
+
+fit_wine 0.42 0.5 $MODEL_1_PORT 1 &
+fit_wine 0.84 0.5 $MODEL_2_PORT 2 &
+fit_fraud_detection $MODEL_3_PORT 3 &

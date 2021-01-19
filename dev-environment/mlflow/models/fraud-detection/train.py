@@ -32,7 +32,8 @@ model_id = int(sys.argv[2])
 
 # Prepare dataset
 try:
-    data = pd.read_csv("dataset/bs140513_032310.csv", sep=",", quotechar="'", header=0)
+    csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
+    data = pd.read_csv(csv_url, sep=",", quotechar="'", header=0)
 except Exception as e:
     logger.exception("Could not read CSV file: {}".format(e))
     exit(1)
