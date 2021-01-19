@@ -3,5 +3,7 @@ channels:
   - anaconda
   - conda-forge
 dependencies:
+  - boto3=1.16.55
   - mlflow=1.13.1
+  - psycopg2=2.8.5
   - scikit-learn=0.23.2

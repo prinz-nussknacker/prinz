@@ -13,14 +13,15 @@ create_mlflow_run() {
   echo "Mlflow run id: $RUN_ID" &&
   echo "Serving trained model in Mlflow registry on port ${serving_port}" &&
   cd $MLFLOW_HOME &&
-  mlflow models serve --no-conda --model-uri "${MLFLOW_HOME}/mlruns/${experiment_id}/$RUN_ID/artifacts/model" --host $MLFLOW_SERVER_HOST --port "${serving_port}"
+  mlflow models serve --no-conda --model-uri "s3://mlflow/${experiment_id}/$RUN_ID/artifacts/model" --host $MLFLOW_SERVER_HOST --port "${serving_port}"
 }
 
 create_experiment_if_not_exists() { # experiment_id
-  mlflow experiments list --view "all" | tail -n +3 | awk '{$1=$1;print}' | sed 's/\s.*$//' | grep -P "^$1$"
+  experiment_id=$1
+  mlflow experiments list --view "all" | tail -n +3 | awk '{$1=$1;print}' | sed 's/\s.*$//' | grep -P "^${experiment_id}$"
   if [ $? -eq 1 ]; then
     echo "Creating new mlflow experiment with id $1"
-    mlflow experiments create --experiment-name "Test experiment $1" --artifact-location "${MLFLOW_HOME}/mlruns/$1"
+    mlflow experiments create --experiment-name "Test experiment ${experiment_id}" --artifact-location "s3://mlflow/${experiment_id}"
   fi
 }
 
