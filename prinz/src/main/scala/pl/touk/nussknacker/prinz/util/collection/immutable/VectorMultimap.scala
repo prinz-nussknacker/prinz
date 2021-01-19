@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.util.collection.immutable
 
 import scala.collection.mutable
 
-class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector[V]]) {
+class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector[V]]) extends Iterable[(K, V)]{
 
   def add(key: K, value: V): VectorMultimap[K, V] = get(key) match {
     case None =>
@@ -52,11 +52,11 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
 
   def keys: Iterable[K] = delegate.keys
 
-  def isEmpty: Boolean = delegate.isEmpty
+  override def isEmpty: Boolean = delegate.isEmpty
 
-  def nonEmpty: Boolean = delegate.nonEmpty
+  override def nonEmpty: Boolean = delegate.nonEmpty
 
-  def size: Int = delegate.values.map(_.size).sum
+  override def size: Int = delegate.values.map(_.size).sum
 
   override def toString: String = {
     val sb = new StringBuilder(s"${getClass.getName}[\n")
@@ -71,6 +71,11 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
       case m: VectorMultimap[K, V] => this.delegate.equals(m.delegate)
       case _ => false
     }
+
+  override def iterator: Iterator[(K, V)] = {
+    val iterators = delegate.map(el => el._2.iterator.map(v => (el._1, v)))
+    iterators.foldLeft(Iterator[(K, V)])((prev, it) => prev ++ it)
+  }
 }
 
 object VectorMultimap {

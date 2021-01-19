@@ -20,7 +20,7 @@ case class MLFRestModelName(name: String)
 
 case class MLFRestRunId(id: String)
 
-@JsonCodec case class MLFRestInvokeBody(columns: List[String], data: List[List[Double]])
+@JsonCodec case class MLFRestInvokeBody(columns: List[String], data: List[List[AnyRef]])
 
 @JsonCodec case class MLFRestRunInfo(run_id: String,
                                      run_uuid: String,

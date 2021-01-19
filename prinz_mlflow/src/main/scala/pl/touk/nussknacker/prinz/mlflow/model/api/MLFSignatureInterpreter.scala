@@ -8,8 +8,9 @@ import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureInterpreter, SignatureName, SignatureType}
-
 import java.io.{InputStream, InputStreamReader, Reader}
+
+import pl.touk.nussknacker.prinz.util.nussknacker.NKConverter
 
 case class MLFSignatureInterpreter(private val config: MLFConfig)
   extends SignatureInterpreter {
@@ -24,16 +25,6 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
       .flatMap(extractDefinitionAndCloseStream)
       .map(definitionToSignature)
     case _ => throw new IllegalArgumentException("MLFSignatureInterpreter can interpret only MLFRegisteredModels")
-  }
-
-  def fromMLFDataType(typeName: String): TypingResult = typeName match {
-    case "boolean" => Typed[Boolean]
-    case "integer" => Typed[Int]
-    case "long" => Typed[Long]
-    case "float" => Typed[Float]
-    case "double" => Typed[Double]
-    case "string" => Typed[String]
-    case "binary" => Typed[Array[Byte]]
   }
 
   private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {
@@ -58,7 +49,8 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
 
   private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature =
     ModelSignature(
-      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
-      for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"), SignatureType(fromMLFDataType(o.`type`)))
+      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(NKConverter.toTypingResult(i.`type`)))),
+      for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"),
+        SignatureType(NKConverter.toTypingResult(o.`type`)))
     )
 }
