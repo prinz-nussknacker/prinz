@@ -4,7 +4,7 @@ fit_wine() { # alpha l1_ratio model_serve_port experiment_id
   sleep 5 &&
   echo "Starting new mlflow run..." &&
   cd $MLFLOW_HOME &&
-  mlflow run --no-conda --experiment-id "$4" $MLFLOW_WORK_DIR/models/sklearn_elasticnet_wine -P alpha="$1" -P l1_ratio="$2" -P model_id="$4" 2>&1 | tee "run$3.out" &&
+  mlflow run --no-conda --experiment-id "$4" $MLFLOW_WORK_DIR/models/sklearn-elasticnet-wine -P alpha="$1" -P l1_ratio="$2" -P model_id="$4" 2>&1 | tee "run$3.out" &&
   echo "Mlflow run finished" &&
   RUN_ID="$(cat "run$3.out" | tail -n 1 | grep -oP "(?<=').*?(?=')")" &&
   rm -f "run$3.out" &&
