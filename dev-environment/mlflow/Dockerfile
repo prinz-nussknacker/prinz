@@ -16,4 +16,5 @@ COPY models/fraud-detection/ ./
 
 WORKDIR ${MLFLOW_HOME}
 COPY scripts/ scripts/
+RUN chmod +x scripts/run.sh
 CMD scripts/run.sh
