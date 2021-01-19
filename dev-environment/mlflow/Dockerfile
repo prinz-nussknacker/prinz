@@ -18,6 +18,6 @@ RUN conda install --yes -q -c anaconda --file=deps/anaconda-deps.txt && \
 COPY models/ models/
 
 WORKDIR ${MLFLOW_HOME}
-COPY run.sh ./run.sh
+COPY scripts/ scripts/
 RUN chmod +x scripts/run.sh
-CMD run.sh
+CMD scripts/run.sh
