@@ -38,7 +38,7 @@ object UnitIntegrationTest {
 
   private val DOCKER_COMPOSE_FILE = new File("../dev-environment/docker-compose.yaml")
 
-  private val TIMEOUT_MINUTES = 2
+  private val TIMEOUT_MINUTES = 3
 
   private val MODEL_1_SERVED_READY_REGEX = s".*Listening at.*1234.*"
 
