@@ -10,7 +10,6 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFB
 import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureInterpreter, SignatureName, SignatureType}
 import java.io.{InputStream, InputStreamReader, Reader}
 
-import pl.touk.nussknacker.prinz.util.nussknacker.NKConverter
 
 case class MLFSignatureInterpreter(private val config: MLFConfig)
   extends SignatureInterpreter {
@@ -35,6 +34,7 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
     case "double" => Typed[Double]
     case "string" => Typed[String]
     case "binary" => Typed[Array[Byte]]
+    case _ => throw new IllegalArgumentException("BLAD W MLF data")
   }
 
   private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {

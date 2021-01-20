@@ -74,7 +74,7 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
 
   override def iterator: Iterator[(K, V)] = {
     val iterators = delegate.map(el => el._2.iterator.map(v => (el._1, v)))
-    iterators.foldLeft(Iterator[(K, V)])((prev, it) => prev ++ it)
+    iterators.foldLeft(Iterator[(K, V)]())((prev, it) => prev.++(it))
   }
 }
 

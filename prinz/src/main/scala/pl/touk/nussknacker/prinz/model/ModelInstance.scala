@@ -1,13 +1,12 @@
 package pl.touk.nussknacker.prinz.model
 
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
-import pl.touk.nussknacker.prinz.util.nussknacker.NKConverter
 
 import scala.concurrent.Future
 
 abstract class ModelInstance(model: Model, protected val signatureInterpreter: SignatureInterpreter) {
 
-  type ModelRunResult = Future[Either[ModelRunException, List[AnyRef]]]
+  type ModelRunResult = Future[Either[ModelRunException, List[Double]]]
 
   private val signatureOption: Option[ModelSignature] =
     signatureInterpreter.downloadSignature(model)
