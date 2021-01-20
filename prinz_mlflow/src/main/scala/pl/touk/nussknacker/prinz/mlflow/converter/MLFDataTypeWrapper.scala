@@ -15,10 +15,10 @@ object MLFDataTypeWrapper {
       Json.fromBoolean(data.dataValue.asInstanceOf[Boolean])
     } else if (data.typing.canBeSubclassOf(Typed[Long])) {
       Json.fromLong(data.dataValue.asInstanceOf[Long])
-    } else if (data.typing.canBeSubclassOf(Typed[Float])) {
-      Json.fromFloatOrNull(data.dataValue.asInstanceOf[Float])
     } else if (data.typing.canBeSubclassOf(Typed[Double])) {
       Json.fromDoubleOrNull(data.dataValue.asInstanceOf[Double])
+    } else if (data.typing.canBeSubclassOf(Typed[Float])) {
+      Json.fromFloatOrNull(data.dataValue.asInstanceOf[Float])
     } else if (data.typing.canBeSubclassOf(Typed[String])) {
       Json.fromString(data.dataValue.asInstanceOf[String])
     } else {
