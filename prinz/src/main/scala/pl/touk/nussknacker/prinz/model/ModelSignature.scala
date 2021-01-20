@@ -4,7 +4,7 @@ import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter}
 import pl.touk.nussknacker.engine.api.typed.typing.{TypedObjectTypingResult, TypingResult}
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
-class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
+case class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
 
   private val signatureInputMap = signatureInputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
@@ -27,6 +27,10 @@ class ModelSignature private(signatureInputs: List[SignatureField], signatureOut
   def toInputParameterDefinition: List[Parameter] = signatureInputs.map(field => field.toNussknackerParameter)
 
   def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
+
+  override def toString: String = getClass.getSimpleName + "(\n"
+    "inputs: " + signatureInputs + "\n"
+    "outputs: " + signatureOutputs + "\n)"
 }
 
 case class SignatureName(name: String)
@@ -37,6 +41,9 @@ case class SignatureField(signatureName: SignatureName, signatureType: Signature
 
   def toNussknackerParameter: Parameter =
     NotBlankParameter(signatureName.name, signatureType.typingResult)
+
+  override def toString: String =
+    "{" + signatureName.name + ": " + signatureType.typingResult.display + "}"
 }
 
 object ModelSignature {

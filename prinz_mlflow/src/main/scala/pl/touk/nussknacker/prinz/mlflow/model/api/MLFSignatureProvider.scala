@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.parser.decode
 import io.circe.yaml.parser.{parse => parseYaml}
@@ -15,7 +16,7 @@ import java.io.{InputStream, InputStreamReader, Reader}
 
 
 case class MLFSignatureProvider(private val config: MLFConfig)
-  extends SignatureProvider {
+  extends SignatureProvider with LazyLogging {
 
   private val bucketClient = MLFBucketClient(MLFBucketClientConfig.fromMLFConfig(config))
 
@@ -60,6 +61,8 @@ case class MLFSignatureProvider(private val config: MLFConfig)
         indexedOutputName(index),
         SignatureType(MLFSignatureInterpreter.fromMLFDataType(o.`type`))
       )
-    ModelSignature(signatureInputs, signatureOutputs)
+    val signature = ModelSignature(signatureInputs, signatureOutputs)
+    logger.info("Downloaded mlflow signature: {}", signature)
+    signature
   }
 }
