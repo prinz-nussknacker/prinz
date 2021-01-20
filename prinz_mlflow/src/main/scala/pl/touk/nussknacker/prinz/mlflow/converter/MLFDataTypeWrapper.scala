@@ -1,7 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.converter
 
-import io.circe.Decoder.Result
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.{ Encoder,  Json}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 
