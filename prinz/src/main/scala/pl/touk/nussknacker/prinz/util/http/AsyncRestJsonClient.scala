@@ -18,7 +18,7 @@ class AsyncRestJsonClient(baseUrl: String, private val backend: SttpBackend[Futu
     logger.info("Sending request in {}: {}", getClass.getSimpleName, request)
     wrapCaughtException(
       () => request.send(backend).map { response => response.body.left.map(clientExceptionFromResponse) },
-      e => Future(Left(RestClientException(e.getMessage)))
+      exception => Future(Left(RestClientException(exception.getMessage)))
     )
   }
 }

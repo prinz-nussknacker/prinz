@@ -1,17 +1,19 @@
 package pl.touk.nussknacker.prinz.mlflow.converter
 
-import io.circe.{Encoder, Json}
-import pl.touk.nussknacker.engine.api.typed.typing.TypingResult
+import io.circe.Decoder.Result
+import io.circe.{Decoder, Encoder, HCursor, Json}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
+import pl.touk.nussknacker.engine.api.typed.typing.TypingResult
 
 import scala.Proxy.Typed
+
 
 class MLFDataTypeWrapper(val dataType: TypingResult,
                          val dataValue: AnyRef)
 
 object MLFDataTypeWrapper {
 
-  implicit val encodeMlfDataType: Encoder[MLFDataTypeWrapper] = (data: MLFDataTypeWrapper) => data.dataType match {
+  implicit val encodeMLFDataType: Encoder[MLFDataTypeWrapper] = (data: MLFDataTypeWrapper) => data.dataType match {
     case _: Typed[Boolean] => Json.fromBoolean(data.dataValue.asInstanceOf[Boolean])
     case _: Typed[Long] => Json.fromLong(data.dataValue.asInstanceOf[Long])
     case _: Typed[Float] => Json.fromFloatOrNull(data.dataValue.asInstanceOf[Float])

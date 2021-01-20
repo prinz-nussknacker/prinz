@@ -12,11 +12,9 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import scala.concurrent.Future
 
 case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
-  extends ModelInstance(model, MLFSignatureInterpreter(config)) with LazyLogging {
+  extends ModelInstance(model, MLFSignatureProvider(config)) with LazyLogging {
 
   private val invokeRestClient = MLFInvokeRestClient(config.servedModelsUrl.toString, model)
-
-  private val mlfSignatureInterpreter = MLFSignatureInterpreter(config)
 
   override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult =
     if(!isModelInputValid(inputMap)) {
@@ -24,11 +22,16 @@ case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
       Future(Left(new InvalidInputModelRunException("Mismatched input types.")))
     }
     else {
-      val jsonDataString = MLFDataConverter.toJsonString(inputMap, getSignature)
+      val jsonDataString = MLFDataConverter.inputToJsonString(inputMap, getSignature)
       logger.info("Send json data to mlflow model: {}", jsonDataString)
       val invokeBody = MLFRestInvokeBody(jsonDataString)
       invokeRestClient.invoke(invokeBody, config.modelLocationStrategy)
-        .map { response => response.left.map(e => new ModelRunException(e)) }
+        .map { response =>
+          logger.info("Response from mlflow model: {}", response)
+          response
+            .left.map(exception => new ModelRunException(exception))
+            .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
+        }
     }
 
   def isModelInputValid(input: VectorMultimap[String, AnyRef]): Boolean = {

@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.model.mlflow
 import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureInterpreter}
+import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureProvider}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
@@ -19,7 +19,7 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
 
-  private val interpreter: MLFSignatureInterpreter = MLFSignatureInterpreter(mlfConfig)
+  private val interpreter: MLFSignatureProvider = MLFSignatureProvider(mlfConfig)
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFRepository

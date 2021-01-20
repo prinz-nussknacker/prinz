@@ -18,12 +18,10 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
                              metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
-    // TODO map params list and collect them according to columns order
-    logger.info("____STARTING_________")
-    val map = createInputMap(params)
-    logger.info(params.toString)
-    logger.info(map.toString)
-    modelInstance.run(map).map(response => response.toOption.get.head.asInstanceOf[AnyRef])
+    val inputMap = createInputMap(params)
+    logger.info("input params in enricher: " + params)
+    logger.info("input map for model run: " + inputMap)
+    modelInstance.run(inputMap).map(response => response.toOption.get.head.asInstanceOf[AnyRef])
   }
 
   override def parameterDefinition: List[Parameter] = modelInstance.getSignature.toInputParameterDefinition
