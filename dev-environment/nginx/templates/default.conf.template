@@ -10,6 +10,10 @@ upstream model2 {
     server ${MODEL_2_URL};
 }
 
+upstream model3 {
+    server ${MODEL_3_URL};
+}
+
 upstream bucket {
     server ${BUCKET_URL};
 }
@@ -28,6 +32,12 @@ server {
         client_max_body_size 16m;
         rewrite /ElasticnetWineModel-2/invocations /invocations break;
         proxy_pass      http://model2;
+    }
+
+    location /FraudDetection-3/invocations {
+        client_max_body_size 16m;
+        rewrite /FraudDetection-3/invocations /invocations break;
+        proxy_pass      http://model3;
     }
 
     location / {

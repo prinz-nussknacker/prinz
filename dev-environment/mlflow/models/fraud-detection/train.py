@@ -1,7 +1,6 @@
 import logging
 import sys
 import warnings
-from uuid import uuid4
 
 import mlflow
 import mlflow.sklearn
@@ -92,7 +91,7 @@ with mlflow.start_run():
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
-    model_name = "FraudDetection-{}-{}".format(model_id, uuid4())
+    model_name = "FraudDetection-{}".format(model_id)
     mlflow.sklearn.log_model(
         classifier,
         "model",

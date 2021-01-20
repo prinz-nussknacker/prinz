@@ -1,7 +1,6 @@
 package pl.touk.nussknacker.prinz.model.mlflow
 
 import com.typesafe.config.{Config, ConfigFactory}
-import org.scalatest.concurrent.ScalaFutures.whenReady
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureInterpreter}
@@ -96,27 +95,37 @@ class MLFContainerTest extends UnitIntegrationTest {
     val instance = getModelInstance().get
     val signature = instance.getSignature
     val sampleInput = sampleInputForSignature(signature)
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
-    whenReady(instance.run(signature.getInputNames.map(_.name), sampleInput)) { response =>
-      response.isRight shouldBe true
-    }
+    val response = Await.ready(instance.run(signature.getInputNames.map(_.name), sampleInput), awaitTimeout)
+    response.value.isDefined shouldBe true
   }
 
   it should "have models that returns different values for the same input" in {
-    val instances = List(getModelInstance(_.head).get, getModelInstance(_.last).get)
+    val instances = List(
+      getModelInstance(getElasticnetWineModelModel(1)).get,
+      getModelInstance(getElasticnetWineModelModel(2)).get
+    )
     val signatures = instances.map(_.getSignature)
     val sampleInputs = signatures.map(sampleInputForSignature)
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     (instances, signatures, sampleInputs)
       .zipped
       .map { case (instance, signature, input) => instance.run(signature.getInputNames.map(_.name), input) }
-      .map { future => Await.result(future, FiniteDuration(500, TimeUnit.MILLISECONDS)) }
+      .map { future => Await.result(future, awaitTimeout) }
       .map(_.right.get)
       .groupBy(_.toString())
       .size should be > 1
   }
 
-  private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = _.head) = {
+  it should "have fraud detection model" in {
+    val instance = getModelInstance(getFraudDetectionModel)
+
+    instance.isDefined shouldBe true
+  }
+
+  private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)) = {
     val repository = new MLFRepository
     val model = repository.listModels.toOption.map(extract)
     model.map(_.toModelInstance)
@@ -127,4 +136,10 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   private def sampleInputForSignature(signature: ModelSignature) =
     List(Seq.tabulate(signature.getInputNames.size)(_.toDouble).toList)
+
+  private def getFraudDetectionModel: List[MLFRegisteredModel] => MLFRegisteredModel =
+    models => models.filter(_.name.name.startsWith("FraudDetection")).head
+
+  private def getElasticnetWineModelModel(modelId: Int): List[MLFRegisteredModel] => MLFRegisteredModel =
+    models => models.filter(_.name.name.startsWith("ElasticnetWineModel-" + modelId)).head
 }
