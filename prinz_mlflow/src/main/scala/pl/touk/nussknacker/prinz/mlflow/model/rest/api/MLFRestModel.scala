@@ -1,6 +1,7 @@
 package pl.touk.nussknacker.prinz.mlflow.model.rest.api
 
 import io.circe.generic.JsonCodec
+import pl.touk.nussknacker.prinz.mlflow.converter.MLFDataTypeWrapper
 
 @JsonCodec case class MLFRestRegisteredModelVersion(name: String,
                                                     version: String,
@@ -21,6 +22,8 @@ case class MLFRestModelName(name: String)
 case class MLFRestRunId(id: String)
 
 case class MLFRestInvokeBody(stringBody: String)
+
+@JsonCodec(encodeOnly = true) case class Dataframe(columns: List[String], data: List[List[MLFDataTypeWrapper]])
 
 @JsonCodec case class MLFRestRunInfo(run_id: String,
                                      run_uuid: String,

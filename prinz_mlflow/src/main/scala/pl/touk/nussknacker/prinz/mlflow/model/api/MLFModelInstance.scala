@@ -4,7 +4,6 @@ import com.typesafe.scalalogging.LazyLogging
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFDataConverter
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestInvokeBody
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFInvokeRestClient
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException, SignatureName}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
@@ -22,10 +21,9 @@ case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
       Future(Left(new InvalidInputModelRunException("Mismatched input types.")))
     }
     else {
-      val jsonDataString = MLFDataConverter.inputToJsonString(inputMap, getSignature)
-      logger.info("Send json data to mlflow model: {}", jsonDataString)
-      val invokeBody = MLFRestInvokeBody(jsonDataString)
-      invokeRestClient.invoke(invokeBody, config.modelLocationStrategy)
+      val dataframe = MLFDataConverter.inputToDataframe(inputMap, getSignature)
+      logger.info("Send dataframe to mlflow model: {}", dataframe)
+      invokeRestClient.invoke(dataframe, config.modelLocationStrategy)
         .map { response =>
           logger.info("Response from mlflow model: {}", response)
           response

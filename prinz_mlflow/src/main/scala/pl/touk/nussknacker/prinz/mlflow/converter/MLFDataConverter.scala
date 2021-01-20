@@ -3,14 +3,11 @@ package pl.touk.nussknacker.prinz.mlflow.converter
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.jawn.decode
-import io.circe.generic.auto.exportEncoder
-import io.circe.syntax.EncoderOps
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureProvider}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 object MLFDataConverter extends LazyLogging {
-
-  private case class Dataframe(columns: List[String], data: List[List[MLFDataTypeWrapper]])
 
   def outputToResultMap(output: String, signature: ModelSignature): Map[String, AnyRef] = {
     // TODO take into account the signature of model when parsing output
@@ -23,7 +20,7 @@ object MLFDataConverter extends LazyLogging {
     }.get
   }
 
-  def inputToJsonString(input: VectorMultimap[String, AnyRef], signature: ModelSignature): String = {
+  def inputToDataframe(input: VectorMultimap[String, AnyRef], signature: ModelSignature): Dataframe = {
     if (!isMultimapConvertible(input)) {
       throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
     }
@@ -37,8 +34,7 @@ object MLFDataConverter extends LazyLogging {
       .map { case (_, v) => v.map(_._1).toList }
       .toList
 
-    val dataframe = Dataframe(columns, data)
-    dataframe.asJson.toString()
+    Dataframe(columns, data)
   }
 
   private def toNamedByIndexAnyRefValue(valueIndex: (Double, Int)): (String, AnyRef) =
