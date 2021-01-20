@@ -33,8 +33,8 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
     case "float" => Typed[Float]
     case "double" => Typed[Double]
     case "string" => Typed[String]
-    case "binary" => Typed[Array[Byte]]
-    case _ => throw new IllegalArgumentException("BLAD W MLF data")
+    case "binary" => throw new IllegalStateException("Not yet supported binary data type")
+    case _ => throw new IllegalArgumentException("Unknown MLFDataType: " + typeName)
   }
 
   private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {
@@ -57,10 +57,17 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
   private def extractDefinition[A](input: String)(implicit decoder: Decoder[List[A]]): Option[List[A]] =
     decode(input).toOption
 
-  private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature =
-    ModelSignature(
-      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
-      for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"),
-        SignatureType(fromMLFDataType(o.`type`)))
-    )
+  private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature = {
+    val signatureInputs = definition.inputs.map { i =>
+      SignatureField(
+        SignatureName(i.name),
+        SignatureType(fromMLFDataType(i.`type`)))
+    }
+    val signatureOutputs = for ((o, index) <- definition.output.zipWithIndex) yield
+      SignatureField(
+        SignatureName(s"output_$index"),
+        SignatureType(fromMLFDataType(o.`type`))
+      )
+    ModelSignature(signatureInputs, signatureOutputs)
+  }
 }

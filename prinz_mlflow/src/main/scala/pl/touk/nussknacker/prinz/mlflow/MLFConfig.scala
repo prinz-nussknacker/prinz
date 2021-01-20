@@ -5,11 +5,10 @@ import com.typesafe.config.Config
 import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFModelLocationStrategy}
 import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl, url}
 
-case class MLFConfig(private implicit val config: Config) {
+case class MLFConfig(modelLocationStrategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy)
+                    (private implicit val config: Config) {
 
   private implicit val BASE_CONFIG_PATH: String = "mlflow."
-
-  val modelLocationStrategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy
 
   val baseApiPath: String = s"/api/2.0/mlflow"
 

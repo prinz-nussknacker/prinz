@@ -11,49 +11,34 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 object MLFDataConverter extends LazyLogging {
 
-  case class MLFType(val typ: String, val v: AnyRef)
-
-  implicit val encodeMLF: Encoder[MLFType] = new Encoder[MLFType] {
-    override def apply(a: MLFType): Json = a.typ match {
-      case "integer" => Json.fromInt(a.v.asInstanceOf[Integer])
-      case "double" => Json.fromDoubleOrNull(a.v.asInstanceOf[java.lang.Double])
-    }
-  }
-
   implicit private val encodeDecimalOrString: Encoder[Either[BigDecimal, String]] =
     Encoder.instance(_.fold(_.asJson, _.asJson))
 
   implicit private val decodeDecimalOrString: Decoder[Either[BigDecimal, String]] =
     Decoder[BigDecimal].map(Left(_)).or(Decoder[String].map(Right(_)))
 
-  case class Dataframe(columns: List[String], data: List[List[MLFType]]) {
+  case class Dataframe(columns: List[String], data: List[List[MLFDataTypeWrapper]]) {
 
-    def toList: List[(String, MLFType)] =
+    def toList: List[(String, MLFDataTypeWrapper)] =
       (for (i <- columns.indices; record <- data) yield (columns(i), record(i))).toList
-  }
-
-  def extractType(signature: ModelSignature, columns: List[String], index: Int): String = {
-    //signature.getInputValueType(SignatureName(columns(index))).get.typingResult.toString
-    "double"
   }
 
   def toJsonString(multimap: VectorMultimap[String, AnyRef], signature: ModelSignature): String = {
     if (!isMultimapConvertible(multimap)) {
-      throw new IllegalArgumentException("Invalid multimap")
+      throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
     }
 
     val columns = multimap.keys.toList
     val data = multimap
       .values
-      .flatMap(_.zipWithIndex) //(val, idx)
-      .map { case (v, idx) => (MLFType(extractType(signature, columns, idx), v), idx)}
-      .groupBy { case (num, idx) => idx }
-      .map { case (k, v) => v.map(_._1).toList }
+      .flatMap(_.zipWithIndex)
+      .map { case (v, idx) => (MLFDataTypeWrapper(signature, columns, idx, v), idx) }
+      .groupBy { case (_, idx) => idx }
+      .map { case (_, v) => v.map(_._1).toList }
       .toList
 
-    val test = Dataframe(columns, data).asJson.toString()
-    logger.info(test)
-    test
+    val dataframe = Dataframe(columns, data)
+    dataframe.asJson.toString()
   }
 
   private def isDataframeConvertible(dataframe: Dataframe): Boolean =

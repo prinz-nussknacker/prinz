@@ -13,5 +13,5 @@ case class MLFInvokeRestClient(baseUrl: String, model: MLFRegisteredModel) {
   private val restClient = new AsyncRestJsonClient(baseUrl)
 
   def invoke(body: MLFRestInvokeBody, strategy: MLFModelLocationStrategy): Future[RestClientResponse[List[Double]]] =
-    restClient.postJsonBody[String, List[Double]](strategy.createModelRelativeUrl(model), body.body)
+    restClient.postJsonBody[String, List[Double]](strategy.createModelRelativeUrl(model), body.stringBody)
 }
