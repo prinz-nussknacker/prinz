@@ -28,8 +28,8 @@ case class ModelSignature private(signatureInputs: List[SignatureField], signatu
 
   def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
 
-  override def toString: String = getClass.getSimpleName + "(\n"
-    "inputs: " + signatureInputs + "\n"
+  override def toString: String = getClass.getSimpleName + "(\n" +
+    "inputs: " + signatureInputs + "\n" +
     "outputs: " + signatureOutputs + "\n)"
 }
 
