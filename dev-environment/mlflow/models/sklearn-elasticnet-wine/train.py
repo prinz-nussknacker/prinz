@@ -6,7 +6,6 @@
 import os
 import warnings
 import sys
-from uuid import uuid4
 
 import pandas as pd
 import numpy as np
@@ -89,6 +88,6 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}-{}".format(model_id, uuid4()), signature=signature)
+            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}".format(model_id), signature=signature)
         else:
             mlflow.sklearn.log_model(lr, "model")
