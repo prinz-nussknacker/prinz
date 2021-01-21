@@ -28,7 +28,7 @@ case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
           logger.info("Response from mlflow model: {}", response)
           response
             .left.map(exception => new ModelRunException(exception))
-            .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
+//            .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
         }
     }
 
