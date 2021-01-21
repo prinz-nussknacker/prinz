@@ -1,16 +1,15 @@
 package pl.touk.nussknacker.prinz.mlflow.converter
 
-import io.circe.{ Encoder,  Json}
+import io.circe.{Encoder, Json}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 
 
-class MLFDataTypeWrapper(val typing: TypingResult,
-                         val dataValue: AnyRef)
+case class MLFInputDataTypeWrapper(typing: TypingResult, dataValue: AnyRef)
 
-object MLFDataTypeWrapper {
+object MLFInputDataTypeWrapper {
 
-  implicit val encodeMLFDataType: Encoder[MLFDataTypeWrapper] = (data: MLFDataTypeWrapper) =>
+  implicit val encodeMLFDataType: Encoder[MLFInputDataTypeWrapper] = (data: MLFInputDataTypeWrapper) =>
     if (data.typing.canBeSubclassOf(Typed[Boolean])) {
       Json.fromBoolean(data.dataValue.asInstanceOf[Boolean])
     } else if (data.typing.canBeSubclassOf(Typed[Long])) {
@@ -25,8 +24,8 @@ object MLFDataTypeWrapper {
       throw new IllegalArgumentException("Unknown mlflow data type wrapper type: " + data.typing)
     }
 
-  def apply(signature: ModelSignature, columns: List[String], index: Int, value: AnyRef): MLFDataTypeWrapper =
-    new MLFDataTypeWrapper(extractType(signature, columns, index), value)
+  def apply(signature: ModelSignature, columns: List[String], index: Int, value: AnyRef): MLFInputDataTypeWrapper =
+    new MLFInputDataTypeWrapper(extractType(signature, columns, index), value)
 
   private def extractType(signature: ModelSignature, columns: List[String], index: Int): TypingResult = {
     val columnName = SignatureName(columns(index))

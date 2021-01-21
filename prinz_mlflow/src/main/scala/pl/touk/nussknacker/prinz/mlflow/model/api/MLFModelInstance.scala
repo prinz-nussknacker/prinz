@@ -23,12 +23,12 @@ case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
     else {
       val dataframe = MLFDataConverter.inputToDataframe(inputMap, getSignature)
       logger.info("Send dataframe to mlflow model: {}", dataframe)
-      invokeRestClient.invoke(dataframe, config.modelLocationStrategy)
+      invokeRestClient.invoke(dataframe, getSignature, config.modelLocationStrategy)
         .map { response =>
           logger.info("Response from mlflow model: {}", response)
           response
             .left.map(exception => new ModelRunException(exception))
-//            .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
+            .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
         }
     }
 

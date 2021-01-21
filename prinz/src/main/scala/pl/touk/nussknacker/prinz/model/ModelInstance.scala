@@ -6,7 +6,7 @@ import scala.concurrent.Future
 
 abstract class ModelInstance(model: Model, protected val signatureInterpreter: SignatureProvider) {
 
-  type ModelRunResult = Future[Either[ModelRunException, List[Double]]]
+  type ModelRunResult = Future[Either[ModelRunException, Map[String, _]]]
 
   private val signatureOption: Option[ModelSignature] =
     signatureInterpreter.provideSignature(model)

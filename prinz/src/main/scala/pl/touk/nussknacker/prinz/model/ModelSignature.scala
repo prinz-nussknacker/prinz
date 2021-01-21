@@ -16,9 +16,13 @@ case class ModelSignature private(signatureInputs: List[SignatureField], signatu
   def getOutputDefinition: TypedObjectTypingResult =
     TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)))
 
-  def getInputNames: List[SignatureName] = signatureInputMap.keys.toList
+  def getInputNames: List[SignatureName] = signatureInputs.map(_.signatureName)
 
-  def getOutputNames: List[SignatureName] = signatureOutputMap.keys.toList
+  def getOutputNames: List[SignatureName] = signatureOutputs.map(_.signatureName)
+
+  def getSignatureInputs: List[SignatureField] = signatureInputs
+
+  def getSignatureOutputs: List[SignatureField] = signatureOutputs
 
   def getInputValueType(valueName: SignatureName): Option[SignatureType] = signatureInputMap.get(valueName)
 
@@ -28,9 +32,7 @@ case class ModelSignature private(signatureInputs: List[SignatureField], signatu
 
   def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
 
-  override def toString: String = getClass.getSimpleName + "(\n" +
-    "inputs: " + signatureInputs + "\n" +
-    "outputs: " + signatureOutputs + "\n)"
+  override def toString: String = s"${getClass.getSimpleName}(\ninputs: $signatureInputs\noutputs: $signatureOutputs\n)"
 }
 
 case class SignatureName(name: String)
