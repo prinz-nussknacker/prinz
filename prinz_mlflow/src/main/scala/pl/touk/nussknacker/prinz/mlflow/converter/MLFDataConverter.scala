@@ -30,32 +30,6 @@ object MLFDataConverter extends LazyLogging {
     Dataframe(columns, data)
   }
 
-  private def getSignaturePositionedValidator(signature: ModelSignature)(index: Int, elem: Either[String, Double]): AnyRef = {
-//    val outputs = signature.getSignatureOutputs
-//    if (index >= outputs.size) {
-//      throw new IllegalArgumentException(s"Too many outputs in result - index $index not match signature: $signature")
-//    }
-//    val outputType = outputs(index).signatureType.typingResult
-//    if (outputType.canBeSubclassOf(Typed[Boolean])) {
-//      Json.fromBoolean(data.dataValue.asInstanceOf[Boolean])
-//    } else if (outputType.canBeSubclassOf(Typed[Long])) {
-//      Json.fromLong(data.dataValue.asInstanceOf[Long])
-//    } else if (outputTypecanBeSubclassOf(Typed[Double])) {
-//      Json.fromDoubleOrNull(data.dataValue.asInstanceOf[Double])
-//    } else if (outputType.canBeSubclassOf(Typed[Float])) {
-//      Json.fromFloatOrNull(data.dataValue.asInstanceOf[Float])
-//    } else if (outputType.canBeSubclassOf(Typed[String])) {
-//      Json.fromString(data.dataValue.asInstanceOf[String])
-//    } else {
-//      throw new IllegalArgumentException("Unknown mlflow data type wrapper type: " + data.typing)
-//    }
-
-    signature
-  }
-
-  private def isDataframeConvertible(dataframe: Dataframe): Boolean =
-    !dataframe.data.exists(record => record.length != dataframe.columns.length)
-
   private def isMultimapConvertible(multimap: VectorMultimap[String, AnyRef]): Boolean =
     multimap.values.map(_.size).toSet.size <= 1
 }
