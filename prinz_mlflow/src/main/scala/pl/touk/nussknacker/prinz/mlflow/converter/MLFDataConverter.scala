@@ -1,57 +1,38 @@
 package pl.touk.nussknacker.prinz.mlflow.converter
 
-import io.circe.{Decoder, Encoder, Json}
-import io.circe.generic.auto.{exportDecoder, exportEncoder}
-import io.circe.jawn.{parse, decode}
-import io.circe.syntax.EncoderOps
+import com.typesafe.scalalogging.LazyLogging
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
+import pl.touk.nussknacker.prinz.model.ModelSignature
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-object MLFDataConverter {
+object MLFDataConverter extends LazyLogging {
 
-  implicit private val encodeDecimalOrString: Encoder[Either[BigDecimal, String]] =
-    Encoder.instance(_.fold(_.asJson, _.asJson))
-
-  implicit private val decodeDecimalOrString: Decoder[Either[BigDecimal, String]] =
-    Decoder[BigDecimal].map(Left(_)).or(Decoder[String].map(Right(_)))
-
-  case class Dataframe(columns: List[String], data: List[List[Either[BigDecimal, String]]]) {
-
-    def toList: List[(String, Either[BigDecimal, String])] =
-      (for (i <- columns.indices; record <- data) yield (columns(i), record(i))).toList
+  def outputToResultMap(output: MLFOutputDataTypeWrapper, signature: ModelSignature): Map[String, _] = {
+    val outNames = signature.getOutputNames.map(_.name)
+    outNames.zip(output.outputData)
+      .toMap
   }
 
-  def toMultimap(data: String): VectorMultimap[String, Either[BigDecimal, String]] = {
-    val parsedData = parse(data).getOrElse(Json.Null).noSpaces
-    val dataframe = decode[Dataframe](parsedData)
-      .getOrElse(throw new IllegalArgumentException("Invalid data"))
+  def inputToDataframe(input: VectorMultimap[String, AnyRef], signature: ModelSignature): Dataframe =
+    if (!isMultimapConvertible(input)) {
+      throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
+    }
+    else if (input.isEmpty) {
+      Dataframe()
+    }
+    else {
+      val columns = input.keys.toList
+      val numberOfDataSeries = input.values.map(_.size).head
+      val data = (0 until numberOfDataSeries).map(seriesIndex =>
+        columns.map(columnName => {
+          val value = input.get(columnName).get(seriesIndex)
+          MLFInputDataTypeWrapper(signature, columnName, value)
+        })
+      ).toList
 
-    if (!isDataframeConvertible(dataframe)) {
-      throw new IllegalArgumentException("Invalid data")
+      Dataframe(columns, data)
     }
 
-    val list = dataframe.toList
-    VectorMultimap(list)
-  }
-
-  def toJsonString(multimap: VectorMultimap[String, Either[BigDecimal, String]]): String = {
-    if (!isMultimapConvertible(multimap)) {
-      throw new IllegalArgumentException("Invalid multimap")
-    }
-
-    val columns = multimap.keys.toList
-    val data = multimap
-      .values
-      .flatMap(_.zipWithIndex)
-      .groupBy { case (num, idx) => idx }
-      .map { case (k, v) => v.map(_._1).toList }
-      .toList
-
-    Dataframe(columns, data).asJson.toString()
-  }
-
-  private def isDataframeConvertible(dataframe: Dataframe): Boolean =
-    !dataframe.data.exists(record => record.length != dataframe.columns.length)
-
-  private def isMultimapConvertible(multimap: VectorMultimap[String, Either[BigDecimal, String]]): Boolean =
+  private def isMultimapConvertible(multimap: VectorMultimap[String, AnyRef]): Boolean =
     multimap.values.map(_.size).toSet.size <= 1
 }

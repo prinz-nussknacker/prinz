@@ -4,7 +4,7 @@ import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter}
 import pl.touk.nussknacker.engine.api.typed.typing.{TypedObjectTypingResult, TypingResult}
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
-class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
+case class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
 
   private val signatureInputMap = signatureInputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
@@ -16,9 +16,13 @@ class ModelSignature private(signatureInputs: List[SignatureField], signatureOut
   def getOutputDefinition: TypedObjectTypingResult =
     TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)))
 
-  def getInputNames: List[SignatureName] = signatureInputMap.keys.toList
+  def getInputNames: List[SignatureName] = signatureInputs.map(_.signatureName)
 
-  def getOutputNames: List[SignatureName] = signatureOutputMap.keys.toList
+  def getOutputNames: List[SignatureName] = signatureOutputs.map(_.signatureName)
+
+  def getSignatureInputs: List[SignatureField] = signatureInputs
+
+  def getSignatureOutputs: List[SignatureField] = signatureOutputs
 
   def getInputValueType(valueName: SignatureName): Option[SignatureType] = signatureInputMap.get(valueName)
 
@@ -27,6 +31,8 @@ class ModelSignature private(signatureInputs: List[SignatureField], signatureOut
   def toInputParameterDefinition: List[Parameter] = signatureInputs.map(field => field.toNussknackerParameter)
 
   def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
+
+  override def toString: String = s"${getClass.getSimpleName}(\ninputs: $signatureInputs\noutputs: $signatureOutputs\n)"
 }
 
 case class SignatureName(name: String)
@@ -37,6 +43,9 @@ case class SignatureField(signatureName: SignatureName, signatureType: Signature
 
   def toNussknackerParameter: Parameter =
     NotBlankParameter(signatureName.name, signatureType.typingResult)
+
+  override def toString: String =
+    "{" + signatureName.name + ": " + signatureType.typingResult.display + "}"
 }
 
 object ModelSignature {

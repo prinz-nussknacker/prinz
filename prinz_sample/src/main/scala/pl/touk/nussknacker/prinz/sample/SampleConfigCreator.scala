@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.sample
 import pl.touk.nussknacker.engine.api.Service
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
 import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
-import pl.touk.nussknacker.engine.flink.util.exception.BrieflyLoggingExceptionHandler
+import pl.touk.nussknacker.engine.flink.util.exception.{BrieflyLoggingExceptionHandler, VerboselyLoggingExceptionHandler}
 import pl.touk.nussknacker.engine.flink.util.sink.EmptySink
 import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
@@ -28,7 +28,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
     implicit val mlfConfig: MLFConfig = MLFConfig()(processObjectDependencies.config)
     val repo = new MLFRepository()
-    val response = repo.listModels
+      val response = repo.listModels
 
     val result = response.right.map(
       modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
@@ -41,5 +41,5 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   }
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
-    ExceptionHandlerFactory.noParams(BrieflyLoggingExceptionHandler(_))
+    ExceptionHandlerFactory.noParams(VerboselyLoggingExceptionHandler(_))
 }

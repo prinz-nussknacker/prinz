@@ -1,13 +1,15 @@
-package pl.touk.nussknacker.prinz.model.mlflow
+package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFSignatureInterpreter}
+import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
@@ -18,8 +20,6 @@ class MLFContainerTest extends UnitIntegrationTest {
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
-
-  private val interpreter: MLFSignatureInterpreter = MLFSignatureInterpreter(mlfConfig)
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFRepository
@@ -82,7 +82,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     val outputNames = signature.getOutputNames
 
     outputNames.size should equal (1)
-    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(interpreter.fromMLFDataType("double"))))
+    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(MLFSignatureInterpreter.fromMLFDataType("double"))))
 
     inputNames.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
@@ -94,10 +94,10 @@ class MLFContainerTest extends UnitIntegrationTest {
   it should "allow to run model with sample data" in {
     val instance = getModelInstance().get
     val signature = instance.getSignature
-    val sampleInput = sampleInputForSignature(signature)
+    val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
-    val response = Await.ready(instance.run(signature.getInputNames.map(_.name), sampleInput), awaitTimeout)
+    val response = Await.ready(instance.run(sampleInput), awaitTimeout)
     response.value.isDefined shouldBe true
   }
 
@@ -107,12 +107,12 @@ class MLFContainerTest extends UnitIntegrationTest {
       getModelInstance(getElasticnetWineModelModel(2)).get
     )
     val signatures = instances.map(_.getSignature)
-    val sampleInputs = signatures.map(sampleInputForSignature)
+    val sampleInputs = signatures.map(constructInputMap(0.235.asInstanceOf[AnyRef], _))
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
-    (instances, signatures, sampleInputs)
+    (instances, sampleInputs)
       .zipped
-      .map { case (instance, signature, input) => instance.run(signature.getInputNames.map(_.name), input) }
+      .map { case (instance, input) => instance.run(input) }
       .map { future => Await.result(future, awaitTimeout) }
       .map(_.right.get)
       .groupBy(_.toString())
@@ -132,14 +132,17 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def input(definition: (String, String)) =
-    SignatureField(SignatureName(definition._1), SignatureType(interpreter.fromMLFDataType(definition._2)))
-
-  private def sampleInputForSignature(signature: ModelSignature) =
-    List(Seq.tabulate(signature.getInputNames.size)(_.toDouble).toList)
+    SignatureField(SignatureName(definition._1), SignatureType(MLFSignatureInterpreter.fromMLFDataType(definition._2)))
 
   private def getFraudDetectionModel: List[MLFRegisteredModel] => MLFRegisteredModel =
     models => models.filter(_.name.name.startsWith("FraudDetection")).head
 
   private def getElasticnetWineModelModel(modelId: Int): List[MLFRegisteredModel] => MLFRegisteredModel =
     models => models.filter(_.name.name.startsWith("ElasticnetWineModel-" + modelId)).head
+
+  private def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
+    val names = signature.getInputNames.map(_.name)
+    val data = List.fill(names.length)(value)
+    VectorMultimap(names.zip(data))
+  }
 }

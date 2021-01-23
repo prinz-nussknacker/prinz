@@ -14,7 +14,7 @@ abstract class AbstractRestJsonClient(private val baseUrl: String) {
     basicRequest
       .post(uriFromRelativePath(relativePath, params.getParamsMap))
       .header("Content-Type", "application/json")
-      .body(encoder(body).toString())
+      .body(encoder(body).noSpaces)
       .response(asJson[RESPONSE])
 
   protected def createGetRequest[BODY, RESPONSE: Manifest](relativePath: String, params: RestRequestParams)

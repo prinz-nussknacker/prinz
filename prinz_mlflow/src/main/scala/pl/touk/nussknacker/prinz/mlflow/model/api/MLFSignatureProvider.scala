@@ -1,39 +1,33 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.Decoder
 import io.circe.parser.decode
 import io.circe.yaml.parser.{parse => parseYaml}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
+import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
-import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureInterpreter, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.SignatureProvider.indexedOutputName
+import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureName, SignatureProvider, SignatureType}
 
 import java.io.{InputStream, InputStreamReader, Reader}
 
-case class MLFSignatureInterpreter(private val config: MLFConfig)
-  extends SignatureInterpreter {
+
+case class MLFSignatureProvider(private val config: MLFConfig)
+  extends SignatureProvider with LazyLogging {
 
   private val bucketClient = MLFBucketClient(MLFBucketClientConfig.fromMLFConfig(config))
 
   private val restClient = MLFRestClient(MLFRestClientConfig.fromMLFConfig(config))
 
-  override def downloadSignature(model: Model): Option[ModelSignature] = model match {
+  override def provideSignature(model: Model): Option[ModelSignature] = model match {
     case model: MLFRegisteredModel => getLatestModelVersionArtifactLocation(model.getVersion.runId)
       .map(bucketClient.getMLModelFile)
       .flatMap(extractDefinitionAndCloseStream)
       .map(definitionToSignature)
     case _ => throw new IllegalArgumentException("MLFSignatureInterpreter can interpret only MLFRegisteredModels")
-  }
-
-  def fromMLFDataType(typeName: String): TypingResult = typeName match {
-    case "boolean" => Typed[Boolean]
-    case "integer" => Typed[Int]
-    case "long" => Typed[Long]
-    case "float" => Typed[Float]
-    case "double" => Typed[Double]
-    case "string" => Typed[String]
-    case "binary" => Typed[Array[Byte]]
   }
 
   private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {
@@ -56,9 +50,19 @@ case class MLFSignatureInterpreter(private val config: MLFConfig)
   private def extractDefinition[A](input: String)(implicit decoder: Decoder[List[A]]): Option[List[A]] =
     decode(input).toOption
 
-  private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature =
-    ModelSignature(
-      definition.inputs.map(i => SignatureField(SignatureName(i.name), SignatureType(fromMLFDataType(i.`type`)))),
-      for ((o, index) <- definition.output.zipWithIndex) yield SignatureField(SignatureName(s"output_$index"), SignatureType(fromMLFDataType(o.`type`)))
-    )
+  private def definitionToSignature(definition: MLFYamlModelDefinition): ModelSignature = {
+    val signatureInputs = definition.inputs.map { i =>
+      SignatureField(
+        SignatureName(i.name),
+        SignatureType(MLFSignatureInterpreter.fromMLFDataType(i.`type`)))
+    }
+    val signatureOutputs = for ((o, index) <- definition.output.zipWithIndex) yield
+      SignatureField(
+        indexedOutputName(index),
+        SignatureType(MLFSignatureInterpreter.fromMLFDataType(o.`type`))
+      )
+    val signature = ModelSignature(signatureInputs, signatureOutputs)
+    logger.info("Downloaded mlflow signature: {}", signature)
+    signature
+  }
 }
