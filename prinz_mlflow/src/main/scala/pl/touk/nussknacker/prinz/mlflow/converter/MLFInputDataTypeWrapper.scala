@@ -5,7 +5,9 @@ import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 
 
-case class MLFInputDataTypeWrapper(typing: TypingResult, dataValue: AnyRef)
+case class MLFInputDataTypeWrapper(typing: TypingResult, dataValue: AnyRef) {
+  override def toString: String = s"MLFInputDataTypeWrapper($dataValue: ${typing.display})"
+}
 
 object MLFInputDataTypeWrapper {
 

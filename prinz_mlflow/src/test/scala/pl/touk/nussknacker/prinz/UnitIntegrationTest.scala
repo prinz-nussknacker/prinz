@@ -36,7 +36,7 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
 object UnitIntegrationTest {
 
-  private val DOCKER_COMPOSE_FILE = new File("../dev-environment/docker-compose.yaml")
+  private val DOCKER_COMPOSE_FILE = new File("./dev-environment/docker-compose.yaml")
 
   private val TIMEOUT_MINUTES = 5
 

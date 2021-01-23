@@ -5,6 +5,8 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
 import pl.touk.nussknacker.prinz.model.ModelSignature
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
+import scala.collection.mutable
+
 object MLFDataConverter extends LazyLogging {
 
   def outputToResultMap(output: MLFOutputDataTypeWrapper, signature: ModelSignature): Map[String, _] = {
@@ -19,16 +21,15 @@ object MLFDataConverter extends LazyLogging {
     }
 
     val columns = input.keys.toList
-    val data = input
-      .values
-      .zipWithIndex
-      .map { case(l, idx) => l.map((_, idx))}
-      .flatten
-      .map { case (v, idx) => (MLFInputDataTypeWrapper(signature, columns, idx, v), idx) }
-      .groupBy { case (_, idx) => idx }
-      .toList
-      .sortBy { case (idx, it) => idx}
-      .map { case (idx, it) => it.map(_._1).toList}
+    val numberOfDataSeries = input.values.map(_.size).head
+
+    val data = (0 until numberOfDataSeries).map(seriesIndex =>
+      columns.indices.map(columnIndex => {
+        val columnName = columns(columnIndex)
+        val value = input.get(columnName).get(seriesIndex)
+        MLFInputDataTypeWrapper(signature, columns, columnIndex, value)
+      }).toList
+    ).toList
 
     Dataframe(columns, data)
   }
