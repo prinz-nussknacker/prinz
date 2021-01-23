@@ -23,7 +23,8 @@ case class MLFRestRunId(id: String)
 
 case class MLFRestInvokeBody(stringBody: String)
 
-@JsonCodec(encodeOnly = true) case class Dataframe(columns: List[String], data: List[List[MLFInputDataTypeWrapper]])
+@JsonCodec(encodeOnly = true) case class Dataframe(columns: List[String] = List.empty,
+                                                   data: List[List[MLFInputDataTypeWrapper]] = List.empty)
 
 @JsonCodec case class MLFRestRunInfo(run_id: String,
                                      run_uuid: String,

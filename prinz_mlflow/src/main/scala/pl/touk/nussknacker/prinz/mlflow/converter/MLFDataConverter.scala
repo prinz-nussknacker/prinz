@@ -13,24 +13,25 @@ object MLFDataConverter extends LazyLogging {
       .toMap
   }
 
-  def inputToDataframe(input: VectorMultimap[String, AnyRef], signature: ModelSignature): Dataframe = {
+  def inputToDataframe(input: VectorMultimap[String, AnyRef], signature: ModelSignature): Dataframe =
     if (!isMultimapConvertible(input)) {
       throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
     }
+    else if (input.size < 1) {
+      Dataframe()
+    }
+    else {
+      val columns = input.keys.toList
+      val numberOfDataSeries = input.values.map(_.size).head
+      val data = (0 until numberOfDataSeries).map(seriesIndex =>
+        columns.map(columnName => {
+          val value = input.get(columnName).get(seriesIndex)
+          MLFInputDataTypeWrapper(signature, columnName, value)
+        })
+      ).toList
 
-    val columns = input.keys.toList
-    val numberOfDataSeries = input.values.map(_.size).head
-
-    val data = (0 until numberOfDataSeries).map(seriesIndex =>
-      columns.indices.map(columnIndex => {
-        val columnName = columns(columnIndex)
-        val value = input.get(columnName).get(seriesIndex)
-        MLFInputDataTypeWrapper(signature, columns, columnIndex, value)
-      }).toList
-    ).toList
-
-    Dataframe(columns, data)
-  }
+      Dataframe(columns, data)
+    }
 
   private def isMultimapConvertible(multimap: VectorMultimap[String, AnyRef]): Boolean =
     multimap.values.map(_.size).toSet.size <= 1

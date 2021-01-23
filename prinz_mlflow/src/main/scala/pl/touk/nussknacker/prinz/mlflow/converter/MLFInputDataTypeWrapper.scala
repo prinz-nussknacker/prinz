@@ -21,13 +21,13 @@ object MLFInputDataTypeWrapper {
       case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: ${data.typing}")
     }
 
-  def apply(signature: ModelSignature, columns: List[String], index: Int, value: AnyRef): MLFInputDataTypeWrapper = {
-    val columnType = extractColumnType(signature, columns, index)
+  def apply(signature: ModelSignature, columnName: String, value: AnyRef): MLFInputDataTypeWrapper = {
+    val columnType = extractColumnType(signature, columnName)
     new MLFInputDataTypeWrapper(columnType, value)
   }
 
-  private def extractColumnType(signature: ModelSignature, columns: List[String], index: Int): TypingResult = {
-    val columnName = SignatureName(columns(index))
-    signature.getInputValueType(columnName).get.typingResult
+  private def extractColumnType(signature: ModelSignature, columnName: String): TypingResult = {
+    val signatureColumnName = SignatureName(columnName)
+    signature.getInputValueType(signatureColumnName).get.typingResult
   }
 }
