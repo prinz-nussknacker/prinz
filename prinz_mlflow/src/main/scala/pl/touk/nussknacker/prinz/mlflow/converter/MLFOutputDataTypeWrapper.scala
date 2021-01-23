@@ -12,8 +12,9 @@ object MLFOutputDataTypeWrapper {
   def getDecoderForSignature(signature: ModelSignature): Decoder[MLFOutputDataTypeWrapper] = new Decoder[MLFOutputDataTypeWrapper] {
 
     override def apply(c: HCursor): Result[MLFOutputDataTypeWrapper] = {
-      val result = c.values
+      val indexedArray = c.values
         .map(_.zipWithIndex)
+      val result = indexedArray
         .map(iterable => iterable.map { case (json, idx) => json.as(getDecoderForIndex(idx)) })
         .flatMap(matchAllResult)
       result match {
