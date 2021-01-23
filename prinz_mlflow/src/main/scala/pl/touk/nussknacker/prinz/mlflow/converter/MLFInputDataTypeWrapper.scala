@@ -5,7 +5,7 @@ import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 
 
-case class MLFInputDataTypeWrapper(typing: TypingResult, dataValue: AnyRef) {
+case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: AnyRef) {
   override def toString: String = s"MLFInputDataTypeWrapper($dataValue: ${typing.display})"
 }
 
@@ -21,10 +21,12 @@ object MLFInputDataTypeWrapper {
       case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: ${data.typing}")
     }
 
-  def apply(signature: ModelSignature, columns: List[String], index: Int, value: AnyRef): MLFInputDataTypeWrapper =
-    new MLFInputDataTypeWrapper(extractType(signature, columns, index), value)
+  def apply(signature: ModelSignature, columns: List[String], index: Int, value: AnyRef): MLFInputDataTypeWrapper = {
+    val columnType = extractColumnType(signature, columns, index)
+    new MLFInputDataTypeWrapper(columnType, value)
+  }
 
-  private def extractType(signature: ModelSignature, columns: List[String], index: Int): TypingResult = {
+  private def extractColumnType(signature: ModelSignature, columns: List[String], index: Int): TypingResult = {
     val columnName = SignatureName(columns(index))
     signature.getInputValueType(columnName).get.typingResult
   }

@@ -12,10 +12,10 @@ object MLFOutputDataTypeWrapper {
   def getDecoderForSignature(signature: ModelSignature): Decoder[MLFOutputDataTypeWrapper] = new Decoder[MLFOutputDataTypeWrapper] {
 
     override def apply(c: HCursor): Result[MLFOutputDataTypeWrapper] = {
-      val indexedArray = c.values
+      val indexedJsonArrayOption = c.values
         .map(_.zipWithIndex)
-      val result = indexedArray
-        .map(iterable => iterable.map { case (json, idx) => json.as(getDecoderForIndex(idx)) })
+      val result = indexedJsonArrayOption
+        .map(indexedJsonArray => indexedJsonArray.map { case (json, idx) => json.as(getDecoderForIndex(idx)) })
         .flatMap(matchAllResult)
       result match {
         case Some(value) => Right(MLFOutputDataTypeWrapper(value))
@@ -24,19 +24,18 @@ object MLFOutputDataTypeWrapper {
     }
 
     private def getDecoderForIndex(index: Int): Decoder[_] = {
-      val output = signature.getOutputNames(index)
-      getDecoderForType(signature.getOutputValueType(output).get.typingResult)
+      val outputName = signature.getOutputNames(index)
+      val outputType = signature.getOutputValueType(outputName).get.typingResult
+      getDecoderForType(outputType)
     }
 
-    private def getDecoderForType(typing: TypingResult): Decoder[_] = {
-      typing match {
-        case t: TypingResult if t.canBeSubclassOf(Typed[Boolean]) => Decoder.decodeBoolean
-        case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => Decoder.decodeLong
-        case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => Decoder.decodeDouble
-        case t: TypingResult if t.canBeSubclassOf(Typed[Float]) => Decoder.decodeFloat
-        case t: TypingResult if t.canBeSubclassOf(Typed[String]) => Decoder.decodeString
-        case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: $typing")
-      }
+    private def getDecoderForType(typing: TypingResult): Decoder[_] = typing match {
+      case t: TypingResult if t.canBeSubclassOf(Typed[Boolean]) => Decoder.decodeBoolean
+      case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => Decoder.decodeLong
+      case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => Decoder.decodeDouble
+      case t: TypingResult if t.canBeSubclassOf(Typed[Float]) => Decoder.decodeFloat
+      case t: TypingResult if t.canBeSubclassOf(Typed[String]) => Decoder.decodeString
+      case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: $typing")
     }
 
     private def matchAllResult[A](l:  Iterable[Result[A]]): Option[List[A]] = l.foldRight(Option(List.empty[A])) {

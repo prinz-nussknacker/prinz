@@ -5,8 +5,6 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
 import pl.touk.nussknacker.prinz.model.ModelSignature
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-import scala.collection.mutable
-
 object MLFDataConverter extends LazyLogging {
 
   def outputToResultMap(output: MLFOutputDataTypeWrapper, signature: ModelSignature): Map[String, _] = {
