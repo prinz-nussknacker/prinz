@@ -10,6 +10,7 @@ import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import java.util.concurrent.TimeUnit
 
+import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Await
@@ -20,8 +21,6 @@ class MLFContainerTest extends UnitIntegrationTest {
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
-
-  private val interpreter: MLFSignatureProvider = MLFSignatureProvider(mlfConfig)
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFRepository
@@ -64,7 +63,7 @@ class MLFContainerTest extends UnitIntegrationTest {
     signature.isDefined shouldBe true
   }
 
-  /*it should "have specific for tests model signature" in {
+  it should "have specific for tests model signature" in {
     val expectedSignatureInput = List(
       ("fixed acidity", "double"),
       ("volatile acidity", "double"),
@@ -84,14 +83,14 @@ class MLFContainerTest extends UnitIntegrationTest {
     val outputNames = signature.getOutputNames
 
     outputNames.size should equal (1)
-    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(interpreter.fromMLFDataType("double"))))
+    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(MLFSignatureInterpreter.fromMLFDataType("double"))))
 
     inputNames.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
       .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
     expectedSignatureInput.map(input)
       .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
-  }*/
+  }
 
   it should "allow to run model with sample data" in {
     val instance = getModelInstance().get
@@ -103,23 +102,23 @@ class MLFContainerTest extends UnitIntegrationTest {
     response.value.isDefined shouldBe true
   }
 
-  /*it should "have models that returns different values for the same input" in {
+  it should "have models that returns different values for the same input" in {
     val instances = List(
       getModelInstance(getElasticnetWineModelModel(1)).get,
       getModelInstance(getElasticnetWineModelModel(2)).get
     )
     val signatures = instances.map(_.getSignature)
-    val sampleInputs = signatures.map(sampleInputForSignature)
+    val sampleInputs = signatures.map(constructInputMap(0.235.asInstanceOf[AnyRef], _))
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
-    (instances, signatures, sampleInputs)
+    (instances, sampleInputs)
       .zipped
-      .map { case (instance, signature, input) => instance.run(signature.getInputNames.map(_.name), input) }
+      .map { case (instance, input) => instance.run(input) }
       .map { future => Await.result(future, awaitTimeout) }
       .map(_.right.get)
       .groupBy(_.toString())
       .size should be > 1
-  }*/
+  }
 
   it should "have fraud detection model" in {
     val instance = getModelInstance(getFraudDetectionModel)
@@ -133,11 +132,8 @@ class MLFContainerTest extends UnitIntegrationTest {
     model.map(_.toModelInstance)
   }
 
-  /*private def input(definition: (String, String)) =
-    SignatureField(SignatureName(definition._1), SignatureType(interpreter.fromMLFDataType(definition._2)))*/
-
-  private def sampleInputForSignature(signature: ModelSignature) =
-    List(Seq.tabulate(signature.getInputNames.size)(_.toDouble).toList)
+  private def input(definition: (String, String)) =
+    SignatureField(SignatureName(definition._1), SignatureType(MLFSignatureInterpreter.fromMLFDataType(definition._2)))
 
   private def getFraudDetectionModel: List[MLFRegisteredModel] => MLFRegisteredModel =
     models => models.filter(_.name.name.startsWith("FraudDetection")).head

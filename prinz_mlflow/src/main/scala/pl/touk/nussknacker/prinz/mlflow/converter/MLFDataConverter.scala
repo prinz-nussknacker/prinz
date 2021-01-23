@@ -21,11 +21,14 @@ object MLFDataConverter extends LazyLogging {
     val columns = input.keys.toList
     val data = input
       .values
-      .flatMap(_.zipWithIndex)
+      .zipWithIndex
+      .map { case(l, idx) => l.map((_, idx))}
+      .flatten
       .map { case (v, idx) => (MLFInputDataTypeWrapper(signature, columns, idx, v), idx) }
       .groupBy { case (_, idx) => idx }
-      .map { case (_, v) => v.map(_._1).toList }
       .toList
+      .sortBy { case (idx, it) => idx}
+      .map { case (idx, it) => it.map(_._1).toList}
 
     Dataframe(columns, data)
   }
