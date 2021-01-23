@@ -4,12 +4,12 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Future
 
-abstract class ModelInstance(model: Model, protected val signatureInterpreter: SignatureProvider) {
+abstract class ModelInstance(model: Model, protected val signatureProvider: SignatureProvider) {
 
   type ModelRunResult = Future[Either[ModelRunException, Map[String, _]]]
 
   private val signatureOption: Option[ModelSignature] =
-    signatureInterpreter.provideSignature(model)
+    signatureProvider.provideSignature(model)
 
   def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult
 

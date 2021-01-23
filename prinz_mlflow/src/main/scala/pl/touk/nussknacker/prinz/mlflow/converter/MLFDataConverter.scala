@@ -17,7 +17,7 @@ object MLFDataConverter extends LazyLogging {
     if (!isMultimapConvertible(input)) {
       throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
     }
-    else if (input.size < 1) {
+    else if (input.isEmpty) {
       Dataframe()
     }
     else {
