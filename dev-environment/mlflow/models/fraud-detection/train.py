@@ -41,13 +41,13 @@ data.dropna()
 data = data.drop(["step", "customer", "zipcodeOri", "merchant", "zipMerchant"], axis="columns")
 
 input_schema = Schema([
-    ColSpec("string", "Age"),
-    ColSpec("string", "Gender"),
-    ColSpec("string", "Category"),
-    ColSpec("float", "Amount")
+    ColSpec("string", "age"),
+    ColSpec("string", "gender"),
+    ColSpec("string", "category"),
+    ColSpec("double", "amount")
 ])
 output_schema = Schema([
-    ColSpec("boolean", "Fraud")
+    ColSpec("boolean", "fraud")
 ])
 signature = ModelSignature(inputs=input_schema, outputs=output_schema)
 
