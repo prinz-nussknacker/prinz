@@ -97,8 +97,8 @@ class MLFContainerTest extends UnitIntegrationTest {
     val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
-    val response = Await.ready(instance.run(sampleInput), awaitTimeout)
-    response.value.isDefined shouldBe true
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe true
   }
 
   it should "have models that returns different values for the same input" in {
@@ -127,10 +127,10 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   it should "have fraud detection model with proper model signature" in {
     val expectedSignatureInput = List(
-      ("Age", "string"),
-      ("Gender", "string"),
-      ("Category", "string"),
-      ("Amount", "float")
+      ("age", "string"),
+      ("gender", "string"),
+      ("category", "string"),
+      ("amount", "double")
     )
     val instance = getModelInstance(getFraudDetectionModel)
     val signature = instance.map(_.getSignature).get
@@ -138,13 +138,27 @@ class MLFContainerTest extends UnitIntegrationTest {
     val outputNames = signature.getOutputNames
 
     outputNames.size should equal (1)
-    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(MLFSignatureInterpreter.fromMLFDataType("boolean"))))
+    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(MLFSignatureInterpreter.fromMLFDataType("integer"))))
 
     inputNames.size should equal (expectedSignatureInput.size)
     expectedSignatureInput.map(input)
       .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
     expectedSignatureInput.map(input)
       .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
+  }
+
+  it should "allow to run fraud model with sample data" in {
+    val instance = getModelInstance(getFraudDetectionModel).get
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("gender", "F"),
+      ("category", "es_transportation"),
+      ("amount", 800.0),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
   }
 
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)) = {

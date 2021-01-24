@@ -47,7 +47,7 @@ input_schema = Schema([
     ColSpec("double", "amount")
 ])
 output_schema = Schema([
-    ColSpec("boolean", "fraud")
+    ColSpec("integer")
 ])
 signature = ModelSignature(inputs=input_schema, outputs=output_schema)
 

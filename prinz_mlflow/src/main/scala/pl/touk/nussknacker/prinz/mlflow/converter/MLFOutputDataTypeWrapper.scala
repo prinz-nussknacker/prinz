@@ -33,7 +33,6 @@ object MLFOutputDataTypeWrapper {
       case t: TypingResult if t.canBeSubclassOf(Typed[Boolean]) => Decoder.decodeBoolean
       case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => Decoder.decodeLong
       case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => Decoder.decodeDouble
-      case t: TypingResult if t.canBeSubclassOf(Typed[Float]) => Decoder.decodeFloat
       case t: TypingResult if t.canBeSubclassOf(Typed[String]) => Decoder.decodeString
       case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: $typing")
     }
