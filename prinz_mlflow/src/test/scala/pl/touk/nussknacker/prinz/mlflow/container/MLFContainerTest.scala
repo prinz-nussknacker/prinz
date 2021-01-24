@@ -125,6 +125,28 @@ class MLFContainerTest extends UnitIntegrationTest {
     instance.isDefined shouldBe true
   }
 
+  it should "have fraud detection model with proper model signature" in {
+    val expectedSignatureInput = List(
+      ("Age", "string"),
+      ("Gender", "string"),
+      ("Category", "string"),
+      ("Amount", "float")
+    )
+    val instance = getModelInstance(getFraudDetectionModel)
+    val signature = instance.map(_.getSignature).get
+    val inputNames = signature.getInputNames
+    val outputNames = signature.getOutputNames
+
+    outputNames.size should equal (1)
+    signature.getOutputValueType(outputNames.head) should equal (Some(SignatureType(MLFSignatureInterpreter.fromMLFDataType("boolean"))))
+
+    inputNames.size should equal (expectedSignatureInput.size)
+    expectedSignatureInput.map(input)
+      .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
+    expectedSignatureInput.map(input)
+      .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
+  }
+
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)) = {
     val repository = new MLFRepository
     val model = repository.listModels.toOption.map(extract)
