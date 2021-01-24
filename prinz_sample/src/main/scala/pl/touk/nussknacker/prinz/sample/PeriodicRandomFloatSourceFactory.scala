@@ -20,20 +20,20 @@ import pl.touk.nussknacker.engine.flink.api.timestampwatermark.{LegacyTimestampW
 import scala.annotation.nowarn
 import scala.collection.JavaConverters._
 
-object PeriodicRandomIntSourceFactory extends PeriodicRandomIntSourceFactory(
+object PeriodicRandomFloatSourceFactory extends PeriodicRandomFloatSourceFactory(
   new LegacyTimestampWatermarkHandler(new MapAscendingTimestampExtractor(MapAscendingTimestampExtractor.DefaultTimestampField)))
 
-class PeriodicRandomIntSourceFactory(timestampAssigner: TimestampWatermarkHandler[Int]) extends FlinkSourceFactory[Int]  {
+class PeriodicRandomFloatSourceFactory(timestampAssigner: TimestampWatermarkHandler[Float]) extends FlinkSourceFactory[Float]  {
 
   @MethodToInvoke
   def create(@ParamName("period") period: Duration,
              // TODO: @DefaultValue(1) instead of nullable
              @ParamName("count") @Nullable @Min(1) nullableCount: Integer): Source[_] = {
-    new FlinkSource[Int] with ReturningType {
+    new FlinkSource[Float] with ReturningType {
 
-      override def typeInformation: TypeInformation[Int] = implicitly[TypeInformation[Int]]
+      override def typeInformation: TypeInformation[Float] = implicitly[TypeInformation[Float]]
 
-      override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Int] = {
+      override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Float] = {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
         val count = Option(nullableCount).map(_.toInt).getOrElse(1)
@@ -42,15 +42,15 @@ class PeriodicRandomIntSourceFactory(timestampAssigner: TimestampWatermarkHandle
           .addSource(new PeriodicFunction(period))
           .map(_ => Context(processId))
           .flatMap { _ =>
-            1.to(count).map(_ => 800)
+            1.to(count).map(_ => 800.floatValue())
           }
 
         timestampAssigner.assignTimestampAndWatermarks(stream)
       }
 
-      override def timestampAssignerForTest: Option[TimestampWatermarkHandler[Int]] = Some(timestampAssigner)
+      override def timestampAssignerForTest: Option[TimestampWatermarkHandler[Float]] = Some(timestampAssigner)
 
-      override val returnType: typing.TypingResult = typing.Typed[Int]
+      override val returnType: typing.TypingResult = typing.Typed[Float]
 
     }
   }
@@ -75,8 +75,8 @@ class PeriodicFunction(duration: Duration) extends SourceFunction[Unit] {
 }
 
 @nowarn("deprecated")
-class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Int] {
-  override def extractAscendingTimestamp(element: Int): Long = {
+class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Float] {
+  override def extractAscendingTimestamp(element: Float): Long = {
     System.currentTimeMillis()
   }
 }
