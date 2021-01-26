@@ -17,7 +17,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
   override def sourceFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SourceFactory[_]]] = Map(
     "periodic" -> allCategories(PeriodicSourceFactory),
-    "periodicFloat" -> allCategories(PeriodicRandomFloatSourceFactory)
+    "periodicGaussianDouble" -> allCategories(PeriodicRandomGaussianDoubleSourceFactory)
   )
 
   override def sinkFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SinkFactory]] = Map(

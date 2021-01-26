@@ -19,38 +19,52 @@ import pl.touk.nussknacker.engine.flink.api.timestampwatermark.{LegacyTimestampW
 
 import scala.annotation.nowarn
 import scala.collection.JavaConverters._
+import scala.math.sqrt
+import scala.util.Random
 
-object PeriodicRandomFloatSourceFactory extends PeriodicRandomFloatSourceFactory(
+object PeriodicRandomGaussianDoubleSourceFactory extends PeriodicRandomGaussianDoubleSourceFactory(
   new LegacyTimestampWatermarkHandler(new MapAscendingTimestampExtractor(MapAscendingTimestampExtractor.DefaultTimestampField)))
 
-class PeriodicRandomFloatSourceFactory(timestampAssigner: TimestampWatermarkHandler[Float]) extends FlinkSourceFactory[Float]  {
+class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWatermarkHandler[Double]) extends FlinkSourceFactory[Double]  {
 
   @MethodToInvoke
   def create(@ParamName("period") period: Duration,
+             // TODO: @DefaultValue(0) instead of nullable
+             @ParamName("mean") @Nullable nullableMean: Double,
+             // TODO: @DefaultValue(1) instead of nullable
+             @ParamName("variance") @Nullable @Min(0) nullableVariance: Double,
              // TODO: @DefaultValue(1) instead of nullable
              @ParamName("count") @Nullable @Min(1) nullableCount: Integer): Source[_] = {
-    new FlinkSource[Float] with ReturningType {
+    new FlinkSource[Double] with ReturningType {
 
-      override def typeInformation: TypeInformation[Float] = implicitly[TypeInformation[Float]]
+      override def typeInformation: TypeInformation[Double] = implicitly[TypeInformation[Double]]
 
-      override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Float] = {
+      override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Double] = {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+
+        //case class GaussianDistribution(myInt: Int, myString: String)
+        val mean: Double = Option(nullableMean).map(_.toDouble).getOrElse(0)
+        val variance: Double = Option(nullableVariance).map(_.toDouble).getOrElse(1)
 
         val count = Option(nullableCount).map(_.toInt).getOrElse(1)
         val processId = flinkNodeContext.metaData.id
         val stream = env
           .addSource(new PeriodicFunction(period))
           .map(_ => Context(processId))
-          .flatMap { _ =>
-            1.to(count).map(_ => 800.floatValue())
+          //.map(flinkNodeContext.lazyParameterHelper.lazyMapFunction(mean, variance))
+          .flatMap { v =>
+            1.to(count).map(_ => {
+              val stdev = sqrt(variance)
+              (Random.nextGaussian() * stdev) + mean
+            })
           }
 
         timestampAssigner.assignTimestampAndWatermarks(stream)
       }
 
-      override def timestampAssignerForTest: Option[TimestampWatermarkHandler[Float]] = Some(timestampAssigner)
+      override def timestampAssignerForTest: Option[TimestampWatermarkHandler[Double]] = Some(timestampAssigner)
 
-      override val returnType: typing.TypingResult = typing.Typed[Float]
+      override val returnType: typing.TypingResult = typing.Typed[Double]
 
     }
   }
@@ -75,8 +89,8 @@ class PeriodicFunction(duration: Duration) extends SourceFunction[Unit] {
 }
 
 @nowarn("deprecated")
-class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Float] {
-  override def extractAscendingTimestamp(element: Float): Long = {
+class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Double] {
+  override def extractAscendingTimestamp(element: Double): Long = {
     System.currentTimeMillis()
   }
 }
