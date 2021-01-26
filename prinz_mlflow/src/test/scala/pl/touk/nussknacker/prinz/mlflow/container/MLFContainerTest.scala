@@ -7,7 +7,7 @@ import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
-import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
+import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
@@ -22,7 +22,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   private implicit val mlfConfig: MLFConfig = MLFConfig()
 
   "Mlflow container" should "list some models" in {
-    val repository = new MLFRepository
+    val repository = new MLFModelRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -30,7 +30,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   it should "list at least two different models" in {
-    val repository = new MLFRepository
+    val repository = new MLFModelRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -39,7 +39,7 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   it should "list model run info with artifact location" in {
     val client = MLFRestClient(MLFRestClientConfig.fromMLFConfig(mlfConfig))
-    val repository = new MLFRepository
+    val repository = new MLFModelRepository
     val modelRunId = repository
       .listModels.toOption.get.head
       .latestVersions.head.runId
@@ -148,7 +148,7 @@ class MLFContainerTest extends UnitIntegrationTest {
   }
 
   private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)) = {
-    val repository = new MLFRepository
+    val repository = new MLFModelRepository
     val model = repository.listModels.toOption.map(extract)
     model.map(_.toModelInstance)
   }
