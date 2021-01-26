@@ -6,19 +6,18 @@ import java.{util => jul}
 import javax.annotation.Nullable
 import javax.validation.constraints.Min
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.scala._
+import org.apache.flink.api.scala._ // scalastyle:ignore
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import pl.touk.nussknacker.engine.api._
+import pl.touk.nussknacker.engine.api.{Context, MethodToInvoke, ParamName}
 import pl.touk.nussknacker.engine.api.process.Source
 import pl.touk.nussknacker.engine.api.typed.{ReturningType, typing}
 import pl.touk.nussknacker.engine.flink.api.process.{FlinkCustomNodeContext, FlinkSource, FlinkSourceFactory}
 import pl.touk.nussknacker.engine.flink.api.timestampwatermark.{LegacyTimestampWatermarkHandler, TimestampWatermarkHandler}
 
 import scala.annotation.nowarn
-import scala.collection.JavaConverters._
 import scala.math.sqrt
 import scala.util.Random
 
@@ -42,16 +41,13 @@ class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWate
       override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Double] = {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
-        //case class GaussianDistribution(myInt: Int, myString: String)
         val mean: Double = Option(nullableMean).map(_.toDouble).getOrElse(0)
         val variance: Double = Option(nullableVariance).map(_.toDouble).getOrElse(1)
-
         val count = Option(nullableCount).map(_.toInt).getOrElse(1)
         val processId = flinkNodeContext.metaData.id
         val stream = env
           .addSource(new PeriodicFunction(period))
           .map(_ => Context(processId))
-          //.map(flinkNodeContext.lazyParameterHelper.lazyMapFunction(mean, variance))
           .flatMap { v =>
             1.to(count).map(_ => {
               val stdev = sqrt(variance)
