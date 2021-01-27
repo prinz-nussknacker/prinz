@@ -8,6 +8,8 @@ val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
 val circeV = "0.11.1"
 val circeYamlV = "0.11.0-M1"
+val jpmmlV = "1.5.11"
+val jpmmlTranspilerV = "1.1.7"
 val testContainersV = "0.38.8"
 val paradiseV = "2.1.1"
 val typesafeConfigV = "1.4.1"
@@ -96,6 +98,22 @@ lazy val prinz_mlflow = (project in file("prinz_mlflow"))
   )
   .dependsOn(prinz % "compile->compile;test->test")
 
+lazy val prinz_pmml = (project in file("prinz_pmml"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-pmml",
+    Test / fork := true,
+    libraryDependencies ++= {
+      Seq(
+        "org.jpmml" % "pmml-evaluator" % jpmmlV,
+        "org.jpmml" % "pmml-evaluator-extension" % jpmmlV,
+        "org.jpmml" % "pmml-model" % jpmmlV,
+        "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
+      )
+    }
+  )
+  .dependsOn(prinz % "compile->compile;test->test")
+
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
@@ -114,3 +132,4 @@ lazy val prinz_sample = (project in file("prinz_sample"))
   )
   .dependsOn(prinz)
   .dependsOn(prinz_mlflow)
+  .dependsOn(prinz_pmml)

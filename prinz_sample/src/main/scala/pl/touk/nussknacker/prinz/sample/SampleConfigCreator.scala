@@ -9,7 +9,7 @@ import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
 import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
-import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
+import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
@@ -27,7 +27,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
     implicit val mlfConfig: MLFConfig = MLFConfig()(processObjectDependencies.config)
-    val repo = new MLFRepository()
+    val repo = new MLFModelRepository()
       val response = repo.listModels
 
     val result = response.right.map(

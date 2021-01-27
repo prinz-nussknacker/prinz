@@ -3,13 +3,13 @@ package pl.touk.nussknacker.prinz.mlflow.model.api
 import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelVersion}
 
 import java.time.Instant
-import pl.touk.nussknacker.prinz.mlflow.repository.MLFRepository
+import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 
 case class MLFRegisteredModel(name: MLFRegisteredModelName,
                               creationTimestamp: Instant,
                               lastUpdatedTimestamp: Instant,
                               latestVersions: List[MLFRegisteredModelVersion],
-                              private val repository: MLFRepository) extends Model {
+                              private val repository: MLFModelRepository) extends Model {
 
   override def getName: MLFRegisteredModelName = name
 
