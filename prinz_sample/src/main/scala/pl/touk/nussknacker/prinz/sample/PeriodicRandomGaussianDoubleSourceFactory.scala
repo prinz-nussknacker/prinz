@@ -28,11 +28,8 @@ class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWate
 
   @MethodToInvoke
   def create(@ParamName("period") period: Duration,
-             // TODO: @DefaultValue(0) instead of nullable
              @ParamName("mean") @Nullable nullableMean: Double,
-             // TODO: @DefaultValue(1) instead of nullable
              @ParamName("variance") @Nullable @Min(0) nullableVariance: Double,
-             // TODO: @DefaultValue(1) instead of nullable
              @ParamName("count") @Nullable @Min(1) nullableCount: Integer): Source[_] = {
     new FlinkSource[Double] with ReturningType {
 
@@ -41,17 +38,17 @@ class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWate
       override def sourceStream(env: StreamExecutionEnvironment, flinkNodeContext: FlinkCustomNodeContext): DataStream[Double] = {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
-        val mean: Double = Option(nullableMean).map(_.toDouble).getOrElse(0)
-        val variance: Double = Option(nullableVariance).map(_.toDouble).getOrElse(1)
-        val count = Option(nullableCount).map(_.toInt).getOrElse(1)
+        val mean: Double = Option(nullableMean).getOrElse(0)
+        val variance: Double = Option(nullableVariance).getOrElse(1)
+        val count: Integer = Option(nullableCount).getOrElse(1)
         val processId = flinkNodeContext.metaData.id
         val stream = env
           .addSource(new PeriodicFunction(period))
           .map(_ => Context(processId))
           .flatMap { v =>
             1.to(count).map(_ => {
-              val stdev = sqrt(variance)
-              (Random.nextGaussian() * stdev) + mean
+              val stdDev = sqrt(variance)
+              (Random.nextGaussian() * stdDev) + mean
             })
           }
 
@@ -67,7 +64,7 @@ class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWate
 
 }
 
-class PeriodicFunction(duration: Duration) extends SourceFunction[Unit] {
+private class PeriodicFunction(duration: Duration) extends SourceFunction[Unit] {
 
   @volatile private var isRunning = true
 
@@ -81,11 +78,10 @@ class PeriodicFunction(duration: Duration) extends SourceFunction[Unit] {
   override def cancel(): Unit = {
     isRunning = false
   }
-
 }
 
 @nowarn("deprecated")
-class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Double] {
+private class MapAscendingTimestampExtractor(timestampField: String) extends AscendingTimestampExtractor[Double] {
   override def extractAscendingTimestamp(element: Double): Long = {
     System.currentTimeMillis()
   }
