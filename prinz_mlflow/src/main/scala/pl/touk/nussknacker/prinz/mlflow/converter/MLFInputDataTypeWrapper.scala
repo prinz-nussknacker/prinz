@@ -3,6 +3,7 @@ package pl.touk.nussknacker.prinz.mlflow.converter
 import io.circe.{Encoder, Json}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureName}
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
+import pl.touk.nussknacker.engine.util.json.BestEffortJsonEncoder
 
 
 case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: AnyRef) {
@@ -11,12 +12,13 @@ case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: AnyR
 
 object MLFInputDataTypeWrapper {
 
+  private val subclassedNumberEncoder = BestEffortJsonEncoder(failOnUnkown = true)
+
   implicit val encodeMLFDataType: Encoder[MLFInputDataTypeWrapper] = (data: MLFInputDataTypeWrapper) =>
     data.typing match {
       case t: TypingResult if t.canBeSubclassOf(Typed[Boolean]) => Json.fromBoolean(data.dataValue.asInstanceOf[Boolean])
-      case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => Json.fromLong(data.dataValue.asInstanceOf[Long])
-      case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => Json.fromDoubleOrNull(data.dataValue.asInstanceOf[Double])
-      case t: TypingResult if t.canBeSubclassOf(Typed[Float]) => Json.fromFloatOrNull(data.dataValue.asInstanceOf[Float])
+      case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => subclassedNumberEncoder.encode(data.dataValue)
+      case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => subclassedNumberEncoder.encode(data.dataValue)
       case t: TypingResult if t.canBeSubclassOf(Typed[String]) => Json.fromString(data.dataValue.asInstanceOf[String])
       case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: ${data.typing}")
     }
