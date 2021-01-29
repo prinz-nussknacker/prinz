@@ -5,8 +5,9 @@ import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFDataConverter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFInvokeRestClient
-import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException, SignatureName}
+import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+import scala.jdk.CollectionConverters.mapAsJavaMap
 
 case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
   extends ModelInstance(model, MLFSignatureProvider(config)) with LazyLogging {
@@ -22,6 +23,7 @@ case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
         response
           .left.map(exception => new ModelRunException(exception))
           .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
+                .map(mapAsJavaMap)
       }
   }
 }

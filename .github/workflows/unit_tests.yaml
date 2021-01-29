@@ -20,4 +20,5 @@ jobs:
         run: >
           cd dev-environment/ && ./clear_environment.sh && cd .. &&
           ./sbtwrapper prinz/test &&
-          ./sbtwrapper prinz_mlflow/test
+          ./sbtwrapper prinz_mlflow/test &&
+          ./sbtwrapper prinz_pmml/test
