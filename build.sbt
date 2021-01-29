@@ -27,6 +27,9 @@ def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "io.netty.versions.properties" => MergeStrategy.first
   case PathList("org", "w3c", "dom", "events", xs @ _*) => MergeStrategy.first
   case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
+  case PathList("com", "sun", "activation", xs @ _*) => MergeStrategy.first
+  case PathList("javax", "activation", xs @ _*) => MergeStrategy.first
+  case PathList("org", "slf4j", "impl", xs @ _*) => MergeStrategy.first
   case x: Any => MergeStrategy.defaultMergeStrategy(x)
 }
 
@@ -109,6 +112,7 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "pmml-evaluator-extension" % jpmmlV,
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
+        "ch.qos.logback" % "logback-classic" % logbackV,
       )
     }
   )

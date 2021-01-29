@@ -32,4 +32,5 @@ jobs:
         run: |
           ./sbtwrapper prinz/scalastyle &&
           ./sbtwrapper prinz_mlflow/scalastyle &&
-          ./sbtwrapper prinz_sample/scalastyle
+          ./sbtwrapper prinz_sample/scalastyle &&
+          ./sbtwrapper prinz_pmml/scalastyle

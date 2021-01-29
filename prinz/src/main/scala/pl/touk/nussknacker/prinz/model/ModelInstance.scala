@@ -1,12 +1,12 @@
 package pl.touk.nussknacker.prinz.model
 
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
-
+import java.util.{Map => JMap}
 import scala.concurrent.Future
 
 abstract class ModelInstance(model: Model, protected val signatureProvider: SignatureProvider) {
 
-  type ModelRunResult = Future[Either[ModelRunException, Map[String, _]]]
+  type ModelRunResult = Future[Either[ModelRunException, JMap[String, _]]]
 
   private val signatureOption: Option[ModelSignature] =
     signatureProvider.provideSignature(model)
