@@ -16,4 +16,7 @@ docker network create dev-bridge-net
 docker-compose -f docker-compose.yaml -f docker-compose-env.yaml kill
 docker-compose -f docker-compose.yaml -f docker-compose-env.yaml rm -f -v
 docker-compose -f docker-compose.yaml -f docker-compose-env.yaml build
-docker-compose -f docker-compose.yaml -f docker-compose-env.yaml up --always-recreate-deps
+docker-compose --env-file ../.env \
+               -f docker-compose.yaml \
+               -f docker-compose-env.yaml \
+               up --always-recreate-deps

@@ -20,6 +20,7 @@ val logbackV = "1.2.3"
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
 ThisBuild / version      := "0.0.1-SNAPSHOT"
 ThisBuild / scalaVersion := scalaV
+ThisBuild / envFileName  := ".env"
 
 def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
