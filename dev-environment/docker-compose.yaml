@@ -11,14 +11,14 @@ services:
       - AWS_SECRET_ACCESS_KEY=mlflow-secret
       - BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
       - MLFLOW_HOME=/opt/mlflow
-      - MLFLOW_S3_ENDPOINT_URL=http://proxy:9000
+      - MLFLOW_S3_ENDPOINT_URL=http://proxy:${NGINX_BUCKET_PORT}
       - MLFLOW_SERVER_HOST=0.0.0.0
-      - MLFLOW_SERVER_PORT=5000
+      - MLFLOW_SERVER_PORT=${MLFLOW_SERVER_PORT}
       - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres-mlflow/mlflow
       - MLFLOW_WORK_DIR=/home/mlflow
-      - MODEL_1_PORT=1111
-      - MODEL_2_PORT=2222
-      - MODEL_3_PORT=3333
+      - MODEL_1_PORT=${MODEL_1_PORT}
+      - MODEL_2_PORT=${MODEL_2_PORT}
+      - MODEL_3_PORT=${MODEL_3_PORT}
     volumes:
       - ./mlflow/models:/home/mlflow/models
     networks:
@@ -35,7 +35,7 @@ services:
       - POSTGRES_USER=mlflow
       - POSTGRES_PASSWORD=mlflow
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - mlflow-net
 
@@ -57,16 +57,16 @@ services:
     volumes:
       - ./nginx/templates:/etc/nginx/templates
     ports:
-      - "5000:5000"
-      - "9000:9000"
+      - "${MLFLOW_SERVER_PORT}:${MLFLOW_SERVER_PORT}"
+      - "${NGINX_BUCKET_PORT}:${NGINX_BUCKET_PORT}"
     environment:
-      - NGINX_MLFLOW_PORT=5000
-      - NGINX_BUCKET_PORT=9000
-      - MLFLOW_URL=mlflow-server:5000
-      - MODEL_1_URL=mlflow-server:1111
-      - MODEL_2_URL=mlflow-server:2222
-      - MODEL_3_URL=mlflow-server:3333
-      - BUCKET_URL=aws-mlflow:9000
+      - NGINX_MLFLOW_PORT=${MLFLOW_SERVER_PORT}
+      - NGINX_BUCKET_PORT=${NGINX_BUCKET_PORT}
+      - MLFLOW_URL=mlflow-server:${MLFLOW_SERVER_PORT}
+      - MODEL_1_URL=mlflow-server:${MODEL_1_PORT}
+      - MODEL_2_URL=mlflow-server:${MODEL_2_PORT}
+      - MODEL_3_URL=mlflow-server:${MODEL_3_PORT}
+      - BUCKET_URL=aws-mlflow:${NGINX_BUCKET_PORT}
     networks:
       - mlflow-net
       - dev-bridge-net

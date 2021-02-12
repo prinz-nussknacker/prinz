@@ -9,6 +9,7 @@ import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
 import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
+import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
@@ -27,17 +28,18 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
-    implicit val mlfConfig: MLFConfig = MLFConfig()(processObjectDependencies.config)
+    val modelLocationStrategy = LocalMLFModelLocationStrategy
+    implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)(processObjectDependencies.config)
     val repo = new MLFModelRepository()
-      val response = repo.listModels
+    val response = repo.listModels
 
     val result = response.right.map(
       modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
         (services, model) => services + (model.getName.name -> allCategories(PrinzEnricher(model)))
     ))
     result match {
-      case Left(exception) => throw exception
       case Right(services) => services
+      case Left(exception) => throw exception
     }
   }
 
