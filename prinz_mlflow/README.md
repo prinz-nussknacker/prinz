@@ -16,7 +16,7 @@ Mlflow is an opensource project for managing machine learning models lifecycle, 
 3. Central model registry - it can be used as a single repository with dedicated web 
    application for model versioning. It allows to keep models versions in single place and make them easily accessible for all developers in organization.
 
-## Mlfow environment
+## Mlflow environment
 
 To work with Mlflow developer need some instance of Mlflow server which would serve as 
 the models' registry. Additionally, there are standalone webservices for realtime models
