@@ -73,6 +73,9 @@ services:
     depends_on:
       - mlflow-server
 
+  pmml-samples:
+    build: pmml-samples/
+
 networks:
   mlflow-net:
     driver: bridge
