@@ -4,6 +4,7 @@
 # Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
 
 import os
+import logging
 import warnings
 import sys
 
@@ -14,11 +15,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
 from urllib.parse import urlparse
 
-import logging
+from sklearn2pmml import sklearn2pmml
+from sklearn2pmml.pipeline import PMMLPipeline
+
+alpha = float(sys.argv[1])
+l1_ratio = float(sys.argv[2])
+output_path = sys.argv[3]
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
-
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
@@ -44,12 +49,11 @@ if __name__ == "__main__":
     train_y = train[["quality"]]
     test_y = test[["quality"]]
 
-    alpha = float(sys.argv[1])
-    l1_ratio = float(sys.argv[2])
-
     lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
-    lr.fit(train_x, train_y)
-    predicted_qualities = lr.predict(test_x)
+    pipeline = PMMLPipeline(steps=[('elastic_net', lr)])
+
+    pipeline.fit(train_x, train_y)
+    predicted_qualities = pipeline.predict(test_x)
 
     (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
 
@@ -57,3 +61,5 @@ if __name__ == "__main__":
     print("  RMSE: {}".format(rmse))
     print("  MAE: {}".format(mae))
     print("  R2: {}".format(r2))
+
+    sklearn2pmml(pipeline, output_path, with_repr = True)

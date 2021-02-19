@@ -11,13 +11,16 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-
+from sklearn2pmml import sklearn2pmml
+from sklearn2pmml.pipeline import PMMLPipeline
 
 def evaluate_metrics(actual, predicted):
     rmse = np.sqrt(mean_squared_error(actual, predicted))
     mae = mean_absolute_error(actual, predicted)
     r2 = r2_score(actual, predicted)
     return rmse, mae, r2
+
+output_path = sys.argv[1]
 
 if __name__ != "__main__":
     sys.exit()
@@ -55,10 +58,13 @@ preprocessor = ColumnTransformer(
         ('numeric', numeric_transformer, numeric_features),
         ('categorical', categorical_transformer, categorical_features)])
 
-classifier = Pipeline(
+lr = LogisticRegression(
+    multi_class='ovr')
+
+classifier = PMMLPipeline(
     steps=[
         ('preprocessor', preprocessor),
-        ('classifier', LogisticRegression())])
+        ('classifier', lr)])
 
 # Build model
 classifier.fit(train_x, train_y)
@@ -68,3 +74,5 @@ test_actual = test_y
 test_predicted = classifier.predict(test_x)
 (rmse, mae, r2) = evaluate_metrics(test_actual, test_predicted)
 print("Classifier metrics: MAE={}, RMSE={}, R2={}".format(mae, rmse, r2))
+
+sklearn2pmml(classifier, output_path, with_repr = True)
