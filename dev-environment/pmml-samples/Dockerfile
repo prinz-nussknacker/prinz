@@ -15,6 +15,7 @@ RUN pip -q install -r deps/requirements.txt && \
 COPY exports/ exports/
 COPY models/ models/
 
+EXPOSE 80
 COPY scripts/ scripts/
-RUN chmod +x scripts/train.sh
-CMD scripts/train.sh && sleep infinity
+RUN chmod +x scripts/serve.py
+CMD python scripts/serve.py
