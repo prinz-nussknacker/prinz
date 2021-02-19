@@ -4,4 +4,4 @@ channels:
 dependencies:
   - scikit-learn=0.23.2
   - pip:
-    - sklearn2pmml=0.66.1
+      - sklearn2pmml=0.66.1
