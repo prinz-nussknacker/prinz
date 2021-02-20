@@ -1,0 +1,7 @@
+name: sklearn-elasticnet-wine
+channels:
+  - anaconda
+dependencies:
+  - scikit-learn=0.23.2
+  - pip:
+      - sklearn2pmml=0.66.1

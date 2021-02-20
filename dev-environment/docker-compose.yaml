@@ -73,6 +73,13 @@ services:
     depends_on:
       - mlflow-server
 
+  pmml-samples:
+    build: pmml-samples/
+    ports:
+      - ${PMML_SAMPLES_PORT}:80
+    volumes:
+      - ./pmml-samples/:/home/pmml
+
 networks:
   mlflow-net:
     driver: bridge
