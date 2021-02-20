@@ -14,7 +14,8 @@ Mlflow is an opensource project for managing machine learning models lifecycle, 
    Microsoft Azure ML, Amazon SageMaker and Apache Spark UDF 
 
 3. Central model registry - it can be used as a single repository with dedicated web 
-   application for model versioning. It allows to keep models versions in single place and make them easily accessible for all developers in organization.
+   application for model versioning. It allows keeping models versions in single place a
+   nd make them easily accessible for all developers in organization.
 
 ## Mlflow environment
 
@@ -58,8 +59,3 @@ the invocation url by the pattern `<databricks-instance>/model/<registered-model
 - Prinz internal convention which specifies the invocation url by `<localhost-instance>/model/<registered-model-name>/invocations`
   (so the version is missed as there are created randomly choson models versions for test purposes which
   don't differ by anything more than the version number)
-  
-
-
-
-
