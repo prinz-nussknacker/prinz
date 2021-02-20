@@ -9,7 +9,7 @@ trait Model {
   def toModelInstance: ModelInstance
 }
 
-abstract class ModelName(name: String) {
+class ModelName(name: String) {
 
   def internal: String = name
 
