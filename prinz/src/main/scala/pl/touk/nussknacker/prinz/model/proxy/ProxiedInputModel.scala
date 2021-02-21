@@ -3,8 +3,8 @@ package pl.touk.nussknacker.prinz.model.proxy
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelVersion}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-class ProxiedModel private(model: Model,
-                           params: List[ProxiedModelInputParam]) extends Model {
+class ProxiedInputModel(model: Model,
+                        params: Iterable[ProxiedModelInputParam]) extends Model {
 
   private val originalModelInstance = model.toModelInstance
 
@@ -33,7 +33,7 @@ class ProxiedModel private(model: Model,
 
   private def supplyNonProvidedInputs(inputMap: VectorMultimap[String, AnyRef]): VectorMultimap[String, AnyRef] =
     proxiedParams
-      .filter(onlyToBeReplacedIn(inputMap))
+      .filter(inputsToBeReplacedIn(inputMap))
       .map(supplyParamValue)
       .foldLeft(inputMap) { (acc, value) => acc.add(value._1, value._2) }
 
@@ -44,6 +44,6 @@ class ProxiedModel private(model: Model,
     (paramName, result)
   }
 
-  private def onlyToBeReplacedIn(inputMap: VectorMultimap[String, AnyRef]): ProxiedModelInputParam => Boolean =
+  private def inputsToBeReplacedIn(inputMap: VectorMultimap[String, AnyRef]): ProxiedModelInputParam => Boolean =
     param => !inputMap.containsKey(param.paramName) || param.overwriteProvided
 }
