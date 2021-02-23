@@ -10,7 +10,7 @@ class ProxiedInputModel(model: Model,
 
   private val proxiedParams = params
 
-  private val modelMetadata = ModelMetadata(model.getName, model.getVersion)
+  private val modelMetadata = ModelMetadata(model.getName, model.getVersion, originalModelInstance.getSignature)
 
   private val proxiedModelInstance = new ModelInstance(
     originalModelInstance.model,
@@ -41,9 +41,9 @@ class ProxiedInputModel(model: Model,
     val paramName = param.paramName
     val metadata = ModelInputParamMetadata(paramName, modelMetadata)
     val result = param.paramSupplier(metadata)
-    (paramName, result)
+    (paramName.name, result)
   }
 
   private def inputsToBeReplacedIn(inputMap: VectorMultimap[String, AnyRef]): ProxiedModelInputParam => Boolean =
-    param => !inputMap.containsKey(param.paramName) || param.overwriteProvided
+    param => !inputMap.containsKey(param.paramName.name) || param.overwriteProvided
 }

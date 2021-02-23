@@ -1,11 +1,11 @@
 package pl.touk.nussknacker.prinz.model.proxy
 
-import pl.touk.nussknacker.prinz.model.ModelMetadata
+import pl.touk.nussknacker.prinz.model.{ModelMetadata, SignatureName}
 import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelInputParam.ParamSupplier
 
 import java.util.Objects
 
-final case class ProxiedModelInputParam(paramName: String,
+final case class ProxiedModelInputParam(paramName: SignatureName,
                                         paramSupplier: ParamSupplier,
                                         overwriteProvided: Boolean = false) {
   override def hashCode(): Int =
@@ -17,7 +17,7 @@ final case class ProxiedModelInputParam(paramName: String,
   }
 }
 
-case class ModelInputParamMetadata(paramName: String, modelMetadata: ModelMetadata)
+case class ModelInputParamMetadata(paramName: SignatureName, modelMetadata: ModelMetadata)
 
 object ProxiedModelInputParam {
 

@@ -2,15 +2,18 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest
+import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel
+import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegisteredModel}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
+import pl.touk.nussknacker.prinz.model.proxy.ProxiedInputModelBuilder
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
+import java.net.URL
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
@@ -161,9 +164,30 @@ class MLFContainerTest extends UnitIntegrationTest {
     response.toOption.isDefined shouldBe (true)
   }
 
-  private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)) = {
+  it should "allow to run fraud model with proxied data" in {
+    val model = getModel(getFraudDetectionModel).get
+    val proxiedModel = ProxiedInputModelBuilder(model)
+      .proxyHttpGet("amount", s"$STATIC_SERVER_PATH/double")
+      .proxyHttpGet("gender", s"$STATIC_SERVER_PATH/string")
+      .build()
+    val instance = proxiedModel.toModelInstance
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("category", "es_transportation"),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
+  }
+
+  private def getModel(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFRegisteredModel] = {
     val repository = new MLFModelRepository
-    val model = repository.listModels.toOption.map(extract)
+    repository.listModels.toOption.map(extract)
+  }
+
+  private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFModelInstance] = {
+    val model = getModel(extract)
     model.map(_.toModelInstance)
   }
 

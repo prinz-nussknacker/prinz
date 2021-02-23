@@ -43,7 +43,8 @@ object UnitIntegrationTest {
   private val ENV: Map[String, String] = List(
     "MODEL_1_PORT",
     "MODEL_2_PORT",
-    "MODEL_3_PORT"
+    "MODEL_3_PORT",
+    "NGINX_STATIC_PORT",
   ).map(readEnv).toMap
 
   private val TIMEOUT_MINUTES = 5
@@ -58,5 +59,7 @@ object UnitIntegrationTest {
 
   private val BRIDGE_NET_NAME = "dev-bridge-net"
 
-  private def readEnv(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
+  val STATIC_SERVER_PATH = s"http://localhost:${ENV("NGINX_STATIC_PORT")}/static"
+
+  protected def readEnv(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
 }

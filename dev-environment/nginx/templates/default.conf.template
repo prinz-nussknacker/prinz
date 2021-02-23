@@ -66,3 +66,22 @@ server {
         proxy_pass http://bucket;
     }
 }
+
+server {
+    listen ${NGINX_STATIC_PORT};
+    server_name static-data;
+
+    location /static/int {
+        rewrite /static/int /int break;
+    }
+    location /static/double {
+        rewrite /static/double /double break;
+    }
+    location /static/boolean {
+        rewrite /static/boolean /boolean break;
+    }
+    location /static/string {
+        rewrite /static/string /string break;
+    }
+
+}

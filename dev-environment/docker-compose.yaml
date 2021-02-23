@@ -56,13 +56,16 @@ services:
     restart: always
     volumes:
       - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/static:/etc/nginx/html
     ports:
       - "${MLFLOW_SERVER_PORT}:${MLFLOW_SERVER_PORT}"
       - "${NGINX_BUCKET_PORT}:${NGINX_BUCKET_PORT}"
+      - "${NGINX_STATIC_PORT}:${NGINX_STATIC_PORT}"
     environment:
       - NGINX_MLFLOW_PORT=${MLFLOW_SERVER_PORT}
       - NGINX_BUCKET_PORT=${NGINX_BUCKET_PORT}
       - MLFLOW_URL=mlflow-server:${MLFLOW_SERVER_PORT}
+      - NGINX_STATIC_PORT=${NGINX_STATIC_PORT}
       - MODEL_1_URL=mlflow-server:${MODEL_1_PORT}
       - MODEL_2_URL=mlflow-server:${MODEL_2_PORT}
       - MODEL_3_URL=mlflow-server:${MODEL_3_PORT}
