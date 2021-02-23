@@ -83,5 +83,4 @@ server {
     location /static/string {
         rewrite /static/string /string break;
     }
-
 }
