@@ -16,6 +16,6 @@ case class MLFInvokeRestClient(baseUrl: String, model: MLFRegisteredModel) {
 
   def invoke(data: Dataframe, signature: ModelSignature, strategy: MLFModelLocationStrategy): Future[RestClientResponse[MLFOutputDataTypeWrapper]] = {
     implicit val decoder: Decoder[MLFOutputDataTypeWrapper] = MLFOutputDataTypeWrapper.getDecoderForSignature(signature)
-    restClient.postJsonBody[Dataframe, MLFOutputDataTypeWrapper](strategy.createModelRelativeUrl(model), data)
+    restClient.postJsonBody[Dataframe, MLFOutputDataTypeWrapper](data, strategy.createModelRelativeUrl(model))
   }
 }

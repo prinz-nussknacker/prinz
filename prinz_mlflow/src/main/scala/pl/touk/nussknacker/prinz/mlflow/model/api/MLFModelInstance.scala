@@ -9,7 +9,8 @@ import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import scala.jdk.CollectionConverters.mapAsJavaMap
 
-case class MLFModelInstance(config: MLFConfig, model: MLFRegisteredModel)
+case class MLFModelInstance(config: MLFConfig,
+                            override val model: MLFRegisteredModel)
   extends ModelInstance(model, MLFSignatureProvider(config)) with LazyLogging {
 
   private val invokeRestClient = MLFInvokeRestClient(config.servedModelsUrl.toString, model)

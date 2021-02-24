@@ -4,7 +4,7 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import java.util.{Map => JMap}
 import scala.concurrent.Future
 
-abstract class ModelInstance(model: Model, protected val signatureProvider: SignatureProvider) {
+abstract class ModelInstance(val model: Model, val signatureProvider: SignatureProvider) {
 
   type ModelRunResult = Future[Either[ModelRunException, JMap[String, _]]]
 

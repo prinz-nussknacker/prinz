@@ -12,7 +12,7 @@ import scala.concurrent.Future
 class AsyncRestJsonClient(baseUrl: String, private val backend: SttpBackend[Future, Any] = AsyncHttpClientFutureBackend())
   extends AbstractRestJsonClient(baseUrl) with LazyLogging {
 
-  def postJsonBody[BODY, RESPONSE: Manifest](relativePath: String, body: BODY, params: RestRequestParams = EmptyRestRequestParams)
+  def postJsonBody[BODY, RESPONSE: Manifest](body: BODY, relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
                                             (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): Future[RestClientResponse[RESPONSE]] = {
     val request = createPostJsonRequest(relativePath, body, params)
     logger.info("Sending request in {}: {}", getClass.getSimpleName, request)
