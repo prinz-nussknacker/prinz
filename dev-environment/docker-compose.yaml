@@ -51,6 +51,15 @@ services:
     networks:
       - mlflow-net
 
+  pmml-samples:
+    build: pmml-samples/
+    environment:
+      - PMML_SERVER_PORT=${PMML_SERVER_PORT}
+    volumes:
+      - ./pmml-samples/:/home/pmml
+    networks:
+      - pmml-net
+
   proxy:
     image: nginx:alpine
     restart: always
@@ -61,6 +70,7 @@ services:
       - "${MLFLOW_SERVER_PORT}:${MLFLOW_SERVER_PORT}"
       - "${NGINX_BUCKET_PORT}:${NGINX_BUCKET_PORT}"
       - "${NGINX_STATIC_PORT}:${NGINX_STATIC_PORT}"
+      - "${PMML_SAMPLES_PORT}:${PMML_SAMPLES_PORT}"
     environment:
       - NGINX_MLFLOW_PORT=${MLFLOW_SERVER_PORT}
       - NGINX_BUCKET_PORT=${NGINX_BUCKET_PORT}
@@ -70,21 +80,20 @@ services:
       - MODEL_2_URL=mlflow-server:${MODEL_2_PORT}
       - MODEL_3_URL=mlflow-server:${MODEL_3_PORT}
       - BUCKET_URL=aws-mlflow:${NGINX_BUCKET_PORT}
+      - PMML_SAMPLES_PORT=${PMML_SAMPLES_PORT}
+      - PMML_SAMPLES_URL=pmml-samples:${PMML_SERVER_PORT}
     networks:
       - mlflow-net
+      - pmml-net
       - dev-bridge-net
     depends_on:
       - mlflow-server
-
-  pmml-samples:
-    build: pmml-samples/
-    ports:
-      - ${PMML_SAMPLES_PORT}:80
-    volumes:
-      - ./pmml-samples/:/home/pmml
+      - pmml-samples
 
 networks:
   mlflow-net:
+    driver: bridge
+  pmml-net:
     driver: bridge
   dev-bridge-net:
     driver: bridge

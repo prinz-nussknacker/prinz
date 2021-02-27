@@ -18,36 +18,41 @@ upstream bucket {
     server ${BUCKET_URL};
 }
 
+upstream pmml {
+    server ${PMML_SAMPLES_URL};
+}
+
 server {
     listen ${NGINX_MLFLOW_PORT};
+    server_name mlflow-server;
     gzip on;
 
     location /ElasticnetWineModel-1/invocations {
         client_max_body_size 16m;
         rewrite /ElasticnetWineModel-1/invocations /invocations break;
-        proxy_pass      http://model1;
+        proxy_pass http://model1;
     }
 
     location /ElasticnetWineModel-2/invocations {
         client_max_body_size 16m;
         rewrite /ElasticnetWineModel-2/invocations /invocations break;
-        proxy_pass      http://model2;
+        proxy_pass http://model2;
     }
 
     location /FraudDetection-3/invocations {
         client_max_body_size 16m;
         rewrite /FraudDetection-3/invocations /invocations break;
-        proxy_pass      http://model3;
+        proxy_pass http://model3;
     }
 
     location / {
-        proxy_pass      http://mlflow;
+        proxy_pass http://mlflow;
     }
 }
 
 server {
     listen ${NGINX_BUCKET_PORT};
-    server_name aws-mlflow;
+    server_name mlflow-aws;
     ignore_invalid_headers off;
     client_max_body_size 0;
     proxy_buffering off;
@@ -82,5 +87,14 @@ server {
     }
     location /static/string {
         rewrite /static/string /string break;
+    }
+}
+
+server {
+    listen ${PMML_SAMPLES_PORT};
+    server_name pmml-samples;
+
+    location / {
+        proxy_pass http://pmml;
     }
 }
