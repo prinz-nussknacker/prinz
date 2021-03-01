@@ -1,18 +1,19 @@
 package pl.touk.nussknacker.prinz.mlflow
 
-import java.net.URL
 import com.typesafe.config.Config
 import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFModelLocationStrategy}
 import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl, url}
 
-case class MLFConfig(modelLocationStrategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy)
-                    (private implicit val config: Config) {
+import java.net.URL
+
+final case class MLFConfig(modelLocationStrategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy)
+                          (private implicit val config: Config) {
 
   private implicit val BASE_CONFIG_PATH: String = "mlflow."
 
-  val baseApiPath: String = s"/api/2.0/mlflow"
+  val baseApiPath: String = "/api/2.0/mlflow"
 
-  val basePreviewApiPath: String = s"/api/2.0/preview/mlflow"
+  val basePreviewApiPath: String = "/api/2.0/preview/mlflow"
 
   val serverUrl: URL = getConfigValue("serverUrl", url("http://localhost:5000"), getUrl)
 

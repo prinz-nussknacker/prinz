@@ -16,6 +16,7 @@ val typesafeConfigV = "1.4.1"
 val typesafeLogV = "3.9.2"
 val logbackV = "1.2.3"
 val h2V = "1.4.200"
+val jsoupV = "1.13.1"
 
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
@@ -115,6 +116,7 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "pmml-evaluator-extension" % jpmmlV,
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
+        "org.jsoup" % "jsoup" % jsoupV,
         "ch.qos.logback" % "logback-classic" % logbackV,
       )
     }

@@ -15,7 +15,11 @@ RUN pip -q install -r deps/requirements.txt && \
 COPY exports/ exports/
 COPY models/ models/
 
-EXPOSE 80
+ENV PMML_SERVER_PORT=80
+
+EXPOSE ${PMML_SERVER_PORT}
 COPY scripts/ scripts/
 RUN chmod +x scripts/serve.py
-CMD python scripts/serve.py
+RUN chmod +x scripts/train.sh
+RUN chmod +x scripts/run.sh
+CMD scripts/run.sh
