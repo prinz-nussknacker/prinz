@@ -16,7 +16,6 @@ docker network create dev-bridge-net
 docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml kill
 docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml rm -f -v
 docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml build
-docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml run pmml-samples scripts/train.sh
 docker-compose --env-file ../.env \
                -f docker-compose.yaml \
                -f docker-compose-env.yaml \

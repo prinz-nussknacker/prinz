@@ -1,7 +1,8 @@
 import http.server
 import socketserver
+import os
 
-PORT = 80
+PORT = int(os.environ["PMML_SERVER_PORT"])
 DIRECTORY = "exports"
 
 
