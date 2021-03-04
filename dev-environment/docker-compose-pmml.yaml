@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  pmml-samples:
+    build: pmml-samples/
+    environment:
+      - PMML_SERVER_PORT=${PMML_SERVER_PORT}
+    volumes:
+      - ./pmml-samples/:/home/pmml
+    networks:
+      - pmml-net
+
+  proxy:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./nginx/pmml/templates:/etc/nginx/templates
+      - ./nginx/pmml/static:/etc/nginx/html
+    ports:
+      - "${NGINX_PMML_STATIC_PORT}:${NGINX_PMML_STATIC_PORT}"
+      - "${PMML_SAMPLES_PORT}:${PMML_SAMPLES_PORT}"
+    environment:
+      - NGINX_PMML_STATIC_PORT=${NGINX_PMML_STATIC_PORT}
+      - PMML_SAMPLES_PORT=${PMML_SAMPLES_PORT}
+      - PMML_SAMPLES_URL=pmml-samples:${PMML_SERVER_PORT}
+    networks:
+      - pmml-net
+      - dev-bridge-net
+    depends_on:
+      - pmml-samples
+
+networks:
+  pmml-net:
+    driver: bridge
+  dev-bridge-net:
+    driver: bridge
+    external: true
