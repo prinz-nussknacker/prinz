@@ -1,47 +1,32 @@
 package pl.touk.nussknacker.prinz.model.proxy
 
-import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
-import pl.touk.nussknacker.prinz.model.{Model, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelComposedInputParam.{ComposedParamsSupplier, ParamsExtractor}
 import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelInputParam.ParamSupplier
-import pl.touk.nussknacker.prinz.util.http.RestJsonClient
+import pl.touk.nussknacker.prinz.model.{Model, SignatureName}
 
 import scala.collection.mutable
 
 class ProxiedInputModelBuilder(private val model: Model) {
 
-  private val params = mutable.Map[SignatureName, ProxiedModelInputParam]()
+  protected val params: mutable.Map[SignatureName, ProxiedModelInputParam] = mutable.Map[SignatureName, ProxiedModelInputParam]()
 
-  def proxyParam(paramName: String, overwriteProvided: Boolean = false)(paramSupplier: ParamSupplier): ProxiedInputModelBuilder = {
+  protected val composedParams: mutable.MutableList[ProxiedModelComposedInputParam[AnyRef]] = mutable.MutableList()
+
+  def proxyParam(paramName: String)(paramSupplier: ParamSupplier): ProxiedInputModelBuilder = {
     val signatureName = SignatureName(paramName)
-    val createdInputParam = ProxiedModelInputParam(signatureName, paramSupplier, overwriteProvided)
-    params put (signatureName, createdInputParam)
+    val createdInputParam = ProxiedModelInputParam(signatureName, paramSupplier)
+    params put(signatureName, createdInputParam)
     this
   }
 
-  def proxyHttpGet(paramName: String, path: String, overwriteProvided: Boolean = false): ProxiedInputModelBuilder = {
-    val httpClient = new RestJsonClient(path)
-    val signatureName = SignatureName(paramName)
-    proxyParam(paramName, overwriteProvided) { modelInputParamMetadata =>
-      val signature = modelInputParamMetadata.modelMetadata.signature
-      signature.getInputValueType(signatureName) match {
-        case Some(paramType) => httpGetAndDeserialize(paramType, httpClient)
-        case None => Unit
-      }
-    }
+  def proxyComposedParam[T](paramsExtractor: ParamsExtractor[T],
+                            paramSupplier: ComposedParamsSupplier[T]): ProxiedInputModelBuilder = {
+    val createdInputParam = ProxiedModelComposedInputParam(paramSupplier,paramsExtractor)
+    composedParams += createdInputParam
+    this
   }
 
-  def build(): ProxiedInputModel = new ProxiedInputModel(model, params.values)
-
-  private def httpGetAndDeserialize(paramType: SignatureType, client: RestJsonClient): AnyRef = {
-    val result = paramType.typingResult match {
-      case t: TypingResult if t.canBeSubclassOf(Typed[Boolean]) => client.getJson[Boolean]().right.map(_.asInstanceOf[AnyRef])
-      case t: TypingResult if t.canBeSubclassOf(Typed[Long]) => client.getJson[Long]().right.map(_.asInstanceOf[AnyRef])
-      case t: TypingResult if t.canBeSubclassOf(Typed[Double]) => client.getJson[Double]().right.map(_.asInstanceOf[AnyRef])
-      case t: TypingResult if t.canBeSubclassOf(Typed[String]) => client.getJson[String]().right.map(_.asInstanceOf[AnyRef])
-      case _ => throw new IllegalArgumentException(s"Unsupported basic http get param supply type: ${paramType.typingResult}")
-    }
-    result.right.get
-  }
+  def build(): ProxiedInputModel = new ProxiedInputModel(model, params.values.toList, composedParams.toList)
 }
 
 object ProxiedInputModelBuilder {

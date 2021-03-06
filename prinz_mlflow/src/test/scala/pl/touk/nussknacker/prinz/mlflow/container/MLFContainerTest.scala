@@ -9,7 +9,7 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegister
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedInputModelBuilder
+import pl.touk.nussknacker.prinz.model.proxy.ProxiedHttpInputModelBuilder
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
@@ -166,7 +166,7 @@ class MLFContainerTest extends UnitIntegrationTest {
 
   it should "allow to run fraud model with proxied data" in {
     val model = getModel(getFraudDetectionModel).get
-    val proxiedModel = ProxiedInputModelBuilder(model)
+    val proxiedModel = ProxiedHttpInputModelBuilder(model)
       .proxyHttpGet("amount", s"$STATIC_SERVER_PATH/double")
       .proxyHttpGet("gender", s"$STATIC_SERVER_PATH/string")
       .build()
