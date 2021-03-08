@@ -28,7 +28,6 @@ fi
 
 if [ $COMPILE = true ]
 then
-    echo "COOOOOMPILE"
     # Compile and package prinz if not packaged yet
     cd .. &&
     ./sbtwrapper prinz_sample/assembly &&

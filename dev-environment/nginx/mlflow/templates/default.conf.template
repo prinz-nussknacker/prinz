@@ -69,7 +69,7 @@ server {
 }
 
 server {
-    listen ${NGINX_MLFLOW_STATIC_PORT};
+    listen ${NGINX_STATIC_PORT};
     server_name static-data;
 
     location /static/int {

@@ -1,19 +1,22 @@
 #!/bin/sh
 
+MLFLOW_ENV="-f docker-compose-mlflow.yaml"
+PMML_ENV="-f docker-compose-pmml.yaml"
+
 COMP_FILES=""
 
 if [ $# -eq 0 ]
 then
-    COMP_FILES="-f docker-compose-mlflow.yaml -f docker-compose-pmml.yaml"
+    COMP_FILES="${MLFLOW_ENV} ${PMML_ENV}"
 else
     for FRAMEWORK in $@
     do
         if [ $FRAMEWORK = "mlflow" ]
         then
-            COMP_FILES+="-f docker-compose-mlflow.yaml "
+            COMP_FILES+="${MLFLOW_ENV} "
         elif [ $FRAMEWORK = "pmml" ]
         then
-            COMP_FILES+="-f docker-compose-pmml.yaml"
+            COMP_FILES+="${PMML_ENV} "
         fi
     done
 fi
