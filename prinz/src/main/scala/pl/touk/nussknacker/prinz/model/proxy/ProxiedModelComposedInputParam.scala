@@ -10,7 +10,7 @@ final case class ProxiedModelComposedInputParam[T](paramsSupplier: ComposedParam
 
 object ProxiedModelComposedInputParam {
 
-  type ComposedParamsSupplier[T] = ModelMetadata => Future[T]
+  type ComposedParamsSupplier[+T] = ModelMetadata => Future[T]
 
-  type ParamsExtractor[T] = T => Future[Iterable[(SignatureName, AnyRef)]]
+  type ParamsExtractor[-T] = T => Future[Iterable[(SignatureName, AnyRef)]]
 }

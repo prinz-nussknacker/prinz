@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 class ProxiedInputModel(model: Model,
                         params: Iterable[ProxiedModelInputParam],
-                        composedParams: Iterable[ProxiedModelComposedInputParam[AnyRef]]) extends Model {
+                        composedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]]) extends Model {
 
   private val originalModelInstance = model.toModelInstance
 
@@ -45,7 +45,7 @@ class ProxiedInputModel(model: Model,
     ).map(addExtraInputsTo(inputMap))
 
   private def supplyNonProvidedComposedInputs(inputMap: VectorMultimap[String, AnyRef]): Future[VectorMultimap[String, AnyRef]] =
-    Future.sequence(composedProxiedParams.map(supplyComposedParamValues))
+    Future.sequence(composedProxiedParams.map { param => supplyComposedParamValues(param) } )
       .map(_.foldLeft(inputMap) { (acc, composedValues) =>
         addExtraInputsTo(acc)(composedValues)
       })
@@ -62,7 +62,7 @@ class ProxiedInputModel(model: Model,
   private def inputsToBeReplacedIn(inputMap: VectorMultimap[String, AnyRef]): ProxiedModelInputParam => Boolean =
     param => !inputMap.containsKey(param.paramName.name)
 
-  private def supplyComposedParamValues(param: ProxiedModelComposedInputParam[AnyRef]): Future[Iterable[(String, AnyRef)]] = {
+  private def supplyComposedParamValues[T <: AnyRef](param: ProxiedModelComposedInputParam[T]): Future[Iterable[(String, AnyRef)]] = {
     param.paramsSupplier(modelMetadata)
       .flatMap(param.paramsExtractor(_))
       .map { iter => iter.map { case (name, value) => (name.name, value) } }
