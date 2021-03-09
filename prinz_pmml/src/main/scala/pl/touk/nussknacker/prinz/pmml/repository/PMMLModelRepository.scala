@@ -69,7 +69,7 @@ class PMMLModelRepository(implicit val config: PMMLConfig) extends ModelReposito
 
 object PMMLModelRepository {
 
-  private val PMML_FILE_EXTENSION: String = ".pmml"
+  protected val PMML_FILE_EXTENSION: String = ".pmml"
 }
 
 // TODO create proper pmml API which would handle model input stream correctly
