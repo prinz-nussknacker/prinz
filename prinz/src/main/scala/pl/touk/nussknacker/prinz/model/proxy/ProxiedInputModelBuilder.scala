@@ -19,8 +19,8 @@ class ProxiedInputModelBuilder(private val model: Model) {
     this
   }
 
-  def proxyComposedParam[T <: AnyRef](paramsExtractor: ParamsExtractor[T],
-                                      paramSupplier: ComposedParamsSupplier[T]): ProxiedInputModelBuilder = {
+  def proxyComposedParam[T <: AnyRef](paramSupplier: ComposedParamsSupplier[T],
+                                      paramsExtractor: ParamsExtractor[T]): ProxiedInputModelBuilder = {
     val createdInputParam = ProxiedModelComposedInputParam(paramSupplier,paramsExtractor)
     composedParams += createdInputParam
     this

@@ -9,7 +9,7 @@ import scala.reflect.io.Directory
 
 trait H2Database extends AnyFlatSpecLike with BeforeAndAfterAll {
 
-  private val PARENT_DIR: String = "./"
+  private val PARENT_DIR: String = "./test-database"
 
   private val DATABASE_NAME: String = "prinz-test-db"
 
@@ -24,6 +24,16 @@ trait H2Database extends AnyFlatSpecLike with BeforeAndAfterAll {
       stmt <- connection.map(_.createStatement)
     } yield {
       val result = stmt.executeQuery(query)
+      stmt.close()
+      result
+    }
+  }
+
+  def executeUpdate(query: String): Option[Int] = {
+    for {
+      stmt <- connection.map(_.createStatement)
+    } yield {
+      val result = stmt.executeUpdate(query)
       stmt.close()
       result
     }

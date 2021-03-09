@@ -1,7 +1,7 @@
 package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest
+import pl.touk.nussknacker.prinz.{H2Database, UnitIntegrationTest}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
@@ -9,16 +9,18 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegister
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedHttpInputModelBuilder
+import pl.touk.nussknacker.prinz.model.proxy.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import java.net.URL
+import java.sql.ResultSet
 import java.util.concurrent.TimeUnit
-import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFContainerTest extends UnitIntegrationTest {
+class MLFContainerTest extends UnitIntegrationTest with H2Database {
 
   private implicit val config: Config = ConfigFactory.load()
 
@@ -164,11 +166,40 @@ class MLFContainerTest extends UnitIntegrationTest {
     response.toOption.isDefined shouldBe (true)
   }
 
-  it should "allow to run fraud model with proxied data" in {
+  it should "allow to run fraud model with http proxied data" in {
     val model = getModel(getFraudDetectionModel).get
-    val proxiedModel = ProxiedHttpInputModelBuilder(model)
+    val proxiedModel = new ProxiedHttpInputModelBuilder(model)
       .proxyHttpGet("amount", s"$STATIC_SERVER_PATH/double")
       .proxyHttpGet("gender", s"$STATIC_SERVER_PATH/string")
+      .build()
+    val instance = proxiedModel.toModelInstance
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("category", "es_transportation"),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
+  }
+
+  it should "allow to run fraud model with database composed proxied data" in {
+    executeUpdate("create table input_data (" +
+      "id int not null," +
+      "amount double not null," +
+      "gender varchar(16) not null" +
+      ");")
+    executeUpdate("insert into input_data values (0, 42.42, 'F')")
+
+    val model = getModel(getFraudDetectionModel).get
+    val proxiedModel = new ProxiedInputModelBuilder(model)
+      .proxyComposedParam[ResultSet](
+        _ => executeQuery("select * from input_data where id = 0;").map(Future(_)).orNull,
+        rs => Future(
+          List("amount", "gender")
+            .map(col => (SignatureName(col), rs.getObject(col)))
+        )
+      )
       .build()
     val instance = proxiedModel.toModelInstance
     val sampleInput = VectorMultimap(
