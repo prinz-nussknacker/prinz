@@ -18,10 +18,6 @@ upstream bucket {
     server ${BUCKET_URL};
 }
 
-upstream pmml {
-    server ${PMML_SAMPLES_URL};
-}
-
 server {
     listen ${NGINX_MLFLOW_PORT};
     server_name mlflow-server;
@@ -87,14 +83,5 @@ server {
     }
     location /static/string {
         rewrite /static/string /string break;
-    }
-}
-
-server {
-    listen ${PMML_SAMPLES_PORT};
-    server_name pmml-samples;
-
-    location / {
-        proxy_pass http://pmml;
     }
 }
