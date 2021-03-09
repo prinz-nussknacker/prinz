@@ -195,10 +195,10 @@ class MLFContainerTest extends UnitIntegrationTest with H2Database {
     val proxiedModel = new ProxiedInputModelBuilder(model)
       .proxyComposedParam[ResultSet](
         _ => executeQuery("select * from input_data where id = 0;").map(Future(_)).orNull,
-        rs => Future(
-          List("amount", "gender")
-            .map(col => (SignatureName(col), rs.getObject(col)))
-        )
+        rs => extractResultSetValues(rs, List(
+          ("amount", _.getBigDecimal("amount")),
+          ("gender", _.getString("gender"))
+        ))
       )
       .build()
     val instance = proxiedModel.toModelInstance
@@ -211,6 +211,16 @@ class MLFContainerTest extends UnitIntegrationTest with H2Database {
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe (true)
   }
+
+  private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
+    Future(
+      if (rs.next()) {
+        extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs)))
+      }
+      else {
+        List()
+      }
+    )
 
   private def getModel(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFRegisteredModel] = {
     val repository = new MLFModelRepository
