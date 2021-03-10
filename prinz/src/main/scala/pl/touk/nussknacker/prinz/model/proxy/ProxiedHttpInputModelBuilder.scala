@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 class ProxiedHttpInputModelBuilder(model: Model) extends ProxiedInputModelBuilder(model) {
 
-  def proxyHttpGet(paramName: String, path: String): ProxiedHttpInputModelBuilder = {
+  def proxyHttpGet(paramName: String, path: String): this.type = {
     val httpClient = new AsyncRestJsonClient(path)
     val signatureName = SignatureName(paramName)
     proxyParam(paramName) { modelInputParamMetadata =>
@@ -19,7 +19,6 @@ class ProxiedHttpInputModelBuilder(model: Model) extends ProxiedInputModelBuilde
         case None => Future(Unit)
       }
     }
-    this
   }
 
   private def httpGetAndDeserialize(paramType: SignatureType, client: AsyncRestJsonClient): Future[AnyRef] = {

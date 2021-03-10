@@ -12,7 +12,7 @@ class ProxiedInputModelBuilder(private val model: Model) {
 
   protected val composedParams: mutable.MutableList[ProxiedModelComposedInputParam[_ <: AnyRef]] = mutable.MutableList()
 
-  def proxyParam(paramName: String)(paramSupplier: ParamSupplier): ProxiedInputModelBuilder = {
+  def proxyParam(paramName: String)(paramSupplier: ParamSupplier): this.type = {
     val signatureName = SignatureName(paramName)
     val createdInputParam = ProxiedModelInputParam(signatureName, paramSupplier)
     params put(signatureName, createdInputParam)
@@ -20,7 +20,7 @@ class ProxiedInputModelBuilder(private val model: Model) {
   }
 
   def proxyComposedParam[T <: AnyRef](paramSupplier: ComposedParamsSupplier[T],
-                                      paramsExtractor: ParamsExtractor[T]): ProxiedInputModelBuilder = {
+                                      paramsExtractor: ParamsExtractor[T]): this.type = {
     val createdInputParam = ProxiedModelComposedInputParam(paramSupplier,paramsExtractor)
     composedParams += createdInputParam
     this
