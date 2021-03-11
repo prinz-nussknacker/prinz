@@ -7,14 +7,11 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import scala.concurrent.Future
 
 class ProxiedInputModel(model: Model,
-                        params: Iterable[ProxiedModelInputParam],
-                        composedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]]) extends Model {
+                        private val proxiedParams: Iterable[ProxiedModelInputParam],
+                        private val composedProxiedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]])
+  extends Model {
 
   private val originalModelInstance = model.toModelInstance
-
-  private val proxiedParams = params
-
-  private val composedProxiedParams = composedParams
 
   private val proxiedName = new ModelName(s"Proxied-${model.getName.internal}")
 
