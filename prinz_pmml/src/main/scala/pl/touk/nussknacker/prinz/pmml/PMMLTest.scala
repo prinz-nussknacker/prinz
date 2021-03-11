@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.pmml
 
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
-import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
+import pl.touk.nussknacker.prinz.pmml.repository.{HttpPMMLModelRepository, PMMLModelRepository}
 
 import java.io.{BufferedReader, InputStreamReader}
 
@@ -16,12 +16,10 @@ object PMMLTest extends App with LazyLogging {
       |""".stripMargin
   )
   implicit val pmmlConfig: PMMLConfig = PMMLConfig()
-  val repository = new PMMLModelRepository
+  val repository = new HttpPMMLModelRepository(pmmlConfig.modelDirectoryHrefSelector)
   val builder = new StringBuilder()
   repository.listModels.right.get
-    .map(_.inputStream)
-    .map(new InputStreamReader(_))
-    .map(new BufferedReader(_))
-    .foreach(_.lines().forEach(line => builder.append(line)))
+    .map(_.getName)
+    .foreach(name => builder.append(name).append(System.lineSeparator()))
   logger.info(builder.toString)
 }

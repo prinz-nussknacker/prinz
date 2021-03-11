@@ -11,12 +11,14 @@ final class PMMLModel(inputStream: InputStream) extends Model {
   //PMMLModelInstance should use this evaluator for scoring
   val evaluator: Evaluator = buildModelEvaluatorFromStream(inputStream)
 
-  override def getName: ModelName = ???
+  override def getName: PMMLModelName = PMMLModelName("TODO - find in pmml api")
 
   override def getVersion: ModelVersion = ???
 
   override def toModelInstance: ModelInstance = ???
 }
+
+case class PMMLModelName(name: String) extends ModelName(name)
 
 object PMMLModel {
 
