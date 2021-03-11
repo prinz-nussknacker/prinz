@@ -8,13 +8,9 @@ import java.io.{BufferedReader, InputStreamReader}
 
 // TODO to be removed after full repository implementation
 object PMMLTest extends App with LazyLogging {
-  val d1  = "file:///home/avan1235/Desktop/pmml/fraud-detection.pmml"
-  val d2  = "file:///home/avan1235/Desktop/pmml/"
-  val d3  = "http://localhost:5100"
-  val d4  = "http://localhost:5100/fraud-detection.pmml"
   implicit val config: Config = ConfigFactory.parseString(s"""
       |  pmml {
-      |    modelsDirectory: "$d4"
+      |    modelsDirectory: "http://localhost:5100"
       |    modelDirectoryHrefSelector: "body > ul > li > a"
       |  }
       |""".stripMargin
