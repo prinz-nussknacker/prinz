@@ -8,8 +8,7 @@ import scala.concurrent.Future
 
 class ProxiedInputModel(model: Model,
                         private val proxiedParams: Iterable[ProxiedModelInputParam],
-                        private val composedProxiedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]])
-  extends Model {
+                        private val composedProxiedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]]) extends Model {
 
   private val originalModelInstance = model.toModelInstance
 
