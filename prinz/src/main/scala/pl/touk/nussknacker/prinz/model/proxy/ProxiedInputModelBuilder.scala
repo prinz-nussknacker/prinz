@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.model.proxy
 
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelComposedInputParam.{ComposedParamsSupplier, ParamsExtractor}
+import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelCompositeInputParam.{ComposedParamsSupplier, ParamsExtractor}
 import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelInputParam.ParamSupplier
 import pl.touk.nussknacker.prinz.model.{Model, SignatureName}
 
@@ -10,7 +10,7 @@ class ProxiedInputModelBuilder(private val model: Model) {
 
   protected val params: mutable.Map[SignatureName, ProxiedModelInputParam] = mutable.Map[SignatureName, ProxiedModelInputParam]()
 
-  protected val composedParams: mutable.MutableList[ProxiedModelComposedInputParam[_ <: AnyRef]] = mutable.MutableList()
+  protected val composedParams: mutable.MutableList[ProxiedModelCompositeInputParam[_ <: AnyRef]] = mutable.MutableList()
 
   def proxyParam(paramName: String)(paramSupplier: ParamSupplier): this.type = {
     val signatureName = SignatureName(paramName)
@@ -21,7 +21,7 @@ class ProxiedInputModelBuilder(private val model: Model) {
 
   def proxyComposedParam[T <: AnyRef](paramSupplier: ComposedParamsSupplier[T],
                                       paramsExtractor: ParamsExtractor[T]): this.type = {
-    val createdInputParam = ProxiedModelComposedInputParam(paramSupplier,paramsExtractor)
+    val createdInputParam = ProxiedModelCompositeInputParam(paramSupplier,paramsExtractor)
     composedParams += createdInputParam
     this
   }

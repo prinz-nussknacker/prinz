@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 class ProxiedInputModel(model: Model,
                         private val proxiedParams: Iterable[ProxiedModelInputParam],
-                        private val composedProxiedParams: Iterable[ProxiedModelComposedInputParam[_ <: AnyRef]]) extends Model {
+                        private val compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]) extends Model {
 
   private val originalModelInstance = model.toModelInstance
 
@@ -37,32 +37,19 @@ class ProxiedInputModel(model: Model,
     Future.sequence(
       proxiedParams
         .filter(inputsToBeReplacedIn(inputMap))
-        .map(supplyParamValue)
+        .map(_.supplyParamValue(modelMetadata))
     ).map(addExtraInputsTo(inputMap))
 
   private def supplyNonProvidedComposedInputs(inputMap: VectorMultimap[String, AnyRef]): Future[VectorMultimap[String, AnyRef]] =
-    Future.sequence(composedProxiedParams.map { param => supplyComposedParamValues(param) } )
+    Future.sequence(compositeProxiedParams
+      .map(_.supplyCompositeParamValues(modelMetadata))
+    )
       .map(_.foldLeft(inputMap) { (acc, composedValues) =>
         addExtraInputsTo(acc)(composedValues)
       })
 
-  private def supplyParamValue(param: ProxiedModelInputParam): Future[(String, AnyRef)] = {
-    val paramName = param.paramName
-    val metadata = ModelInputParamMetadata(paramName, modelMetadata)
-    val resultFuture = param.paramSupplier(metadata)
-    resultFuture.map { result =>
-      (paramName.name, result)
-    }
-  }
-
   private def inputsToBeReplacedIn(inputMap: VectorMultimap[String, AnyRef]): ProxiedModelInputParam => Boolean =
     param => !inputMap.containsKey(param.paramName.name)
-
-  private def supplyComposedParamValues[T <: AnyRef](param: ProxiedModelComposedInputParam[T]): Future[Iterable[(String, AnyRef)]] = {
-    param.paramsSupplier(modelMetadata)
-      .flatMap(param.paramsExtractor(_))
-      .map { iter => iter.map { case (name, value) => (name.name, value) } }
-  }
 
   private def addExtraInputsTo(inputMap: VectorMultimap[String, AnyRef])(extraInputs: Iterable[(String, AnyRef)]): VectorMultimap[String, AnyRef] =
     extraInputs.foldLeft(inputMap) { (acc, value) => acc.add(value._1, value._2) }
