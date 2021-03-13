@@ -1,8 +1,8 @@
-package pl.touk.nussknacker.prinz.model.proxy
+package pl.touk.nussknacker.prinz.model.proxy.api
 
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelCompositeInputParam.{ComposedParamsSupplier, ParamsExtractor}
-import pl.touk.nussknacker.prinz.model.{ModelMetadata, SignatureName}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedModelCompositeInputParam.{ComposedParamsSupplier, ParamsExtractor}
+import pl.touk.nussknacker.prinz.model.{ModelMetadata, SignatureName}
 
 import scala.concurrent.Future
 

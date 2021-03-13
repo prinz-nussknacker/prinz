@@ -1,4 +1,4 @@
-package pl.touk.nussknacker.prinz.model.proxy
+package pl.touk.nussknacker.prinz.model.proxy.api
 
 import pl.touk.nussknacker.prinz.model.{ModelMetadata, SignatureName}
 

@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.model.proxy
 
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelCompositeInputParam.{ComposedParamsSupplier, ParamsExtractor}
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedModelInputParam.ParamSupplier
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedModelCompositeInputParam.{ComposedParamsSupplier, ParamsExtractor}
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedModelInputParam.ParamSupplier
+import pl.touk.nussknacker.prinz.model.proxy.api.{ProxiedInputModel, ProxiedModelCompositeInputParam, ProxiedModelInputParam}
 import pl.touk.nussknacker.prinz.model.{Model, SignatureName}
 
 import scala.collection.mutable
