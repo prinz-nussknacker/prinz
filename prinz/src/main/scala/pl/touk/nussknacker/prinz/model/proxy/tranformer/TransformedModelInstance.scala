@@ -16,3 +16,5 @@ class TransformedModelInstance(originalModelInstance: ModelInstance,
         originalModelInstance.run(transformedInput)
       }
 }
+
+trait ModelInputTransformer extends SignatureTransformer with TransformedParamProvider

@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.model.proxy.api
 
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelVersion}
 import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance, ProxiedModelCompositeInputParam, ProxiedModelInputParam}
-import pl.touk.nussknacker.prinz.model.proxy.tranformer.{SignatureTransformer, TransformedModelInstance, TransformedParamProvider}
+import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer, SignatureTransformer, TransformedModelInstance, TransformedParamProvider}
 
 
 class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, proxy: ModelInstance)
@@ -33,6 +33,15 @@ class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, 
       model,
       TransformedProxiedInputModelName(model),
       new TransformedModelInstance(originalModelInstance, signatureTransformer, paramProvider)
+    )
+  }
+
+  def this(model: Model,
+           transformer: ModelInputTransformer) {
+    this(
+      model,
+      TransformedProxiedInputModelName(model),
+      new TransformedModelInstance(originalModelInstance, transformer, transformer)
     )
   }
 

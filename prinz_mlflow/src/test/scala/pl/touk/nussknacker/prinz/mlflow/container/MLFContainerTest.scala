@@ -10,6 +10,7 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegister
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
@@ -237,15 +238,8 @@ class MLFContainerTest extends UnitIntegrationTest
       "(3, 44.44, 'F');")
 
     val model = getModel(getFraudDetectionModel).get
-    val proxiedModel = new ProxiedInputModelBuilder(model)
-      .proxyComposedParam[ResultSet](
-        _ => executeQuery("select * from input_data where id = 0;").map(Future(_)).orNull,
-        rs => extractResultSetValues(rs, List(
-          ("amount", _.getBigDecimal("amount")),
-          ("gender", _.getString("gender"))
-        ))
-      )
-      .build()
+    val signatureTransformer =
+    val proxiedModel = ProxiedInputModel(model, signatureTransformer, paramProvider)
     val instance = proxiedModel.toModelInstance
     val sampleInput = VectorMultimap(
       ("age", "4"),
