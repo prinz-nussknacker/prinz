@@ -1,6 +1,7 @@
 package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
+import org.scalatest.BeforeAndAfterAll
 import pl.touk.nussknacker.prinz.{H2Database, UnitIntegrationTest}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
@@ -9,22 +10,33 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegister
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
-import pl.touk.nussknacker.prinz.model.proxy.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
+import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-import java.net.URL
 import java.sql.ResultSet
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFContainerTest extends UnitIntegrationTest with H2Database {
+class MLFContainerTest extends UnitIntegrationTest
+  with H2Database
+  with BeforeAndAfterAll {
 
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    initDatabase()
+  }
+
+  override def afterAll(): Unit = {
+    super.afterAll()
+    closeDatabase()
+  }
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFModelRepository
@@ -190,6 +202,39 @@ class MLFContainerTest extends UnitIntegrationTest with H2Database {
       "gender varchar(16) not null" +
       ");")
     executeUpdate("insert into input_data values (0, 42.42, 'F')")
+
+    val model = getModel(getFraudDetectionModel).get
+    val proxiedModel = new ProxiedInputModelBuilder(model)
+      .proxyComposedParam[ResultSet](
+        _ => executeQuery("select * from input_data where id = 0;").map(Future(_)).orNull,
+        rs => extractResultSetValues(rs, List(
+          ("amount", _.getBigDecimal("amount")),
+          ("gender", _.getString("gender"))
+        ))
+      )
+      .build()
+    val instance = proxiedModel.toModelInstance
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("category", "es_transportation"),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
+  }
+
+  it should "allow to run fraud model with database transformed proxied data" in {
+    executeUpdate("create table customer_data (" +
+      "customer_id int not null," +
+      "customer_amount double not null," +
+      "customer_gender varchar(16) not null" +
+      ");")
+    executeUpdate("insert into input_data values " +
+      "(0, 42.42, 'F')," +
+      "(1, 24.24, 'M')," +
+      "(2, 22.22, 'M')," +
+      "(3, 44.44, 'F');")
 
     val model = getModel(getFraudDetectionModel).get
     val proxiedModel = new ProxiedInputModelBuilder(model)

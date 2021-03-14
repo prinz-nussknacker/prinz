@@ -1,17 +1,14 @@
 package pl.touk.nussknacker.prinz
 
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.flatspec.AnyFlatSpecLike
-
 import java.io.File
 import java.sql.{Connection, DriverManager, ResultSet}
 import scala.reflect.io.Directory
 
-trait H2Database extends AnyFlatSpecLike with BeforeAndAfterAll {
+trait H2Database {
 
   private val DATABASE_PARENT_DIR: String = "./h2-test-database"
 
-  private val DATABASE_NAME: String = "prinz-test-db"
+  private val DATABASE_NAME: String = s"prinz-test-db-${this.getClass.getSimpleName}"
 
   private val DATABASE_DIR: String = s"$DATABASE_PARENT_DIR/$DATABASE_NAME"
 
@@ -31,11 +28,11 @@ trait H2Database extends AnyFlatSpecLike with BeforeAndAfterAll {
     } yield stmt.executeUpdate(query)
   }
 
-  override protected def afterAll(): Unit = {
-    new Directory(new File(DATABASE_PARENT_DIR)).deleteRecursively()
+  def initDatabase(): Unit = {
+    new Directory(new File(DATABASE_DIR)).deleteRecursively()
   }
 
-  override protected def beforeAll(): Unit = {
+  def closeDatabase(): Unit = {
     connection = Some(DriverManager.getConnection(DATABASE_URL))
   }
 }

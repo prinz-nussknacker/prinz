@@ -6,6 +6,7 @@ import pl.touk.nussknacker.engine.api.test.InvocationCollectors
 import pl.touk.nussknacker.engine.api.typed.typing
 import pl.touk.nussknacker.engine.api.{ContextId, MetaData}
 import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.model.ModelInstance.ModelInputData
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.ExecutionContext
@@ -28,6 +29,6 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
 
   override def returnType: typing.TypingResult = modelInstance.getSignature.getOutputDefinition
 
-  def createInputMap(inputs: List[AnyRef]): VectorMultimap[String, AnyRef] =
+  def createInputMap(inputs: List[AnyRef]): ModelInputData =
     VectorMultimap(parameterDefinition.map(_.name) zip inputs)
 }

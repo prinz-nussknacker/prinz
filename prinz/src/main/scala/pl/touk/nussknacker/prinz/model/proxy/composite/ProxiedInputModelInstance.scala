@@ -1,15 +1,16 @@
-package pl.touk.nussknacker.prinz.model.proxy.api
+package pl.touk.nussknacker.prinz.model.proxy.composite
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
+import pl.touk.nussknacker.prinz.model.ModelInstance.ModelRunResult
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelMetadata}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Future
 
-class ProxiedInputModelInstance(private val modelMetadata: ModelMetadata,
-                                private val originalModelInstance: ModelInstance,
-                                private val proxiedParams: Iterable[ProxiedModelInputParam],
-                                private val compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]])
+class ProxiedInputModelInstance(modelMetadata: ModelMetadata,
+                                originalModelInstance: ModelInstance,
+                                proxiedParams: Iterable[ProxiedModelInputParam],
+                                compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]])
   extends ModelInstance(originalModelInstance.model, originalModelInstance.signatureProvider) {
 
   override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {

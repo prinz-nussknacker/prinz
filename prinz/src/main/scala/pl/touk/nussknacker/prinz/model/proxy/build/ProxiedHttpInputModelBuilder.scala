@@ -1,7 +1,7 @@
-package pl.touk.nussknacker.prinz.model.proxy
+package pl.touk.nussknacker.prinz.model.proxy.build
 
-import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
+import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.{Model, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.http.AsyncRestJsonClient
 
