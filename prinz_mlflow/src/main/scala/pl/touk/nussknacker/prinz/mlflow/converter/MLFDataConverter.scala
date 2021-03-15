@@ -22,7 +22,7 @@ object MLFDataConverter extends LazyLogging {
       Dataframe()
     }
     else {
-      val columns = input.keys.toList
+      val columns = signature.signatureInputs.map(_.signatureName.name)
       val numberOfDataSeries = input.values.map(_.size).head
       val data = (0 until numberOfDataSeries).map(seriesIndex =>
         columns.map(columnName => {

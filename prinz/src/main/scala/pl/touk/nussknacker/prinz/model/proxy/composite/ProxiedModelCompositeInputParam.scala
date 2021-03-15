@@ -11,7 +11,7 @@ final case class ProxiedModelCompositeInputParam[T](paramsSupplier: ComposedPara
 
   def supplyCompositeParamValues(modelMetadata: ModelMetadata): Future[Iterable[(String, AnyRef)]] = {
     paramsSupplier(modelMetadata)
-      .flatMap(paramsExtractor(_))
+      .flatMap(paramsExtractor)
       .map { iter => iter.map { case (name, value) => (name.name, value) } }
   }
 }

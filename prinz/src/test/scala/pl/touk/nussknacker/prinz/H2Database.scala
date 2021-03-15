@@ -4,35 +4,38 @@ import java.io.File
 import java.sql.{Connection, DriverManager, ResultSet}
 import scala.reflect.io.Directory
 
-trait H2Database {
+object H2Database {
 
   private val DATABASE_PARENT_DIR: String = "./h2-test-database"
 
-  private val DATABASE_NAME: String = s"prinz-test-db-${this.getClass.getSimpleName}"
+  private val DATABASE_NAME: String = s"prinz-test-db"
 
   private val DATABASE_DIR: String = s"$DATABASE_PARENT_DIR/$DATABASE_NAME"
 
   private val DATABASE_URL: String = s"jdbc:h2:$DATABASE_DIR"
 
-  private var connection: Option[Connection] = None
-
-  def executeQuery(query: String): Option[ResultSet] = {
-    for {
-      stmt <- connection.map(_.createStatement)
-    } yield stmt.executeQuery(query)
+  private val connection: Connection = {
+    cleanDatabase()
+    DriverManager.getConnection(DATABASE_URL)
   }
 
-  def executeUpdate(query: String): Option[Int] = {
-    for {
-      stmt <- connection.map(_.createStatement)
-    } yield stmt.executeUpdate(query)
+  def executeNonEmptyQuery(query: String): ResultSet = {
+    val stmt = connection.createStatement
+    val rs = stmt.executeQuery(query)
+    if (rs.next()) {
+      rs
+    }
+    else {
+      throw new IllegalArgumentException("Empty ResultSet")
+    }
   }
 
-  def initDatabase(): Unit = {
-    new Directory(new File(DATABASE_DIR)).deleteRecursively()
+  def executeUpdate(query: String): Int = {
+    val stmt = connection.createStatement
+    stmt.executeUpdate(query)
   }
 
-  def closeDatabase(): Unit = {
-    connection = Some(DriverManager.getConnection(DATABASE_URL))
+  private def cleanDatabase(): Unit = {
+    new Directory(new File(DATABASE_PARENT_DIR)).deleteRecursively()
   }
 }

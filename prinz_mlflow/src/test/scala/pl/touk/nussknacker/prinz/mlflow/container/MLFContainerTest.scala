@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.BeforeAndAfterAll
-import pl.touk.nussknacker.prinz.{H2Database, UnitIntegrationTest}
+import pl.touk.nussknacker.prinz.{H2Database, TestH2IdTransformedParamProvider, UnitIntegrationTest}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
@@ -22,22 +22,11 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
 class MLFContainerTest extends UnitIntegrationTest
-  with H2Database
   with BeforeAndAfterAll {
 
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    initDatabase()
-  }
-
-  override def afterAll(): Unit = {
-    super.afterAll()
-    closeDatabase()
-  }
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFModelRepository
@@ -197,17 +186,17 @@ class MLFContainerTest extends UnitIntegrationTest
   }
 
   it should "allow to run fraud model with database composed proxied data" in {
-    executeUpdate("create table input_data (" +
+    H2Database.executeUpdate("create table input_data (" +
       "id int not null," +
       "amount double not null," +
       "gender varchar(16) not null" +
       ");")
-    executeUpdate("insert into input_data values (0, 42.42, 'F')")
+    H2Database.executeUpdate("insert into input_data values (0, 42.42, 'F')")
 
     val model = getModel(getFraudDetectionModel).get
     val proxiedModel = new ProxiedInputModelBuilder(model)
       .proxyComposedParam[ResultSet](
-        _ => executeQuery("select * from input_data where id = 0;").map(Future(_)).orNull,
+        _ => Future(H2Database.executeNonEmptyQuery("select * from input_data where id = 0;")),
         rs => extractResultSetValues(rs, List(
           ("amount", _.getBigDecimal("amount")),
           ("gender", _.getString("gender"))
@@ -226,22 +215,24 @@ class MLFContainerTest extends UnitIntegrationTest
   }
 
   it should "allow to run fraud model with database transformed proxied data" in {
-    executeUpdate("create table customer_data (" +
-      "customer_id int not null," +
-      "customer_amount double not null," +
-      "customer_gender varchar(16) not null" +
+    val tableName = "customer"
+    H2Database.executeUpdate(s"create table $tableName (" +
+      s"${tableName}_id int not null," +
+      s"${tableName}_amount double not null," +
+      s"${tableName}_gender varchar(16) not null" +
       ");")
-    executeUpdate("insert into input_data values " +
+    H2Database.executeUpdate(s"insert into $tableName values " +
       "(0, 42.42, 'F')," +
       "(1, 24.24, 'M')," +
       "(2, 22.22, 'M')," +
       "(3, 44.44, 'F');")
 
     val model = getModel(getFraudDetectionModel).get
-    val signatureTransformer =
-    val proxiedModel = ProxiedInputModel(model, signatureTransformer, paramProvider)
+    val paramProvider = new TestH2IdTransformedParamProvider(tableName)
+    val proxiedModel = ProxiedInputModel(model, paramProvider)
     val instance = proxiedModel.toModelInstance
     val sampleInput = VectorMultimap(
+      (s"${tableName}_id", 1),
       ("age", "4"),
       ("category", "es_transportation"),
     ).mapValues(_.asInstanceOf[AnyRef])
@@ -252,14 +243,7 @@ class MLFContainerTest extends UnitIntegrationTest
   }
 
   private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
-    Future(
-      if (rs.next()) {
-        extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs)))
-      }
-      else {
-        List()
-      }
-    )
+    Future(extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs))))
 
   private def getModel(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFRegisteredModel] = {
     val repository = new MLFModelRepository

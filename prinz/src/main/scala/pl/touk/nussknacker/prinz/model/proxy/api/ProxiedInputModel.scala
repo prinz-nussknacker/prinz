@@ -5,16 +5,18 @@ import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstanc
 import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer, SignatureTransformer, TransformedModelInstance, TransformedParamProvider}
 
 
-class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, proxy: ModelInstance)
+class ProxiedInputModel private(model: Model,
+                                modelName: ProxiedInputModelName,
+                                proxySupplier: (ModelMetadata, ModelInstance) => ModelInstance)
   extends Model {
 
   private val originalModelInstance: ModelInstance = model.toModelInstance
 
-  private val proxiedModelInstance: ModelInstance = proxy
-
   private val proxiedName: ModelName = modelName
 
   private val modelMetadata: ModelMetadata = ModelMetadata(model.getName, model.getVersion, originalModelInstance.getSignature)
+
+  private val proxiedModelInstance: ModelInstance = proxySupplier(modelMetadata, originalModelInstance)
 
   def this(model: Model,
            proxiedParams: Iterable[ProxiedModelInputParam],
@@ -22,7 +24,7 @@ class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, 
     this(
       model,
       CompositeProxiedInputModelName(model),
-      new ProxiedInputModelInstance(modelMetadata, originalModelInstance, proxiedParams, compositeProxiedParams)
+      (metadata, instance) => new ProxiedInputModelInstance(metadata, instance, proxiedParams, compositeProxiedParams)
     )
   }
 
@@ -32,7 +34,7 @@ class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, 
     this(
       model,
       TransformedProxiedInputModelName(model),
-      new TransformedModelInstance(originalModelInstance, signatureTransformer, paramProvider)
+      (_, instance) => new TransformedModelInstance(instance, signatureTransformer, paramProvider)
     )
   }
 
@@ -41,7 +43,7 @@ class ProxiedInputModel private(model: Model, modelName: ProxiedInputModelName, 
     this(
       model,
       TransformedProxiedInputModelName(model),
-      new TransformedModelInstance(originalModelInstance, transformer, transformer)
+      (_, instance) => new TransformedModelInstance(instance, transformer, transformer)
     )
   }
 
@@ -63,4 +65,7 @@ object ProxiedInputModel {
             signatureTransformer: SignatureTransformer,
             paramProvider: TransformedParamProvider): ProxiedInputModel =
     new ProxiedInputModel(model, signatureTransformer, paramProvider)
+
+  def apply(model: Model, transformer: ModelInputTransformer): ProxiedInputModel =
+    new ProxiedInputModel(model, transformer)
 }
