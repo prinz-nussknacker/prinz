@@ -50,6 +50,7 @@ if __name__ == "__main__":
     test_y = test[["quality"]]
 
     lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
+    lr.pmml_name_ = 'ElasticnetWineModel'
     pipeline = PMMLPipeline(steps=[('elastic_net', lr)])
 
     pipeline.fit(train_x, train_y)
