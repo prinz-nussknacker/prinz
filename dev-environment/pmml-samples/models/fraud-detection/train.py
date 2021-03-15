@@ -58,13 +58,13 @@ preprocessor = ColumnTransformer(
         ('numeric', numeric_transformer, numeric_features),
         ('categorical', categorical_transformer, categorical_features)])
 
-lr = LogisticRegression(
-    multi_class='ovr')
+lr = LogisticRegression(multi_class='ovr')
+lr.pmml_name_ = 'FraudDetection'
 
-classifier = PMMLPipeline(
-    steps=[
-        ('preprocessor', preprocessor),
-        ('classifier', lr)])
+classifier = PMMLPipeline([
+    ('preprocessor', preprocessor),
+    ('classifier', lr)
+])
 
 # Build model
 classifier.fit(train_x, train_y)
