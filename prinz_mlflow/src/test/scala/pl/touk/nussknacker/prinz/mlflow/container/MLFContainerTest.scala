@@ -230,7 +230,6 @@ class MLFContainerTest extends UnitIntegrationTest
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe (true)
-
   }
 
   it should "transform model param definition with database transformed proxied data" in {
