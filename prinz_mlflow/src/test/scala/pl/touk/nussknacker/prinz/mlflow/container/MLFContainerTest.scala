@@ -216,17 +216,7 @@ class MLFContainerTest extends UnitIntegrationTest
 
   it should "allow to run fraud model with database transformed proxied data" in {
     val tableName = "customer"
-    H2Database.executeUpdate(s"create table $tableName (" +
-      s"${tableName}_id int not null," +
-      s"${tableName}_amount double not null," +
-      s"${tableName}_gender varchar(16) not null" +
-      ");")
-    H2Database.executeUpdate(s"insert into $tableName values " +
-      "(0, 42.42, 'F')," +
-      "(1, 24.24, 'M')," +
-      "(2, 22.22, 'M')," +
-      "(3, 44.44, 'F');")
-
+    prepareCustomerTestData()
     val model = getModel(getFraudDetectionModel).get
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
     val proxiedModel = ProxiedInputModel(model, paramProvider)
@@ -239,7 +229,43 @@ class MLFContainerTest extends UnitIntegrationTest
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe (true)
+    response.toOption.isDefined shouldBe true
+
+  }
+
+  it should "transform model param definition with database transformed proxied data" in {
+    val tableName = "customer"
+    prepareCustomerTestData()
+
+    val model = getModel(getFraudDetectionModel).get
+    val paramProvider = new TestH2IdTransformedParamProvider(tableName)
+    val proxiedModel = ProxiedInputModel(model, paramProvider)
+    val instance = proxiedModel.toModelInstance
+    val enricherInputsDefinition = instance.getParameterDefinition.signatureInputs
+    val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
+
+    inputsNames should contain s"${tableName}_id"
+    inputsNames should contain "age"
+    inputsNames should contain "category"
+    inputsNames should not contain s"${tableName}_gender"
+    inputsNames should not contain s"gender"
+    inputsNames should not contain s"${tableName}_amount"
+    inputsNames should not contain s"amount"
+  }
+
+  private def prepareCustomerTestData(): Unit = {
+    val tableName = "customer"
+    H2Database.executeUpdate(s"drop table if exists $tableName;")
+    H2Database.executeUpdate(s"create table $tableName (" +
+      s"${tableName}_id int not null," +
+      s"${tableName}_amount double not null," +
+      s"${tableName}_gender varchar(16) not null" +
+      ");")
+    H2Database.executeUpdate(s"insert into $tableName values " +
+      "(0, 42.42, 'F')," +
+      "(1, 24.24, 'M')," +
+      "(2, 22.22, 'M')," +
+      "(3, 44.44, 'F');")
   }
 
   private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =

@@ -24,8 +24,20 @@ class TestH2IdTransformedParamProvider(tableName: String) extends ModelInputTran
     Future(addExtraDataForIds(extraInputsNames, ids, originalParameters))
   }
 
-  override def changeSignature(modelSignature: ModelSignature): ModelSignature =
-    modelSignature
+  override def changeSignature(modelSignature: ModelSignature): ModelSignature = {
+    val inputsToRemove = cachedColumnNames
+      .getOrElse(initExtraColumnFields())
+      .map(_.signatureName.name)
+      .toSet
+    val filteredInputs = modelSignature
+      .signatureInputs
+      .filter(input => !inputsToRemove.contains(input.signatureName.name))
+    val extraInput = SignatureField(
+      SignatureName(s"${tableName}_id"),
+      SignatureType(Typed[Int])
+    )
+    ModelSignature(extraInput::filteredInputs, modelSignature.signatureOutputs)
+  }
 
   private def addExtraDataForIds(extraInputsNames: List[String], ids: Iterable[Int], inputData: ModelInputData): ModelInputData =
     ids.foldLeft(inputData) { (acc, id) =>

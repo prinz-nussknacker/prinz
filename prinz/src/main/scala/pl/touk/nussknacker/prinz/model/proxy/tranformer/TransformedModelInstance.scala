@@ -1,13 +1,18 @@
 package pl.touk.nussknacker.prinz.model.proxy.tranformer
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
-import pl.touk.nussknacker.prinz.model.ModelInstance
+import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelSignature, SignatureNotFoundException}
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
+import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 
 class TransformedModelInstance(originalModelInstance: ModelInstance,
-                               signatureTransformer: SignatureTransformer,
+                               transformedSignatureProvider: TransformedSignatureProvider,
                                paramProvider: TransformedParamProvider)
-  extends ModelInstance(originalModelInstance.model, new TransformedSignatureProvider(signatureTransformer)) {
+  extends ModelInstance(originalModelInstance.model, originalModelInstance.signatureProvider) {
+
+  private val transformedSignatureOption: ProvideSignatureResult =
+    transformedSignatureProvider
+      .provideSignature(originalModelInstance.model)
 
   override def run(inputMap: ModelInputData): ModelRunResult =
     paramProvider
@@ -15,6 +20,11 @@ class TransformedModelInstance(originalModelInstance: ModelInstance,
       .flatMap { transformedInput =>
         originalModelInstance.run(transformedInput)
       }
+
+  override def getParameterDefinition: ModelSignature = transformedSignatureOption match {
+    case Some(value) => value
+    case None => throw SignatureNotFoundException(this)
+  }
 }
 
 trait ModelInputTransformer extends SignatureTransformer with TransformedParamProvider

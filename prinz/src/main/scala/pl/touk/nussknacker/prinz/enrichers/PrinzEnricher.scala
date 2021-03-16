@@ -25,9 +25,15 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
     modelInstance.run(inputMap).map(response => response.toOption.get)
   }
 
-  override def parameterDefinition: List[Parameter] = modelInstance.getSignature.toInputParameterDefinition
+  override def parameterDefinition: List[Parameter] =
+    modelInstance
+      .getParameterDefinition
+      .toInputParameterDefinition
 
-  override def returnType: typing.TypingResult = modelInstance.getSignature.getOutputDefinition
+  override def returnType: typing.TypingResult =
+    modelInstance
+      .getParameterDefinition
+      .getOutputDefinition
 
   def createInputMap(inputs: List[AnyRef]): ModelInputData =
     VectorMultimap(parameterDefinition.map(_.name) zip inputs)

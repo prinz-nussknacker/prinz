@@ -18,6 +18,10 @@ abstract class ModelInstance(val model: Model, val signatureProvider: SignatureP
     case Some(value) => value
     case None => throw SignatureNotFoundException(this)
   }
+
+  def getParameterDefinition: ModelSignature = getSignature
+
+  override def toString: String = s"ModelInstance for: $model"
 }
 
 object ModelInstance {
