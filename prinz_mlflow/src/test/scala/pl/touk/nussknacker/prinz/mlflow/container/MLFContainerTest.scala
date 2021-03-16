@@ -229,7 +229,7 @@ class MLFContainerTest extends UnitIntegrationTest
     val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
+    response.toOption.isDefined shouldBe (true)
 
   }
 
@@ -244,13 +244,13 @@ class MLFContainerTest extends UnitIntegrationTest
     val enricherInputsDefinition = instance.getParameterDefinition.signatureInputs
     val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
 
-    inputsNames should contain s"${tableName}_id"
-    inputsNames should contain "age"
-    inputsNames should contain "category"
-    inputsNames should not contain s"${tableName}_gender"
-    inputsNames should not contain s"gender"
-    inputsNames should not contain s"${tableName}_amount"
-    inputsNames should not contain s"amount"
+    inputsNames should contain (s"${tableName}_id")
+    inputsNames should contain ("age")
+    inputsNames should contain ("category")
+    inputsNames should not contain (s"${tableName}_gender")
+    inputsNames should not contain (s"gender")
+    inputsNames should not contain (s"${tableName}_amount")
+    inputsNames should not contain (s"amount")
   }
 
   private def prepareCustomerTestData(): Unit = {
