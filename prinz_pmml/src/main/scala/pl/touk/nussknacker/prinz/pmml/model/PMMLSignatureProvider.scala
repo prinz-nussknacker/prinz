@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
 import org.jpmml.evaluator.ModelField
-import pl.touk.nussknacker.prinz.model._
+import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField,
+  SignatureName, SignatureProvider, SignatureType}
 import pl.touk.nussknacker.prinz.pmml.converter.PMMLSignatureInterpreter.fromPMMLDataType
 
 import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
@@ -18,5 +19,8 @@ object PMMLSignatureProvider extends SignatureProvider {
   }
 
   private def modelFieldToSignatureField(modelField: ModelField): SignatureField =
-    SignatureField(SignatureName(modelField.getName.toString), SignatureType(fromPMMLDataType(modelField.getDataType.toString)))
+    SignatureField(
+      SignatureName(modelField.getName.toString),
+      SignatureType(fromPMMLDataType(modelField.getDataType.toString))
+    )
 }

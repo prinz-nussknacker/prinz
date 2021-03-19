@@ -2,12 +2,14 @@ name: Run unit tests
 on:
   pull_request:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
     paths-ignore:
       - 'docs/**'
   push:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
     paths-ignore:
       - 'docs/**'
 jobs:
