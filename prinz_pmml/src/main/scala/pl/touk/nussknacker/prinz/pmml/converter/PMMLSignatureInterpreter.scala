@@ -4,6 +4,7 @@ import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 
 object PMMLSignatureInterpreter {
 
+  // scalastyle:off
   def fromPMMLDataType(typeName: String): TypingResult = typeName match {
     case "string" => Typed[String]
     case "boolean" => Typed[Boolean]
@@ -26,4 +27,5 @@ object PMMLSignatureInterpreter {
     case _ => throw new IllegalArgumentException(s"Unknown PMMLDataType: $typeName")
     //TODO Potentially add support for other types from XMLSchema-2 like time and date
   }
+  // scalastyle:on
 }

@@ -2,10 +2,12 @@ name: Check code quality
 on:
   pull_request:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
   push:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
 jobs:
   check-code-quality:
     runs-on: ubuntu-latest
