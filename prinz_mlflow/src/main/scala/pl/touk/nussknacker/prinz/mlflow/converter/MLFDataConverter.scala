@@ -2,6 +2,7 @@ package pl.touk.nussknacker.prinz.mlflow.converter
 
 import com.typesafe.scalalogging.LazyLogging
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
+import pl.touk.nussknacker.prinz.model.ModelInstance.ModelInputData
 import pl.touk.nussknacker.prinz.model.ModelSignature
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
@@ -13,7 +14,7 @@ object MLFDataConverter extends LazyLogging {
       .toMap
   }
 
-  def inputToDataframe(input: VectorMultimap[String, AnyRef], signature: ModelSignature): Dataframe =
+  def inputToDataframe(input: ModelInputData, signature: ModelSignature): Dataframe =
     if (!isMultimapConvertible(input)) {
       throw new IllegalArgumentException("Invalid multimap data given for mlflow data conversion")
     }
@@ -21,7 +22,7 @@ object MLFDataConverter extends LazyLogging {
       Dataframe()
     }
     else {
-      val columns = input.keys.toList
+      val columns = signature.signatureInputs.map(_.signatureName.name)
       val numberOfDataSeries = input.values.map(_.size).head
       val data = (0 until numberOfDataSeries).map(seriesIndex =>
         columns.map(columnName => {

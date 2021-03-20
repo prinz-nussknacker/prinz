@@ -21,4 +21,13 @@ class AsyncRestJsonClient(baseUrl: String, private val backend: SttpBackend[Futu
       exception => Future(Left(RestClientException(exception.getMessage)))
     )
   }
+
+  def getJson[RESPONSE: Manifest](relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
+                                 (implicit decoder: Decoder[RESPONSE]): Future[RestClientResponse[RESPONSE]] = {
+    val request = createGetRequest(relativePath, params)
+    wrapCaughtException(
+      () => request.send(backend).map { response => response.body.left.map(clientExceptionFromResponse) },
+      e => Future(Left(RestClientException(e.getMessage)))
+    )
+  }
 }

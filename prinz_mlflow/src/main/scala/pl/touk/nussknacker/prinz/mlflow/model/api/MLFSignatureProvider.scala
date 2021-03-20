@@ -9,7 +9,7 @@ import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
-import pl.touk.nussknacker.prinz.model.SignatureProvider.indexedOutputName
+import pl.touk.nussknacker.prinz.model.SignatureProvider.{ProvideSignatureResult, indexedOutputName}
 import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureName, SignatureProvider, SignatureType}
 
 import java.io.{InputStream, InputStreamReader, Reader}
@@ -22,7 +22,7 @@ case class MLFSignatureProvider(private val config: MLFConfig)
 
   private val restClient = MLFRestClient(MLFRestClientConfig.fromMLFConfig(config))
 
-  override def provideSignature(model: Model): Option[ModelSignature] = model match {
+  override def provideSignature(model: Model): ProvideSignatureResult = model match {
     case model: MLFRegisteredModel => getLatestModelVersionArtifactLocation(model.getVersion.runId)
       .map(bucketClient.getMLModelFile)
       .flatMap(extractDefinitionAndCloseStream)

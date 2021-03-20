@@ -7,6 +7,8 @@ trait Model {
   def getVersion: ModelVersion
 
   def toModelInstance: ModelInstance
+
+  override def toString: String = s"Model $getName version: $getVersion"
 }
 
 class ModelName(name: String) {

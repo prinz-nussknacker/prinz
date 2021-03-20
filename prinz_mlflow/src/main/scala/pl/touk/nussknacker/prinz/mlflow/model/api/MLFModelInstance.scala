@@ -5,8 +5,10 @@ import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFDataConverter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFInvokeRestClient
+import pl.touk.nussknacker.prinz.model.ModelInstance.ModelRunResult
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+
 import scala.jdk.CollectionConverters.mapAsJavaMap
 
 case class MLFModelInstance(config: MLFConfig,
