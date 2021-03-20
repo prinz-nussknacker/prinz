@@ -1,14 +1,14 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
 import org.dmg.pmml.FieldName
-import org.jpmml.evaluator.{Evaluator, EvaluatorUtil, FieldValue, InputField, PMMLException}
+import org.jpmml.evaluator.{Evaluator, EvaluatorUtil, FieldValue, PMMLException}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
-import pl.touk.nussknacker.prinz.pmml.utils.VectorMultimapAsRowset
+import pl.touk.nussknacker.prinz.pmml.model.VectorMultimapUtils.VectorMultimapAsRowset
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import java.util.{Map => JMap}
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.{mapAsJavaMapConverter, mapAsScalaMapConverter}
 import scala.concurrent.Future
 
 case class PMMLModelInstance(evaluator: Evaluator, override val model: PMMLModel)
@@ -18,8 +18,9 @@ case class PMMLModelInstance(evaluator: Evaluator, override val model: PMMLModel
 
   override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = Future {
     try {
-      val results = inputMap.forEachRow(evaluateRow)
-      Right(collectOutputs(results).asJava)
+      val resultSeq = inputMap.forEachRow(evaluateRow)
+      val results = collectOutputs(resultSeq).asJava
+      Right(results)
     } catch {
       case ex: PMMLException => {
         Left(new ModelRunException(ex.toString))
@@ -28,24 +29,20 @@ case class PMMLModelInstance(evaluator: Evaluator, override val model: PMMLModel
   }
 
   def evaluateRow(row: Map[String, AnyRef]): Map[String, _] = {
-    val args = this.buildArguments(row);
+    val args = EvaluatorUtil.encodeKeys(row.asJava)
     val results = evaluator.evaluate(args)
     EvaluatorUtil.decodeAll(results).asScala.toMap
-    // TODO(kantoniak): Check if we have to handle complex PMML types
-  }
-
-  def buildArguments(row: Map[String, AnyRef]): PMMLArgs = {
-    val inputNameToField = evaluator.getInputFields.asScala.map((field: InputField) => (field.getName.getValue, field)).toMap
-    (row map {
-      case (key, value) => (
-          FieldName.create(key),
-          inputNameToField(key).prepare(value)
-      )
-    } toMap).asJava
   }
 
   def collectOutputs(rows: IndexedSeq[Map[String, _]]): Map[String, _] = {
-    rows.head
-    // TODO(kantoniak): Collect and merge inputs
+    rows.take(2).size match {
+      case 0 => Map[String, Any]()
+      case 1 => rows.head
+      case 2 => {
+        val vecMap = VectorMultimap[String, Any]()
+        rows.foreach(r => r.foreach(t => vecMap.add(t._1, t._2)))
+        vecMap.toMap
+      }
+    }
   }
 }

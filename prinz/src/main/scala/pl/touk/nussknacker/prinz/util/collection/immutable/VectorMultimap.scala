@@ -64,6 +64,8 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
 
   def containsKey(key: K): Boolean = delegate.contains(key)
 
+  def toMap(): Map[K, Vector[V]] = delegate.toMap
+
   override def toString: String = {
     val sb = new StringBuilder(s"${getClass.getName}[\n")
     delegate.map { case (k, vs) => s"\t$k -> $vs\n" }.foreach(sb.append)
