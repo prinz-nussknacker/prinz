@@ -6,7 +6,7 @@ import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
 import pl.touk.nussknacker.prinz.pmml.model.VectorMultimapUtils.VectorMultimapAsRowset
-import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap.VectorMultimapBuilder
 
 import java.util.{Map => JMap}
 import scala.jdk.CollectionConverters.{mapAsJavaMapConverter, mapAsScalaMapConverter}
@@ -40,9 +40,9 @@ case class PMMLModelInstance(evaluator: Evaluator, override val model: PMMLModel
       case 0 => Map[String, Any]()
       case 1 => rows.head
       case 2 => {
-        val vecMap = VectorMultimap[String, Any]()
-        rows.foreach(r => r.foreach(t => vecMap.add(t._1, t._2)))
-        vecMap.toMap
+        val builder = new VectorMultimapBuilder[String, Any]
+        rows.foreach(r => builder ++= r)
+        builder.result().toMap
       }
     }
   }

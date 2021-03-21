@@ -101,7 +101,7 @@ object VectorMultimap {
     builder.result()
   }
 
-  private class VectorMultimapBuilder[K, V] extends mutable.Builder[(K, V), VectorMultimap[K, V]] {
+  class VectorMultimapBuilder[K, V] extends mutable.Builder[(K, V), VectorMultimap[K, V]] {
     private val elements = new mutable.LinkedHashMap[K, Vector[V]]
 
     override def +=(element: (K, V)): this.type = {
