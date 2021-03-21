@@ -32,4 +32,5 @@ jobs:
           export REPOSITORY_ABSOLUTE_ROOT=$(pwd) &&
           ./sbtwrapper prinz/test &&
           ./sbtwrapper prinz_mlflow/test &&
-          ./sbtwrapper prinz_pmml/test
+          ./sbtwrapper prinz_pmml/test &&
+          ./sbtwrapper prinz_h2o/test
