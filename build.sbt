@@ -16,7 +16,7 @@ val typesafeConfigV = "1.4.1"
 val typesafeLogV = "3.9.2"
 val logbackV = "1.2.3"
 val h2V = "1.4.200"
-
+val h2oV = "3.32.0.5"
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
 ThisBuild / version      := "0.0.1-SNAPSHOT"
@@ -116,6 +116,20 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
         "ch.qos.logback" % "logback-classic" % logbackV,
+      )
+    }
+  )
+  .dependsOn(prinz % "compile->compile;test->test")
+
+lazy val prinz_h2o = (project in file("prinz_h2o"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-h2o",
+    Test / fork := true,
+    libraryDependencies ++= {
+      Seq(
+        "ai.h2o" % "h2o-genmodel" % h2oV,
+        "ai.h2o" % "h2o-core" % h2oV,
       )
     }
   )

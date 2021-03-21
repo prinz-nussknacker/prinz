@@ -2,10 +2,12 @@ name: Check code quality
 on:
   pull_request:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
   push:
     branches:
-      - master
+      - 'master'
+      - 'dev/**'
 jobs:
   check-code-quality:
     runs-on: ubuntu-latest
@@ -32,5 +34,6 @@ jobs:
         run: |
           ./sbtwrapper prinz/scalastyle &&
           ./sbtwrapper prinz_mlflow/scalastyle &&
-          ./sbtwrapper prinz_sample/scalastyle &&
-          ./sbtwrapper prinz_pmml/scalastyle
+          ./sbtwrapper prinz_pmml/scalastyle &&
+          ./sbtwrapper prinz_h2o/scalastyle &&
+          ./sbtwrapper prinz_sample/scalastyle
