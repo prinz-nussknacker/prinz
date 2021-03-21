@@ -83,7 +83,7 @@ file so for example to run MLflow integration tests one would use the command
 There is a possibility to run the tests in the IDE and debug them step by step. In order to have the environment properly
 configured the extra [EnvFile](https://plugins.jetbrains.com/plugin/7861-envfile) plugin is needed.
 
-Before trying to run tests locally from the IDE one have to change the configuration of the location of 
+Before trying to run tests locally from the IDE one have to change the configuration of the location of
 docker compose file relative location. It is needed as running the tests from IDE have the other relative
 home path than when running on CI pipeline. The problem can be easily detected because when the path is
 not configured properly, after running tests we got the message which states that
