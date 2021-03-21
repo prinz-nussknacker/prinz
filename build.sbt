@@ -23,6 +23,7 @@ val logbackV = "1.2.3"
 val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
+val h2oV = "3.32.0.5"
 
 ThisBuild / scalaVersion  := scalaV
 ThisBuild / versionScheme := Some("semver-spec")
@@ -170,6 +171,20 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
   )
   .dependsOn(prinz % "compile->compile;test->test")
   .dependsOn(prinz_proxy % "test->test")
+
+lazy val prinz_h2o = (project in file("prinz_h2o"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-h2o",
+    Test / fork := true,
+    libraryDependencies ++= {
+      Seq(
+        "ai.h2o" % "h2o-genmodel" % h2oV,
+        "ai.h2o" % "h2o-core" % h2oV,
+      )
+    }
+  )
+  .dependsOn(prinz % "compile->compile;test->test")
 
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
