@@ -64,7 +64,7 @@ Examples of model runtimes:
 
 # Compile and run tests
 
-## Docker image access 
+## Docker image access
 
 In order to run tests, custom docker images are needed. They can be build locally, but they are also available on the
 GitHub Dockerhub repository. Inorder to use the Docker images from this repository one need to be logged. Follow the
