@@ -111,6 +111,3 @@ file available in the repository
 ![Add env file to configuration](./docs/imgs/env_file_configuration.png)
 
 After adding this configuration file with environment definition running test should be possible from the IDE.
-
-
-    
