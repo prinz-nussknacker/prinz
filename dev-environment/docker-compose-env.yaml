@@ -5,7 +5,6 @@ services:
   nussknacker:
     container_name: nussknacker
     build: ./nussknacker
-    restart: always
     ports:
       - "3000:3000"
       - "8080:8080"
