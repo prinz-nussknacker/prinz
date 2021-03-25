@@ -23,10 +23,13 @@ object MLFDataConverter extends LazyLogging {
       Dataframe()
     }
     else {
-      val columns = signature.getInputNames.map(_.name).toList
-      val data = input.forEachRow(r => {
-        val wrapped = r.transform(MLFInputDataTypeWrapper(signature, _, _)).toMap
-        columns.map(wrapped.get(_).get).toList
+      val columns = signature.signatureInputs.map(_.signatureName.name).toList
+      val data = input.forEachRow(colToVal => {
+        val wrapped = colToVal
+          .filterKeys(columns.contains) // silently drop columns not present in signature
+          .transform(MLFInputDataTypeWrapper(signature, _, _))
+          .toMap
+        columns.map(wrapped(_)).toList
       }).toList
       Dataframe(columns, data)
     }
