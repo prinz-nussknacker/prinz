@@ -23,9 +23,11 @@ object MLFDataConverter extends LazyLogging {
       Dataframe()
     }
     else {
-      val columns = input.keys.toList
-      val wrapValue = ((c:String, v:AnyRef) => MLFInputDataTypeWrapper(signature, c, v)).tupled
-      val data = input.forEachRow(_.map(wrapValue).toList).toList
+      val columns = signature.getInputNames.map(_.name).toList
+      val data = input.forEachRow(r => {
+        val wrapped = r.transform(MLFInputDataTypeWrapper(signature, _, _)).toMap
+        columns.map(wrapped.get(_).get).toList
+      }).toList
       Dataframe(columns, data)
     }
 
