@@ -5,6 +5,7 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.api.Dataframe
 import pl.touk.nussknacker.prinz.model.ModelInstance.ModelInputData
 import pl.touk.nussknacker.prinz.model.ModelSignature
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimapUtils.VectorMultimapAsRowset
 
 object MLFDataConverter extends LazyLogging {
 
@@ -22,15 +23,9 @@ object MLFDataConverter extends LazyLogging {
       Dataframe()
     }
     else {
-      val columns = signature.signatureInputs.map(_.signatureName.name)
-      val numberOfDataSeries = input.values.map(_.size).head
-      val data = (0 until numberOfDataSeries).map(seriesIndex =>
-        columns.map(columnName => {
-          val value = input.get(columnName).get(seriesIndex)
-          MLFInputDataTypeWrapper(signature, columnName, value)
-        })
-      ).toList
-
+      val columns = input.keys.toList
+      val wrapValue = ((c:String, v:AnyRef) => MLFInputDataTypeWrapper(signature, c, v)).tupled
+      val data = input.forEachRow(_.map(wrapValue).toList).toList
       Dataframe(columns, data)
     }
 
