@@ -9,17 +9,17 @@ import java.nio.file.Paths
 
 class LocalFilePMMLModelRepository(implicit config: PMMLConfig) extends PMMLModelRepository {
 
-  override protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[InputStream] = {
+  override protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[PMMLModelPayload] = {
     val urlFile = Paths.get(url.toURI).toFile
     if (urlFile.isDirectory) {
       urlFile.listFiles()
         .filter(_.isFile)
         .filter(file => isPMMLFile(file.getName))
-        .map(new FileInputStream(_))
+        .map(file => PMMLModelPayload(new FileInputStream(file), file.getName))
     }
     else {
       val dataStream = new FileInputStream(urlFile)
-      List(dataStream)
+      List(PMMLModelPayload(dataStream, urlFile.getName))
     }
   }
 }

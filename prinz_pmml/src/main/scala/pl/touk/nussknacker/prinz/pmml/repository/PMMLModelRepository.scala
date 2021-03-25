@@ -22,15 +22,17 @@ abstract class PMMLModelRepository(implicit protected val config: PMMLConfig) ex
     Right[ModelRepositoryException, List[PMMLModel]](files.map(PMMLModel(_)).toList)
   }
 
-  protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[InputStream]
+  protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[PMMLModelPayload]
 
-  override def getModel(name: ModelName): RepositoryResponse[PMMLModel] = ???
+  override def getModel(name: ModelName): RepositoryResponse[PMMLModel] = listModels.right
+    .map(_.filter(model => model.getName == name).head)
 
   protected def isPMMLFile(fileName: String): Boolean = fileName.endsWith(PMML_FILE_EXTENSION)
 }
 
 object PMMLModelRepository {
+  val SEPERATOR: String = "-v"
 
-  protected val PMML_FILE_EXTENSION: String = ".pmml"
+  val PMML_FILE_EXTENSION: String = ".pmml"
 }
 

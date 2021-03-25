@@ -3,26 +3,35 @@ package pl.touk.nussknacker.prinz.pmml.model
 import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvaluator}
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion}
 import pl.touk.nussknacker.prinz.pmml.model.PMMLModel.buildModelEvaluatorFromStream
+import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 import java.io.{File, InputStream}
 
-final class PMMLModel(inputStream: InputStream) extends Model {
+final class PMMLModel(payload: PMMLModelPayload) extends Model {
   //TODO we need evaluator in PMMLModel to get the signature
   //PMMLModelInstance should use this evaluator for scoring
-  val evaluator: Evaluator = buildModelEvaluatorFromStream(inputStream)
+  val evaluator: Evaluator = buildModelEvaluatorFromStream(payload.inputStream)
 
-  override def getName: PMMLModelName = PMMLModelName("TODO - find in pmml api")
+  override def getName: PMMLModelName = extractName
 
-  override def getVersion: ModelVersion = ???
+  override def getVersion: ModelVersion = PMMLModelVersion(payload.version)
 
   override def toModelInstance: ModelInstance = ???
+
+  private def extractName: PMMLModelName = {
+    //TODO: imo we should firstly check evaluator, if it has metadata about model name
+    //TODO: then if not, use name from filename
+
+    PMMLModelName(payload.name)
+  }
 }
 
 case class PMMLModelName(name: String) extends ModelName(name)
 
-object PMMLModel {
+case class PMMLModelVersion(version: String) extends ModelVersion
 
-  def apply(inputStream: InputStream): PMMLModel = new PMMLModel(inputStream)
+object PMMLModel {
+  def apply(payload: PMMLModelPayload): PMMLModel = new PMMLModel(payload)
 
   private def buildModelEvaluatorFromStream(inputStream: InputStream): ModelEvaluator[_] = {
     val model = new LoadingModelEvaluatorBuilder().load(inputStream).build()

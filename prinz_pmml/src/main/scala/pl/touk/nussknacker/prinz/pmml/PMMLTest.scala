@@ -10,7 +10,7 @@ import java.io.{BufferedReader, InputStreamReader}
 object PMMLTest extends App with LazyLogging {
   implicit val config: Config = ConfigFactory.parseString(s"""
       |  pmml {
-      |    modelsDirectory: "http://localhost:5100"
+      |    modelsDirectory: "http://localhost:5100/"
       |    modelDirectoryHrefSelector: "body > ul > li > a"
       |  }
       |""".stripMargin
@@ -18,8 +18,9 @@ object PMMLTest extends App with LazyLogging {
   implicit val pmmlConfig: PMMLConfig = PMMLConfig()
   val repository = new HttpPMMLModelRepository(pmmlConfig.modelDirectoryHrefSelector)
   val builder = new StringBuilder()
-  repository.listModels.right.get
-    .map(_.getName)
+  val res = repository.listModels.right.get
+
+    res.map(_.getName)
     .foreach(name => builder.append(name).append(System.lineSeparator()))
   logger.info(builder.toString)
 }
