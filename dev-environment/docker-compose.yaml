@@ -4,7 +4,6 @@ services:
 
   mlflow-server:
     image: docker.pkg.github.com/prinz-nussknacker/prinz/mlflow-server:0.2.0
-    restart: always
     environment:
       - ARTIFACT_LOCATION=s3://mlflow
       - AWS_ACCESS_KEY_ID=mlflow-key
@@ -29,7 +28,6 @@ services:
 
   postgres-mlflow:
     image: postgres:12-alpine
-    restart: always
     environment:
       - POSTGRES_DB=mlflow
       - POSTGRES_USER=mlflow
@@ -53,7 +51,6 @@ services:
 
   proxy:
     image: nginx:alpine
-    restart: always
     volumes:
       - ./nginx/templates:/etc/nginx/templates
       - ./nginx/static:/etc/nginx/html
