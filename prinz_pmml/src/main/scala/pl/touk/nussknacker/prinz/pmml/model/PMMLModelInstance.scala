@@ -16,7 +16,7 @@ case class PMMLModelInstance(evaluator: Evaluator, override val model: PMMLModel
 
   override def run(inputMap: ModelInputData): ModelRunResult = Future {
     try {
-      val resultSeq = inputMap.forEachRow(evaluateRow)
+      val resultSeq = inputMap.mapRows(evaluateRow)
       val results = collectOutputs(resultSeq).asJava
       Right(results)
     } catch {

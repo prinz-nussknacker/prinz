@@ -8,7 +8,7 @@ object VectorMultimapUtils {
 
     private def toMutableMap[T](immutable: collection.Map[K, T]): mutable.Map[K, T] = mutable.Map() ++ immutable
 
-    def forEachRow[T](f: Map[K, V] => T): IndexedSeq[T] = {
+    def mapRows[T](f: Map[K, V] => T): IndexedSeq[T] = {
       val totalTuples = inputsMap.map(_._2.length).max
       val iteratorsMap = toMutableMap(inputsMap.mapVectors(_.iterator))
 
