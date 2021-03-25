@@ -1,12 +1,16 @@
-package pl.touk.nussknacker.prinz.pmml.model
+package pl.touk.nussknacker.prinz.util.collection.immutable
 
-import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+import scala.collection.mutable
 
 object VectorMultimapUtils {
+
   implicit class VectorMultimapAsRowset[K, V](val inputsMap: VectorMultimap[K, V]) {
-    def forEachRow[T](f: Map[K, V] => T) : IndexedSeq[T] = {
+
+    private def toMutableMap[T](immutable: collection.Map[K, T]): mutable.Map[K, T] = mutable.Map() ++ immutable
+
+    def mapRows[T](f: Map[K, V] => T): IndexedSeq[T] = {
       val totalTuples = inputsMap.map(_._2.length).max
-      val iteratorsMap = inputsMap.mapVectors(_.iterator)
+      val iteratorsMap = toMutableMap(inputsMap.mapVectors(_.iterator))
 
       (1 to totalTuples) map (_ => {
         val row = iteratorsMap map {
@@ -16,4 +20,5 @@ object VectorMultimapUtils {
       })
     }
   }
+
 }
