@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+
+  h2o-server:
+    build: ./h2o
+    environment:
+      - H2O_WORK_DIR=${H2O_WORK_DIR}
+      - H2O_SERVER_PORT=${H2O_SERVER_PORT}
+    ports:
+      - "${H2O_SERVER_PORT}:${H2O_SERVER_PORT}"
+    volumes:
+      - ./h2o/models:${H2O_WORK_DIR}/models
+      - ./h2o/exports:${H2O_WORK_DIR}/exports
+    networks:
+      - h2o-net
+
+networks:
+  h2o-net:
+    driver: bridge
+  dev-bridge-net:
+    driver: bridge
+    external: true
