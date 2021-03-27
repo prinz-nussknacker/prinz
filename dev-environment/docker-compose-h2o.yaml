@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   h2o-server:
-    build: ./h2o
+    image: docker.pkg.github.com/prinz-nussknacker/prinz/h2o-server:0.0.1
     environment:
       - H2O_WORK_DIR=${H2O_WORK_DIR}
       - H2O_SERVER_PORT=${H2O_SERVER_PORT}

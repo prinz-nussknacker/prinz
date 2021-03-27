@@ -29,4 +29,3 @@ if __name__ == "__main__":
     print("  R2: {}".format(glm.r2(valid=True)))
 
     glm.save_mojo("exports")
-
