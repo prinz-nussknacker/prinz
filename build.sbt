@@ -15,6 +15,7 @@ val paradiseV = "2.1.1"
 val typesafeConfigV = "1.4.1"
 val typesafeLogV = "3.9.2"
 val logbackV = "1.2.3"
+val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
 
@@ -85,7 +86,8 @@ lazy val prinz = (project in file("prinz"))
         "org.scala-lang" % "scala-reflect" % scalaV,
         "ch.qos.logback" % "logback-classic" % logbackV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
-        "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test
+        "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
+        "com.h2database" % "h2" % h2V % Test,
       )
     }
   )

@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest
+import org.scalatest.BeforeAndAfterAll
+import pl.touk.nussknacker.prinz.{H2Database, TestH2IdTransformedParamProvider, UnitIntegrationTest}
 import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
@@ -9,16 +10,19 @@ import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegister
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
-import pl.touk.nussknacker.prinz.model.proxy.ProxiedInputModelBuilder
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
+import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
-import java.net.URL
+import java.sql.ResultSet
 import java.util.concurrent.TimeUnit
-import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFContainerTest extends UnitIntegrationTest {
+class MLFContainerTest extends UnitIntegrationTest
+  with BeforeAndAfterAll {
 
   private implicit val config: Config = ConfigFactory.load()
 
@@ -164,9 +168,9 @@ class MLFContainerTest extends UnitIntegrationTest {
     response.toOption.isDefined shouldBe (true)
   }
 
-  it should "allow to run fraud model with proxied data" in {
+  it should "allow to run fraud model with http proxied data" in {
     val model = getModel(getFraudDetectionModel).get
-    val proxiedModel = ProxiedInputModelBuilder(model)
+    val proxiedModel = new ProxiedHttpInputModelBuilder(model)
       .proxyHttpGet("amount", s"$STATIC_SERVER_PATH/double")
       .proxyHttpGet("gender", s"$STATIC_SERVER_PATH/string")
       .build()
@@ -180,6 +184,91 @@ class MLFContainerTest extends UnitIntegrationTest {
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe (true)
   }
+
+  it should "allow to run fraud model with database composed proxied data" in {
+    H2Database.executeUpdate("create table input_data (" +
+      "id int not null," +
+      "amount double not null," +
+      "gender varchar(16) not null" +
+      ");")
+    H2Database.executeUpdate("insert into input_data values (0, 42.42, 'F')")
+
+    val model = getModel(getFraudDetectionModel).get
+    val proxiedModel = new ProxiedInputModelBuilder(model)
+      .proxyComposedParam[ResultSet](
+        _ => Future(H2Database.executeNonEmptyQuery("select * from input_data where id = 0;")),
+        rs => extractResultSetValues(rs, List(
+          ("amount", _.getBigDecimal("amount")),
+          ("gender", _.getString("gender"))
+        ))
+      )
+      .build()
+    val instance = proxiedModel.toModelInstance
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("category", "es_transportation"),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
+  }
+
+  it should "allow to run fraud model with database transformed proxied data" in {
+    val tableName = "customer"
+    prepareCustomerTestData()
+    val model = getModel(getFraudDetectionModel).get
+    val paramProvider = new TestH2IdTransformedParamProvider(tableName)
+    val proxiedModel = ProxiedInputModel(model, paramProvider)
+    val instance = proxiedModel.toModelInstance
+    val sampleInput = VectorMultimap(
+      (s"${tableName}_id", 1),
+      ("age", "4"),
+      ("category", "es_transportation"),
+    ).mapValues(_.asInstanceOf[AnyRef])
+    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe (true)
+  }
+
+  it should "transform model param definition with database transformed proxied data" in {
+    val tableName = "customer"
+    prepareCustomerTestData()
+
+    val model = getModel(getFraudDetectionModel).get
+    val paramProvider = new TestH2IdTransformedParamProvider(tableName)
+    val proxiedModel = ProxiedInputModel(model, paramProvider)
+    val instance = proxiedModel.toModelInstance
+    val enricherInputsDefinition = instance.getParameterDefinition.signatureInputs
+    val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
+
+    inputsNames should contain (s"${tableName}_id")
+    inputsNames should contain ("age")
+    inputsNames should contain ("category")
+    inputsNames should not contain (s"${tableName}_gender")
+    inputsNames should not contain (s"gender")
+    inputsNames should not contain (s"${tableName}_amount")
+    inputsNames should not contain (s"amount")
+  }
+
+  private def prepareCustomerTestData(): Unit = {
+    val tableName = "customer"
+    H2Database.executeUpdate(s"drop table if exists $tableName;")
+    H2Database.executeUpdate(s"create table $tableName (" +
+      s"${tableName}_id int not null," +
+      s"${tableName}_amount double not null," +
+      s"${tableName}_gender varchar(16) not null" +
+      ");")
+    H2Database.executeUpdate(s"insert into $tableName values " +
+      "(0, 42.42, 'F')," +
+      "(1, 24.24, 'M')," +
+      "(2, 22.22, 'M')," +
+      "(3, 44.44, 'F');")
+  }
+
+  private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
+    Future(extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs))))
 
   private def getModel(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFRegisteredModel] = {
     val repository = new MLFModelRepository

@@ -35,4 +35,3 @@ object PMMLModelRepository {
 
   val PMML_FILE_EXTENSION: String = ".pmml"
 }
-

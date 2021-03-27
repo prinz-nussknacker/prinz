@@ -22,3 +22,6 @@ dev-environment/nussknacker/opt/prinz-sample/*.jar
 # IDE files
 .idea/
 .bsp/
+
+# Test generated data
+h2-test-database/
