@@ -11,6 +11,7 @@ class HttpPMMLModelRepository(modelDirectoryHrefSelector: String)
 
   override protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[PMMLModelPayload] = {
     val urlString = url.toString
+
     if (isPMMLFile(urlString)) {
       val dataStream = url.openStream()
       List(PMMLModelPayload(dataStream, urlString.split("/").last))
