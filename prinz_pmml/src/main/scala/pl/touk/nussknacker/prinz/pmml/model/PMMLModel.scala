@@ -1,14 +1,13 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
-import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvaluator}
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion}
-import pl.touk.nussknacker.prinz.pmml.model.PMMLModel.buildModelEvaluatorFromStream
+import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvaluator, PMMLException}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelVersion}
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 import java.io.{File, InputStream}
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
-  val evaluatorBuilder = new LoadingModelEvaluatorBuilder().load(inputStream)
+  val evaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)
   val optionalModelName = Option(evaluatorBuilder.getModel().getModelName())
   val evaluator: Evaluator = evaluatorBuilder.build()
 
@@ -18,12 +17,7 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
   override def toModelInstance: ModelInstance = new PMMLModelInstance(evaluator, this)
 
-  private def extractName: PMMLModelName = {
-    //TODO: imo we should firstly check evaluator, if it has metadata about model name
-    //TODO: then if not, use name from filename
-
-    PMMLModelName(payload.name)
-  }
+  private def extractName: PMMLModelName = PMMLModelName(optionalModelName.getOrElse(payload.name))
   
   try {
     evaluator.verify()

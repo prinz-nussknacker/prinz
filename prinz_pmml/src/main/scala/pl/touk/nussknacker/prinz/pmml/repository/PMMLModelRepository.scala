@@ -31,7 +31,7 @@ abstract class PMMLModelRepository(implicit protected val config: PMMLConfig) ex
 }
 
 object PMMLModelRepository {
-  val SEPERATOR: String = "-v"
+  val NAME_VERSION_SEPARATOR: String = "-v"
 
   val PMML_FILE_EXTENSION: String = ".pmml"
 }
