@@ -26,7 +26,7 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
   override def getVersion: ModelVersion = PMMLModelVersion(payload.version)
 
-  override def toModelInstance: ModelInstance = new PMMLModelInstance(evaluator, this)
+  override def toModelInstance: ModelInstance = PMMLModelInstance(evaluator, this)
 
   private def extractName: PMMLModelName = PMMLModelName(optionalModelName.getOrElse(payload.name))
 }

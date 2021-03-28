@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   pmml-samples:
-    build: pmml-samples/
+    image: docker.pkg.github.com/prinz-nussknacker/prinz/pmml-samples:0.0.1
     environment:
       - PMML_SERVER_PORT=${PMML_SERVER_PORT}
     volumes:
