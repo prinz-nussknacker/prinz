@@ -1,5 +1,8 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
+import org.jpmml.evaluator.Evaluator
+import pl.touk.nussknacker.prinz.model.ModelInstance
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import org.jpmml.evaluator.{Evaluator, EvaluatorUtil, PMMLException}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
