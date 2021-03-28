@@ -13,11 +13,12 @@ cp "../prinz_sample/target/scala-${scalaV}/prinz-sample-assembly-0.0.1-SNAPSHOT.
 docker network create dev-bridge-net
 
 # Add -d flag to hide environment startup
-docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml kill
-docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml rm -f -v
-docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml build
-docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-env.yaml run pmml-samples scripts/train.sh
+docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-h2o.yaml -f docker-compose-env.yaml kill
+docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-h2o.yaml -f docker-compose-env.yaml rm -f -v
+docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-h2o.yaml -f docker-compose-env.yaml build
+docker-compose --env-file ../.env -f docker-compose.yaml -f docker-compose-h2o.yaml -f docker-compose-env.yaml run pmml-samples scripts/train.sh
 docker-compose --env-file ../.env \
                -f docker-compose.yaml \
                -f docker-compose-env.yaml \
+               -f docker-compose-h2o.yaml \
                up --always-recreate-deps
