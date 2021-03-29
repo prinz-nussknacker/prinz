@@ -27,7 +27,7 @@ abstract class PMMLUnitIntegrationTest extends UnitIntegrationTest {
 
 object PMMLUnitIntegrationTest {
 
-  private val TIMEOUT_MINUTES = 1
+  private val TIMEOUT_MINUTES = 3
 
   private val PMML_HTTP_SERVER_READY_REGEX = ".*Serving.*"
 
