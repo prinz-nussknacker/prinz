@@ -2,8 +2,8 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.BeforeAndAfterAll
-import pl.touk.nussknacker.prinz.{H2Database, TestH2IdTransformedParamProvider, UnitIntegrationTest}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.STATIC_SERVER_PATH
+import pl.touk.nussknacker.prinz.{H2Database, TestH2IdTransformedParamProvider, MLFUnitIntegrationTest}
+import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegisteredModel}
@@ -21,8 +21,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFContainerTest extends UnitIntegrationTest
-  with BeforeAndAfterAll {
+class MLFRestApiTest extends MLFUnitIntegrationTest {
 
   private implicit val config: Config = ConfigFactory.load()
 
