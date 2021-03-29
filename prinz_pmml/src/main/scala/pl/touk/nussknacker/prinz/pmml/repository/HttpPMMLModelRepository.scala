@@ -7,8 +7,7 @@ import java.io.File
 import java.net.URL
 import scala.collection.JavaConverters
 
-class HttpPMMLModelRepository(modelDirectoryHrefSelector: String)
-                             (implicit config: PMMLConfig) extends PMMLModelRepository {
+class HttpPMMLModelRepository(implicit config: PMMLConfig) extends PMMLModelRepository {
 
   override protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[PMMLModelPayload] = {
     val urlString = url.toString
@@ -20,7 +19,7 @@ class HttpPMMLModelRepository(modelDirectoryHrefSelector: String)
     else {
       val doc = Jsoup.connect(urlString).get()
       val elements = doc
-        .select(modelDirectoryHrefSelector)
+        .select(config.modelDirectoryHrefSelector)
         .eachAttr("href")
       JavaConverters.iterableAsScalaIterable(elements)
         .filter(isPMMLFile)

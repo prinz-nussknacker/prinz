@@ -3,7 +3,9 @@ These images are published on GitHub Container Registry with status page located
 
 
 ## Usage of GitHub docker images
-To use it on CI the `secrets.GITHUB_TOKEN` is used to authenticate to repository. To use it on your local machine you have to genrate Personal Access Token on [this website](https://github.com/settings/tokens) and save it to `~/token.txt` file. Then use
+To use it on CI the `secrets.GITHUB_TOKEN` is used to authenticate to repository.
+To use it on your local machine you have to generate Personal Access Token
+on [this website](https://github.com/settings/tokens) and save it to `~/token.txt` file. Then use
 ```
 cat ~/token.txt | docker login https://docker.pkg.github.com -u YOUR_GITHUB_USERNAME --password-stdin
 ```
@@ -38,7 +40,7 @@ and then check the result on status page.
 
 ## Using published image
 
-The published  image can be used by logged GitHub users as usual images from DockerHub, 
+The published  image can be used by logged GitHub users as usual images from DockerHub,
 for example by using the image specification in `docker-compose.yaml` file
 
 ```yaml

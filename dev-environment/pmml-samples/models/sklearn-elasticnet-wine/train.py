@@ -32,35 +32,38 @@ def eval_metrics(actual, pred):
     return rmse, mae, r2
 
 
-if __name__ == "__main__":
-    warnings.filterwarnings("ignore")
-    np.random.seed(40)
+if __name__ != "__main__":
+    sys.exit()
 
-    csv_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv")
-    try:
-        data = pd.read_csv(csv_url, sep=";")
-    except Exception as e:
-        logger.exception("Unable to download training & test CSV, check your internet connection. Error: {}".format(e))
+warnings.filterwarnings("ignore")
+np.random.seed(40)
 
-    train, test = train_test_split(data)
+csv_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv")
+try:
+    data = pd.read_csv(csv_url, sep=";")
+except Exception as e:
+    logger.exception("Unable to download training & test CSV, check your internet connection. Error: {}".format(e))
+    exit(1)
 
-    train_x = train.drop(["quality"], axis=1)
-    test_x = test.drop(["quality"], axis=1)
-    train_y = train[["quality"]]
-    test_y = test[["quality"]]
+train, test = train_test_split(data)
 
-    lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
-    lr.pmml_name_ = 'ElasticnetWineModel'
-    pipeline = PMMLPipeline(steps=[('elastic_net', lr)])
+train_x = train.drop(["quality"], axis=1)
+test_x = test.drop(["quality"], axis=1)
+train_y = train[["quality"]]
+test_y = test[["quality"]]
 
-    pipeline.fit(train_x, train_y)
-    predicted_qualities = pipeline.predict(test_x)
+lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
+lr.pmml_name_ = 'ElasticnetWineModel'
+pipeline = PMMLPipeline(steps=[('elastic_net', lr)])
 
-    (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
+pipeline.fit(train_x, train_y)
+predicted_qualities = pipeline.predict(test_x)
 
-    print("Elasticnet model (alpha={}, l1_ratio={}):".format(alpha, l1_ratio))
-    print("  RMSE: {}".format(rmse))
-    print("  MAE: {}".format(mae))
-    print("  R2: {}".format(r2))
+(rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
 
-    sklearn2pmml(pipeline, output_path, with_repr = True)
+print("Elasticnet model (alpha={}, l1_ratio={}):".format(alpha, l1_ratio))
+print("  RMSE: {}".format(rmse))
+print("  MAE: {}".format(mae))
+print("  R2: {}".format(r2))
+
+sklearn2pmml(pipeline, output_path, with_repr = True)

@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz
 import com.dimafeng.testcontainers.DockerComposeContainer.{ComposeFile, Def}
 import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.{ContainerDef, WaitingForService}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.BRIDGE_NET_NAME
+import pl.touk.nussknacker.prinz.UnitIntegrationTest.{BRIDGE_NET_NAME, EnvMap}
 
 import java.io.File
 import scala.sys.process.Process
@@ -12,7 +12,7 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 
   def dockerComposeFile: File
 
-  def env: Map[String, String]
+  def env: EnvMap
 
   def waitingForService: Option[WaitingForService]
 
@@ -37,4 +37,6 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
 object UnitIntegrationTest {
 
   private val BRIDGE_NET_NAME = "dev-bridge-net"
+
+  type EnvMap = Map[String, String]
 }

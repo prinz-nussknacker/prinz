@@ -26,6 +26,7 @@ if __name__ != "__main__":
     sys.exit()
 
 warnings.filterwarnings("ignore")
+np.random.seed(40)
 
 # Prepare dataset
 try:

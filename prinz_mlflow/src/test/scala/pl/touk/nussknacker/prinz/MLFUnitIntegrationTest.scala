@@ -7,12 +7,13 @@ import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.{
   MLFLOW_SERVER_SERVICE_NAME, MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX,
   MODEL_3_SERVED_READY_REGEX, TIMEOUT_MINUTES, readEnvWithName}
+import pl.touk.nussknacker.prinz.UnitIntegrationTest.EnvMap
 
 abstract class MLFUnitIntegrationTest extends UnitIntegrationTest {
 
   override def dockerComposeFile: File = new File("../dev-environment/docker-compose-mlflow.yaml")
 
-  override def env: Map[String, String] = List(
+  override def env: EnvMap = List(
     "MODEL_1_PORT",
     "MODEL_2_PORT",
     "MODEL_3_PORT",
