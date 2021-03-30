@@ -12,6 +12,7 @@ import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
+import pl.touk.nussknacker.prinz.model.Model
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
 import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
 
@@ -47,9 +48,10 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
     val result = for {
       mlfModels <- mlfModelsResult
       pmmlModels <- pmmlModelsResult
-    } yield (mlfModels ++ pmmlModels).foldLeft(Map.empty[String, WithCategories[Service]])(
-      (services, model) => services + (model.getName.toString -> allCategories(PrinzEnricher(model)))
-    )
+    } yield (addRepositoryName(mlfModels, "mlf") ++ addRepositoryName(pmmlModels, "pmml"))
+      .foldLeft(Map.empty[String, WithCategories[Service]]) {
+        (services, modelRepository) => services + createModelEnricherRepresentation(modelRepository)
+    }
 
     result match {
       case Right(services) => services
@@ -59,4 +61,15 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
     ExceptionHandlerFactory.noParams(VerboselyLoggingExceptionHandler(_))
+
+  private def addRepositoryName(models: List[Model], repository: String): List[(Model, String)] =
+    models.map(model => (model, repository))
+
+  private def createModelEnricherRepresentation(modelRepository: (Model, String)): (String, WithCategories[Service]) =
+    createModelNameWithRepository(modelRepository) -> allCategories(createEnricher(modelRepository))
+
+  private def createModelNameWithRepository(modelRepository: (Model, String)): String =
+    s"${modelRepository._2}-${modelRepository._1.getName.toString}"
+
+  private def createEnricher(modelRepository: (Model, String)): PrinzEnricher = PrinzEnricher(modelRepository._1)
 }

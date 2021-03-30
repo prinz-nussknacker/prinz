@@ -53,8 +53,8 @@ train_y = train[["quality"]]
 test_y = test[["quality"]]
 
 lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
-lr.pmml_name_ = 'ElasticnetWineModel'
-pipeline = PMMLPipeline(steps=[('elastic_net', lr)])
+lr.pmml_name_ = f"ElasticnetWineModel-{alpha}-{l1_ratio}"
+pipeline = PMMLPipeline(steps=[("elastic_net", lr)])
 
 pipeline.fit(train_x, train_y)
 predicted_qualities = pipeline.predict(test_x)
