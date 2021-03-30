@@ -2,16 +2,7 @@ version: '3.8'
 
 services:
 
-  pmml-samples:
-    image: docker.pkg.github.com/prinz-nussknacker/prinz/pmml-samples:0.0.1
-    environment:
-      - PMML_SERVER_PORT=${PMML_SERVER_PORT}
-    volumes:
-      - ./pmml-samples/:/home/pmml
-    networks:
-      - pmml-net
-
-  proxy:
+  pmml-proxy:
     image: nginx:alpine
     restart: always
     volumes:
@@ -24,8 +15,15 @@ services:
     networks:
       - pmml-net
       - dev-bridge-net
-    depends_on:
-      - pmml-samples
+
+  pmml-samples:
+    image: docker.pkg.github.com/prinz-nussknacker/prinz/pmml-samples:0.0.1
+    environment:
+      - PMML_SERVER_PORT=${PMML_SERVER_PORT}
+    volumes:
+      - ./pmml-samples/:/home/pmml
+    networks:
+      - pmml-net
 
 networks:
   pmml-net:
