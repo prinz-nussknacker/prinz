@@ -13,6 +13,7 @@ import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.model.repository.CompositeModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
 import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
 
@@ -36,21 +37,20 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
     val modelLocationStrategy = LocalMLFModelLocationStrategy
     implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)
-
     implicit val pmmlConfig: PMMLConfig = PMMLConfig()
-
     val mlfRepository = new MLFModelRepository()
-    val mlfModelsResult = mlfRepository.listModels
-
     val pmmlRepository = new HttpPMMLModelRepository()
-    val pmmlModelsResult = pmmlRepository.listModels
+
+    val repository = CompositeModelRepository(
+      mlfRepository,
+      pmmlRepository
+    )
+    val modelsResult = repository.listModels
 
     val result = for {
-      mlfModels <- mlfModelsResult
-      pmmlModels <- pmmlModelsResult
-    } yield (addRepositoryName(mlfModels, "mlf") ++ addRepositoryName(pmmlModels, "pmml"))
-      .foldLeft(Map.empty[String, WithCategories[Service]]) {
-        (services, modelRepository) => services + createModelEnricherRepresentation(modelRepository)
+      models <- modelsResult
+    } yield models.foldLeft(Map.empty[String, WithCategories[Service]]) {
+        (services, model) => services + createModelEnricherRepresentation(model)
     }
 
     result match {
@@ -62,14 +62,6 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
     ExceptionHandlerFactory.noParams(VerboselyLoggingExceptionHandler(_))
 
-  private def addRepositoryName(models: List[Model], repository: String): List[(Model, String)] =
-    models.map(model => (model, repository))
-
-  private def createModelEnricherRepresentation(modelRepository: (Model, String)): (String, WithCategories[Service]) =
-    createModelNameWithRepository(modelRepository) -> allCategories(createEnricher(modelRepository))
-
-  private def createModelNameWithRepository(modelRepository: (Model, String)): String =
-    s"${modelRepository._2}-${modelRepository._1.getName.toString}"
-
-  private def createEnricher(modelRepository: (Model, String)): PrinzEnricher = PrinzEnricher(modelRepository._1)
+  private def createModelEnricherRepresentation(model: Model): (String, WithCategories[Service]) =
+    model.getName.toString -> allCategories(PrinzEnricher(model))
 }

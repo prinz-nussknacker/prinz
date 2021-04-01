@@ -88,6 +88,6 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel-{}".format(model_id), signature=signature)
+            mlflow.sklearn.log_model(lr, "model", registered_model_name="MLF-ElasticnetWineModel-{}".format(model_id), signature=signature)
         else:
             mlflow.sklearn.log_model(lr, "model")

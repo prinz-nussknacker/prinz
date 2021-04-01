@@ -60,7 +60,7 @@ preprocessor = ColumnTransformer(
         ("categorical", categorical_transformer, categorical_features)])
 
 lr = LogisticRegression(multi_class="ovr")
-lr.pmml_name_ = "FraudDetection"
+lr.pmml_name_ = "PMML-FraudDetection"
 
 classifier = PMMLPipeline([
     ("preprocessor", preprocessor),

@@ -91,7 +91,7 @@ with mlflow.start_run():
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
-    model_name = "FraudDetection-{}".format(model_id)
+    model_name = "MLF-FraudDetection-{}".format(model_id)
     mlflow.sklearn.log_model(
         classifier,
         "model",

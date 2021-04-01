@@ -23,21 +23,21 @@ server {
     server_name mlflow-server;
     gzip on;
 
-    location /ElasticnetWineModel-1/invocations {
+    location /MLF-ElasticnetWineModel-1/invocations {
         client_max_body_size 16m;
-        rewrite /ElasticnetWineModel-1/invocations /invocations break;
+        rewrite /MLF-ElasticnetWineModel-1/invocations /invocations break;
         proxy_pass http://model1;
     }
 
-    location /ElasticnetWineModel-2/invocations {
+    location /MLF-ElasticnetWineModel-2/invocations {
         client_max_body_size 16m;
-        rewrite /ElasticnetWineModel-2/invocations /invocations break;
+        rewrite /MLF-ElasticnetWineModel-2/invocations /invocations break;
         proxy_pass http://model2;
     }
 
-    location /FraudDetection-3/invocations {
+    location /MLF-FraudDetection-3/invocations {
         client_max_body_size 16m;
-        rewrite /FraudDetection-3/invocations /invocations break;
+        rewrite /MLF-FraudDetection-3/invocations /invocations break;
         proxy_pass http://model3;
     }
 

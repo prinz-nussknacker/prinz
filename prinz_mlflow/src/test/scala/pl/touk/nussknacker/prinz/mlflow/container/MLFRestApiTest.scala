@@ -283,10 +283,10 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
     SignatureField(SignatureName(definition._1), SignatureType(MLFSignatureInterpreter.fromMLFDataType(definition._2)))
 
   private def getFraudDetectionModel: List[MLFRegisteredModel] => MLFRegisteredModel =
-    models => models.filter(_.name.name.startsWith("FraudDetection")).head
+    models => models.filter(_.name.name.startsWith("MLF-FraudDetection")).head
 
   private def getElasticnetWineModelModel(modelId: Int): List[MLFRegisteredModel] => MLFRegisteredModel =
-    models => models.filter(_.name.name.startsWith("ElasticnetWineModel-" + modelId)).head
+    models => models.filter(_.name.name.startsWith("MLF-ElasticnetWineModel-" + modelId)).head
 
   private def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
     val names = signature.getInputNames.map(_.name)
