@@ -29,7 +29,7 @@ object PMMLUnitIntegrationTest {
 
   private val TIMEOUT_MINUTES = 5
 
-  private val PMML_HTTP_SERVER_READY_REGEX = ".*Serving.*"
+  private val PMML_HTTP_SERVER_READY_REGEX = ".*Training models finished.*"
 
   private val PMML_SAMPLES_SERVICE_NAME = "pmml-samples"
 }
