@@ -27,6 +27,8 @@ if __name__ != "__main__":
     sys.exit()
 
 warnings.filterwarnings("ignore")
+logging.basicConfig(level=logging.WARN)
+logger = logging.getLogger(__name__)
 model_id = int(sys.argv[2])
 
 # Prepare dataset

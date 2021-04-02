@@ -25,4 +25,12 @@ class PMMLHttpApiTest extends PMMLUnitIntegrationTest {
     models.isDefined shouldBe true
     models.get.groupBy(_.getName).size should be > 1
   }
+
+  it should "" in {
+    val repository = new HttpPMMLModelRepository
+    val models = repository.listModels.toOption
+
+    models.isDefined shouldBe true
+    models.get.map(_.toModelInstance)
+  }
 }

@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.BeforeAndAfterAll
-import pl.touk.nussknacker.prinz.{H2Database, TestH2IdTransformedParamProvider, MLFUnitIntegrationTest}
+import pl.touk.nussknacker.prinz.{H2Database, MLFUnitIntegrationTest, TestH2IdTransformedParamProvider, TestModelsManger}
 import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
@@ -12,7 +12,8 @@ import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRes
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
-import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.repository.ModelRepository
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import java.sql.ResultSet
@@ -21,11 +22,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFRestApiTest extends MLFUnitIntegrationTest {
+class MLFRestApiTest extends MLFUnitIntegrationTest with TestModelsManger {
 
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
+
+  private val awaitTimeout = FiniteDuration(2000, TimeUnit.MILLISECONDS)
 
   "Mlflow container" should "list some models" in {
     val repository = new MLFModelRepository
@@ -101,7 +104,6 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
     val instance = getModelInstance().get
     val signature = instance.getSignature
     val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe true
@@ -114,7 +116,6 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
     )
     val signatures = instances.map(_.getSignature)
     val sampleInputs = signatures.map(constructInputMap(0.235.asInstanceOf[AnyRef], _))
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     (instances, sampleInputs)
       .zipped
@@ -161,10 +162,9 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
       ("category", "es_transportation"),
       ("amount", 800.0),
     ).mapValues(_.asInstanceOf[AnyRef])
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe (true)
+    response.toOption.isDefined shouldBe true
   }
 
   it should "allow to run fraud model with http proxied data" in {
@@ -178,10 +178,9 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
       ("age", "4"),
       ("category", "es_transportation"),
     ).mapValues(_.asInstanceOf[AnyRef])
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe (true)
+    response.toOption.isDefined shouldBe true
   }
 
   it should "allow to run fraud model with database composed proxied data" in {
@@ -207,10 +206,9 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
       ("age", "4"),
       ("category", "es_transportation"),
     ).mapValues(_.asInstanceOf[AnyRef])
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe (true)
+    response.toOption.isDefined shouldBe true
   }
 
   it should "allow to run fraud model with database transformed proxied data" in {
@@ -225,10 +223,9 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
       ("age", "4"),
       ("category", "es_transportation"),
     ).mapValues(_.asInstanceOf[AnyRef])
-    val awaitTimeout = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe (true)
+    response.toOption.isDefined shouldBe true
   }
 
   it should "transform model param definition with database transformed proxied data" in {
@@ -245,10 +242,10 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
     inputsNames should contain (s"${tableName}_id")
     inputsNames should contain ("age")
     inputsNames should contain ("category")
-    inputsNames should not contain (s"${tableName}_gender")
-    inputsNames should not contain (s"gender")
-    inputsNames should not contain (s"${tableName}_amount")
-    inputsNames should not contain (s"amount")
+    inputsNames should not contain s"${tableName}_gender"
+    inputsNames should not contain "gender"
+    inputsNames should not contain s"${tableName}_amount"
+    inputsNames should not contain s"amount"
   }
 
   private def prepareCustomerTestData(): Unit = {
@@ -269,28 +266,8 @@ class MLFRestApiTest extends MLFUnitIntegrationTest {
   private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
     Future(extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs))))
 
-  private def getModel(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFRegisteredModel] = {
-    val repository = new MLFModelRepository
-    repository.listModels.toOption.map(extract)
-  }
-
-  private def getModelInstance(extract: List[MLFRegisteredModel] => MLFRegisteredModel = getElasticnetWineModelModel(1)): Option[MLFModelInstance] = {
-    val model = getModel(extract)
-    model.map(_.toModelInstance)
-  }
-
   private def input(definition: (String, String)) =
     SignatureField(SignatureName(definition._1), SignatureType(MLFSignatureInterpreter.fromMLFDataType(definition._2)))
 
-  private def getFraudDetectionModel: List[MLFRegisteredModel] => MLFRegisteredModel =
-    models => models.filter(_.name.name.startsWith("MLF-FraudDetection")).head
-
-  private def getElasticnetWineModelModel(modelId: Int): List[MLFRegisteredModel] => MLFRegisteredModel =
-    models => models.filter(_.name.name.startsWith("MLF-ElasticnetWineModel-" + modelId)).head
-
-  private def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
-    val names = signature.getInputNames.map(_.name)
-    val data = List.fill(names.length)(value)
-    VectorMultimap(names.zip(data))
-  }
+  override def getRepository: ModelRepository = new MLFModelRepository
 }

@@ -7,20 +7,9 @@ abstract sealed class MLFModelLocationStrategy {
 
 object LocalMLFModelLocationStrategy extends MLFModelLocationStrategy {
 
-  private val MODEL_NAME_SPLIT_BY: Char = '-'
-
-  private val BASENAME_MODEL_INDEX: Int = 0
-
-  private val VERSION_MODEL_INDEX: Int = 1
-
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
-    val localModelBaseName = getLocalModelBaseName(model)
+    val localModelBaseName = model.name.internal
     s"/$localModelBaseName/invocations"
-  }
-
-  private def getLocalModelBaseName(model: MLFRegisteredModel): String = {
-    val nameParts = model.name.name.split(MODEL_NAME_SPLIT_BY)
-    s"${nameParts(BASENAME_MODEL_INDEX)}$MODEL_NAME_SPLIT_BY${nameParts(VERSION_MODEL_INDEX)}"
   }
 }
 
