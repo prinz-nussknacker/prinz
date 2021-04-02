@@ -21,6 +21,7 @@ def evaluate_metrics(actual, predicted):
     return rmse, mae, r2
 
 output_path = sys.argv[1]
+id = sys.argv[2]
 
 if __name__ != "__main__":
     sys.exit()
@@ -60,7 +61,7 @@ preprocessor = ColumnTransformer(
         ("categorical", categorical_transformer, categorical_features)])
 
 lr = LogisticRegression(multi_class="ovr")
-lr.pmml_name_ = "PMML-FraudDetection"
+lr.pmml_name_ = f"PMML-FraudDetection-{id}"
 
 classifier = PMMLPipeline([
     ("preprocessor", preprocessor),

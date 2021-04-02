@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFRestApiTest extends MLFUnitIntegrationTest with TestModelsManger {
+class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
 
   private implicit val config: Config = ConfigFactory.load()
 
@@ -31,7 +31,7 @@ class MLFRestApiTest extends MLFUnitIntegrationTest with TestModelsManger {
   private val awaitTimeout = FiniteDuration(2000, TimeUnit.MILLISECONDS)
 
   "Mlflow container" should "list some models" in {
-    val repository = new MLFModelRepository
+    val repository = getRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
@@ -39,7 +39,7 @@ class MLFRestApiTest extends MLFUnitIntegrationTest with TestModelsManger {
   }
 
   it should "list at least two different models" in {
-    val repository = new MLFModelRepository
+    val repository = getRepository
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true

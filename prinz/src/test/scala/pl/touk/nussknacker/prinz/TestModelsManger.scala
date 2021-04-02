@@ -1,7 +1,7 @@
 package pl.touk.nussknacker.prinz
 
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelSignature, SignatureField, SignatureName, SignatureType}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelSignature}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 trait TestModelsManger {

@@ -21,6 +21,7 @@ from sklearn2pmml.pipeline import PMMLPipeline
 alpha = float(sys.argv[1])
 l1_ratio = float(sys.argv[2])
 output_path = sys.argv[3]
+id = sys.argv[4]
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ train_y = train[["quality"]]
 test_y = test[["quality"]]
 
 lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
-lr.pmml_name_ = f"PMML-ElasticnetWineModel-{alpha}-{l1_ratio}"
+lr.pmml_name_ = f"PMML-ElasticnetWineModel-{id}"
 pipeline = PMMLPipeline(steps=[("elastic_net", lr)])
 
 pipeline.fit(train_x, train_y)
