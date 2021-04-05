@@ -32,8 +32,6 @@ trait ContainerUnitTest extends UnitTest
     env = env,
     waitingFor = waitingForService
   )
-
-  protected def readEnv(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
 }
 
 object ContainerUnitTest {

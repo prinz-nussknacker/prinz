@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.pmml
 import com.dimafeng.testcontainers.WaitingForService
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest
-import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{EnvMap, readEnv}
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{EnvMap, readEnv, readEnvWithName}
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.{PMML_HTTP_SERVER_READY_REGEX, PMML_SAMPLES_SERVICE_NAME, TIMEOUT_MINUTES}
 
 import java.io.File
@@ -17,7 +17,7 @@ abstract class PMMLContainerUnitTest extends ContainerUnitTest {
     "PMML_SERVER_PORT",
     "PMML_SAMPLES_PORT",
     "PMML_NGINX_STATIC_PORT",
-  ).map(readEnv).toMap
+  ).map(readEnvWithName).toMap
 
   override def waitingForService: Option[WaitingForService] = Some(
     WaitingForService(PMML_SAMPLES_SERVICE_NAME, new LogMessageWaitStrategy()

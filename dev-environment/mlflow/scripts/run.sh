@@ -51,8 +51,7 @@ sleep 10
 
 create_experiment_if_not_exists 1 &&
 create_experiment_if_not_exists 2 &&
-create_experiment_if_not_exists 3
-
-fit_fraud_detection $MODEL_3_PORT 3 &
+create_experiment_if_not_exists 3 &&
 fit_wine 0.42 0.5 $MODEL_1_PORT 1 &
-fit_wine 0.84 0.5 $MODEL_2_PORT 2
+fit_wine 0.84 0.5 $MODEL_2_PORT 2 &
+fit_fraud_detection $MODEL_3_PORT 3

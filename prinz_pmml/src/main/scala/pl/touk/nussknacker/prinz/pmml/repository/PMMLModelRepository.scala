@@ -10,7 +10,8 @@ import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository.PMML_FILE_E
 import java.net.URL
 
 
-abstract class PMMLModelRepository(implicit protected val config: PMMLConfig) extends ModelRepository with LazyLogging {
+abstract class PMMLModelRepository(implicit protected val config: PMMLConfig)
+  extends ModelRepository with LazyLogging {
 
   override def listModels: RepositoryResponse[List[PMMLModel]] =
     Right[ModelRepositoryException, List[PMMLModel]](readURL.map(PMMLModel(_)).toList)
@@ -31,6 +32,7 @@ abstract class PMMLModelRepository(implicit protected val config: PMMLConfig) ex
 }
 
 object PMMLModelRepository {
+
   val NAME_VERSION_SEPARATOR: String = "-v"
 
   val PMML_FILE_EXTENSION: String = ".pmml"
