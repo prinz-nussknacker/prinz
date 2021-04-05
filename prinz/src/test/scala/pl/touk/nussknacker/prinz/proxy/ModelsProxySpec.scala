@@ -1,6 +1,5 @@
 package pl.touk.nussknacker.prinz.proxy
 
-import org.scalatest.BeforeAndAfterEach
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
 import pl.touk.nussknacker.prinz.container.TestModelsManger
@@ -13,12 +12,9 @@ import java.sql.ResultSet
 import scala.concurrent.{Await, Future}
 
 trait ModelsProxySpec extends UnitTest
-  with TestModelsManger
-  with BeforeAndAfterEach {
+  with TestModelsManger {
 
   def staticServerPath: String
-
-  override def beforeEach(): Unit = H2Database.cleanDatabase()
 
   s"$integrationName " should "allow to run fraud model with http proxied data" in {
     val model = getModel(getFraudDetectionModel).get
@@ -37,6 +33,7 @@ trait ModelsProxySpec extends UnitTest
   }
 
   it should "allow to run fraud model with database composed proxied data" in {
+    H2Database.executeUpdate("drop table if exists input_data;")
     H2Database.executeUpdate("create table input_data (" +
       "id int not null," +
       "amount double not null," +
@@ -66,7 +63,8 @@ trait ModelsProxySpec extends UnitTest
 
   it should "allow to run fraud model with database transformed proxied data" in {
     val tableName = "customer"
-    prepareCustomerTestData()
+    prepareCustomerTestData(tableName)
+
     val model = getModel(getFraudDetectionModel).get
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
     val proxiedModel = ProxiedInputModel(model, paramProvider)
@@ -83,7 +81,7 @@ trait ModelsProxySpec extends UnitTest
 
   it should "transform model param definition with database transformed proxied data" in {
     val tableName = "customer"
-    prepareCustomerTestData()
+    prepareCustomerTestData(tableName)
 
     val model = getModel(getFraudDetectionModel).get
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
@@ -101,8 +99,7 @@ trait ModelsProxySpec extends UnitTest
     inputsNames should not contain s"amount"
   }
 
-  private def prepareCustomerTestData(): Unit = {
-    val tableName = "customer"
+  private def prepareCustomerTestData(tableName: String): Unit = {
     H2Database.executeUpdate(s"drop table if exists $tableName;")
     H2Database.executeUpdate(s"create table $tableName (" +
       s"${tableName}_id int not null," +

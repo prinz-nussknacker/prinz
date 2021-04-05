@@ -11,7 +11,7 @@ import java.time.Duration
 
 abstract class PMMLContainerUnitTest extends ContainerUnitTest {
 
-  override def dockerComposeFile: File = new File("../dev-environment/docker-compose-pmml.yaml")
+  override def dockerComposeFile: File = new File(s"${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/docker-compose-pmml.yaml")
 
   override def env: EnvMap = List(
     "PMML_SERVER_PORT",

@@ -11,7 +11,7 @@ import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{EnvMap, readEnv, r
 
 abstract class MLFContainerUnitTest extends ContainerUnitTest {
 
-  override def dockerComposeFile: File = new File("../dev-environment/docker-compose-mlflow.yaml")
+  override def dockerComposeFile: File = new File(s"${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/docker-compose-mlflow.yaml")
 
   override def env: EnvMap = List(
     "MODEL_1_PORT",
