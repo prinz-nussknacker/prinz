@@ -3,13 +3,17 @@ package pl.touk.nussknacker.prinz.pmml.container
 import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
+import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
 import pl.touk.nussknacker.prinz.pmml.{PMMLConfig, PMMLContainerUnitTest}
+import pl.touk.nussknacker.prinz.proxy.ModelsProxySpec
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
-class PMMLHttpApiTest extends PMMLContainerUnitTest with ApiIntegrationSpec {
+class PMMLHttpApiTest extends PMMLContainerUnitTest
+  with ApiIntegrationSpec
+  with ModelsProxySpec {
 
   private implicit val config: Config = ConfigFactory.load()
 
@@ -20,4 +24,6 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest with ApiIntegrationSpec {
   override def getRepository: ModelRepository = new HttpPMMLModelRepository
 
   override def awaitTimeout: FiniteDuration = FiniteDuration(100, TimeUnit.MILLISECONDS)
+
+  override def staticServerPath: String = STATIC_SERVER_PATH
 }

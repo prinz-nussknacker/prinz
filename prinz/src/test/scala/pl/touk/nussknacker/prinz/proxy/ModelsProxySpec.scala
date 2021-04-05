@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.proxy
 
+import org.scalatest.BeforeAndAfterEach
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
 import pl.touk.nussknacker.prinz.container.TestModelsManger
@@ -11,9 +12,13 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import java.sql.ResultSet
 import scala.concurrent.{Await, Future}
 
-trait ModelsProxySpec extends UnitTest with TestModelsManger {
+trait ModelsProxySpec extends UnitTest
+  with TestModelsManger
+  with BeforeAndAfterEach {
 
   def staticServerPath: String
+
+  override def beforeEach(): Unit = H2Database.cleanDatabase()
 
   s"$integrationName " should "allow to run fraud model with http proxied data" in {
     val model = getModel(getFraudDetectionModel).get

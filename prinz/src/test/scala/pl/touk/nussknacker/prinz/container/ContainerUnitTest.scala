@@ -41,4 +41,8 @@ object ContainerUnitTest {
   private val BRIDGE_NET_NAME = "dev-bridge-net"
 
   type EnvMap = Map[String, String]
+
+  def readEnvWithName(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
+
+  def readEnv(name: String): String = sys.env.getOrElse(name, "")
 }

@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.pmml
 import com.dimafeng.testcontainers.WaitingForService
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest
-import pl.touk.nussknacker.prinz.container.ContainerUnitTest.EnvMap
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{EnvMap, readEnv}
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.{PMML_HTTP_SERVER_READY_REGEX, PMML_SAMPLES_SERVICE_NAME, TIMEOUT_MINUTES}
 
 import java.io.File
@@ -16,6 +16,7 @@ abstract class PMMLContainerUnitTest extends ContainerUnitTest {
   override def env: EnvMap = List(
     "PMML_SERVER_PORT",
     "PMML_SAMPLES_PORT",
+    "PMML_NGINX_STATIC_PORT",
   ).map(readEnv).toMap
 
   override def waitingForService: Option[WaitingForService] = Some(
@@ -32,4 +33,6 @@ object PMMLContainerUnitTest {
   private val PMML_HTTP_SERVER_READY_REGEX = ".*Training models finished.*"
 
   private val PMML_SAMPLES_SERVICE_NAME = "pmml-samples"
+
+  val STATIC_SERVER_PATH = s"http://localhost:${readEnv("PMML_NGINX_STATIC_PORT")}/static"
 }

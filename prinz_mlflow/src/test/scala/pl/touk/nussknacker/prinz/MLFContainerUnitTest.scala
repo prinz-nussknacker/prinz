@@ -5,10 +5,9 @@ import java.time.Duration
 import com.dimafeng.testcontainers.WaitingForService
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pl.touk.nussknacker.prinz.MLFContainerUnitTest.{MLFLOW_SERVER_SERVICE_NAME,
-  MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX, MODEL_3_SERVED_READY_REGEX,
-  TIMEOUT_MINUTES, readEnvWithName}
+  MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX, MODEL_3_SERVED_READY_REGEX, TIMEOUT_MINUTES}
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest
-import pl.touk.nussknacker.prinz.container.ContainerUnitTest.EnvMap
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{EnvMap, readEnv, readEnvWithName}
 
 abstract class MLFContainerUnitTest extends ContainerUnitTest {
 
@@ -18,7 +17,7 @@ abstract class MLFContainerUnitTest extends ContainerUnitTest {
     "MODEL_1_PORT",
     "MODEL_2_PORT",
     "MODEL_3_PORT",
-    "NGINX_STATIC_PORT",
+    "MLF_NGINX_STATIC_PORT",
   ).map(readEnvWithName).toMap
 
   override def waitingForService: Option[WaitingForService] = Some(
@@ -42,9 +41,5 @@ object MLFContainerUnitTest {
 
   private val MLFLOW_SERVER_SERVICE_NAME = "mlflow-server"
 
-  val STATIC_SERVER_PATH = s"http://localhost:${readEnv("NGINX_STATIC_PORT")}/static"
-
-  private def readEnvWithName(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
-
-  protected def readEnv(name: String): String = sys.env.getOrElse(name, "")
+  val STATIC_SERVER_PATH = s"http://localhost:${readEnv("MLF_NGINX_STATIC_PORT")}/static"
 }
