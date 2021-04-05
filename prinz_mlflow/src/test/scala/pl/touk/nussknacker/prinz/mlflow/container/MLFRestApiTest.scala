@@ -2,9 +2,9 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.BeforeAndAfterAll
-import pl.touk.nussknacker.prinz.{H2Database, MLFUnitIntegrationTest, TestH2IdTransformedParamProvider}
-import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.STATIC_SERVER_PATH
-import pl.touk.nussknacker.prinz.container.TestModelsManger
+import pl.touk.nussknacker.prinz.{H2Database, MLFContainerUnitTest, TestH2IdTransformedParamProvider}
+import pl.touk.nussknacker.prinz.MLFContainerUnitTest.STATIC_SERVER_PATH
+import pl.touk.nussknacker.prinz.container.{ApiIntegrationSpec, TestModelsManger}
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegisteredModel}
@@ -23,29 +23,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
+class MLFRestApiTest extends MLFContainerUnitTest
+  with ApiIntegrationSpec {
 
   private implicit val config: Config = ConfigFactory.load()
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
-
-  private val awaitTimeout = FiniteDuration(2000, TimeUnit.MILLISECONDS)
-
-  "Mlflow container" should "list some models" in {
-    val repository = getRepository
-    val models = repository.listModels.toOption
-
-    models.isDefined shouldBe true
-    models.exists(_.nonEmpty) shouldBe true
-  }
-
-  it should "list at least two different models" in {
-    val repository = getRepository
-    val models = repository.listModels.toOption
-
-    models.isDefined shouldBe true
-    models.get.groupBy(_.getName).size should be > 1
-  }
 
   it should "list model run info with artifact location" in {
     val client = MLFRestClient(MLFRestClientConfig.fromMLFConfig(mlfConfig))
@@ -57,19 +40,6 @@ class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
 
     runInfo.isDefined shouldBe true
     runInfo.map(_.info).map(_.artifact_uri).isDefined shouldBe true
-  }
-
-  it should "have model instance available" in {
-    val instance = getModelInstance()
-
-    instance.isDefined shouldBe true
-  }
-
-  it should "have model instance that has signature defined" in {
-    val instance = getModelInstance()
-    val signature = instance.map(_.getSignature)
-
-    signature.isDefined shouldBe true
   }
 
   it should "have specific for tests model signature" in {
@@ -101,38 +71,6 @@ class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
       .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
   }
 
-  it should "allow to run model with sample data" in {
-    val instance = getModelInstance().get
-    val signature = instance.getSignature
-    val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
-
-    val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
-  }
-
-  it should "have models that returns different values for the same input" in {
-    val instances = List(
-      getModelInstance(getElasticnetWineModelModel(1)).get,
-      getModelInstance(getElasticnetWineModelModel(2)).get
-    )
-    val signatures = instances.map(_.getSignature)
-    val sampleInputs = signatures.map(constructInputMap(0.235.asInstanceOf[AnyRef], _))
-
-    (instances, sampleInputs)
-      .zipped
-      .map { case (instance, input) => instance.run(input) }
-      .map { future => Await.result(future, awaitTimeout) }
-      .map(_.right.get)
-      .groupBy(_.toString())
-      .size should be > 1
-  }
-
-  it should "have fraud detection model" in {
-    val instance = getModelInstance(getFraudDetectionModel)
-
-    instance.isDefined shouldBe true
-  }
-
   it should "have fraud detection model with proper model signature" in {
     val expectedSignatureInput = List(
       ("age", "string"),
@@ -153,19 +91,6 @@ class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
       .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
     expectedSignatureInput.map(input)
       .foreach(field => signature.getInputValueType(field.signatureName) should equal (Some(field.signatureType)))
-  }
-
-  it should "allow to run fraud model with sample data" in {
-    val instance = getModelInstance(getFraudDetectionModel).get
-    val sampleInput = VectorMultimap(
-      ("age", "4"),
-      ("gender", "F"),
-      ("category", "es_transportation"),
-      ("amount", 800.0),
-    ).mapValues(_.asInstanceOf[AnyRef])
-
-    val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
   }
 
   it should "allow to run fraud model with http proxied data" in {
@@ -271,4 +196,8 @@ class MLFContainerTest extends MLFUnitIntegrationTest with TestModelsManger {
     SignatureField(SignatureName(definition._1), SignatureType(MLFSignatureInterpreter.fromMLFDataType(definition._2)))
 
   override def getRepository: ModelRepository = new MLFModelRepository
+
+  override def integrationName: String = "MLflow"
+
+  override def awaitTimeout: FiniteDuration = FiniteDuration(2000, TimeUnit.MILLISECONDS)
 }

@@ -1,6 +1,7 @@
 package pl.touk.nussknacker.prinz.container
 
 import pl.touk.nussknacker.prinz.UnitTest
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Await
 import scala.concurrent.duration.FiniteDuration
@@ -64,5 +65,24 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManger {
       .map(_.right.get)
       .groupBy(_.toString())
       .size should be > 1
+  }
+
+  it should "have fraud detection model" in {
+    val instance = getModelInstance(getFraudDetectionModel)
+
+    instance.isDefined shouldBe true
+  }
+
+  it should "allow to run fraud model with sample data" in {
+    val instance = getModelInstance(getFraudDetectionModel).get
+    val sampleInput = VectorMultimap(
+      ("age", "4"),
+      ("gender", "F"),
+      ("category", "es_transportation"),
+      ("amount", 800.0),
+    ).mapValues(_.asInstanceOf[AnyRef])
+
+    val response = Await.result(instance.run(sampleInput), awaitTimeout)
+    response.toOption.isDefined shouldBe true
   }
 }
