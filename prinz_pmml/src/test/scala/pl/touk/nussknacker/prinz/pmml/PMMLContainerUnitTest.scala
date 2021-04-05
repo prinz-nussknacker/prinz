@@ -2,14 +2,14 @@ package pl.touk.nussknacker.prinz.pmml
 
 import com.dimafeng.testcontainers.WaitingForService
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
-import pl.touk.nussknacker.prinz.UnitIntegrationTest
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.EnvMap
-import pl.touk.nussknacker.prinz.pmml.PMMLUnitIntegrationTest.{PMML_HTTP_SERVER_READY_REGEX, PMML_SAMPLES_SERVICE_NAME, TIMEOUT_MINUTES}
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.EnvMap
+import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.{PMML_HTTP_SERVER_READY_REGEX, PMML_SAMPLES_SERVICE_NAME, TIMEOUT_MINUTES}
 
 import java.io.File
 import java.time.Duration
 
-abstract class PMMLUnitIntegrationTest extends UnitIntegrationTest {
+abstract class PMMLContainerUnitTest extends ContainerUnitTest {
 
   override def dockerComposeFile: File = new File("../dev-environment/docker-compose-pmml.yaml")
 
@@ -25,7 +25,7 @@ abstract class PMMLUnitIntegrationTest extends UnitIntegrationTest {
   )
 }
 
-object PMMLUnitIntegrationTest {
+object PMMLContainerUnitTest {
 
   private val TIMEOUT_MINUTES = 5
 

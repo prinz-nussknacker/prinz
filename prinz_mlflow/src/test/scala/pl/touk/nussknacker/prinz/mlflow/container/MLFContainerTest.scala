@@ -2,8 +2,9 @@ package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.BeforeAndAfterAll
-import pl.touk.nussknacker.prinz.{H2Database, MLFUnitIntegrationTest, TestH2IdTransformedParamProvider, TestModelsManger}
+import pl.touk.nussknacker.prinz.{H2Database, MLFUnitIntegrationTest, TestH2IdTransformedParamProvider}
 import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.STATIC_SERVER_PATH
+import pl.touk.nussknacker.prinz.container.TestModelsManger
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFModelInstance, MLFRegisteredModel}

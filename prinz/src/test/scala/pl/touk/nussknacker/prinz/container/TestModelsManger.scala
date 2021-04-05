@@ -1,4 +1,4 @@
-package pl.touk.nussknacker.prinz
+package pl.touk.nussknacker.prinz.container
 
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelSignature}

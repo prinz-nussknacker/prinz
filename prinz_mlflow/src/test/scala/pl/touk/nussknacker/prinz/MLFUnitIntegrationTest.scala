@@ -4,12 +4,13 @@ import java.io.File
 import java.time.Duration
 import com.dimafeng.testcontainers.WaitingForService
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
-import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.{
-  MLFLOW_SERVER_SERVICE_NAME, MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX,
-  MODEL_3_SERVED_READY_REGEX, TIMEOUT_MINUTES, readEnvWithName}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.EnvMap
+import pl.touk.nussknacker.prinz.MLFUnitIntegrationTest.{MLFLOW_SERVER_SERVICE_NAME,
+  MODEL_1_SERVED_READY_REGEX, MODEL_2_SERVED_READY_REGEX, MODEL_3_SERVED_READY_REGEX,
+  TIMEOUT_MINUTES, readEnvWithName}
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.EnvMap
 
-abstract class MLFUnitIntegrationTest extends UnitIntegrationTest {
+abstract class MLFUnitIntegrationTest extends ContainerUnitTest {
 
   override def dockerComposeFile: File = new File("../dev-environment/docker-compose-mlflow.yaml")
 

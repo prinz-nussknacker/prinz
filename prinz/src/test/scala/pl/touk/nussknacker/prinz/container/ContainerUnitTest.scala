@@ -1,14 +1,16 @@
-package pl.touk.nussknacker.prinz
+package pl.touk.nussknacker.prinz.container
 
 import com.dimafeng.testcontainers.DockerComposeContainer.{ComposeFile, Def}
 import com.dimafeng.testcontainers.scalatest.TestContainerForAll
 import com.dimafeng.testcontainers.{ContainerDef, WaitingForService}
-import pl.touk.nussknacker.prinz.UnitIntegrationTest.{BRIDGE_NET_NAME, EnvMap}
+import pl.touk.nussknacker.prinz.UnitTest
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.{BRIDGE_NET_NAME, EnvMap}
 
 import java.io.File
 import scala.sys.process.Process
 
-abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
+trait ContainerUnitTest extends UnitTest
+  with TestContainerForAll {
 
   def dockerComposeFile: File
 
@@ -34,7 +36,7 @@ abstract class UnitIntegrationTest extends UnitTest with TestContainerForAll {
   protected def readEnv(name: String): (String, String) = (name, sys.env.getOrElse(name, ""))
 }
 
-object UnitIntegrationTest {
+object ContainerUnitTest {
 
   private val BRIDGE_NET_NAME = "dev-bridge-net"
 
