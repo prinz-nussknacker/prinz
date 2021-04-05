@@ -20,6 +20,7 @@ class PMMLLocalFileApiTest extends PMMLContainerUnitTest
     s"""
       |  pmml {
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/pmml-samples/exports"
+      |    modelDirectoryHrefSelector: ""
       |  }
       |""".stripMargin)
 

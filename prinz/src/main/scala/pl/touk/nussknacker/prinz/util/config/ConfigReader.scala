@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.util.config
 
 import java.net.URL
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.{LazyLogging, Logger}
+import com.typesafe.scalalogging.LazyLogging
 
 object ConfigReader extends LazyLogging {
 
@@ -14,7 +14,7 @@ object ConfigReader extends LazyLogging {
       extracted
     }
     else {
-      throw new IllegalStateException(s"No config value defined for ${fullPath}")
+      throw new IllegalStateException(s"No config value defined for $fullPath")
     }
   }
 
@@ -23,6 +23,4 @@ object ConfigReader extends LazyLogging {
   def getInt(config: Config, path: String): Int = config.getInt(path)
 
   def getString(config: Config, path: String): String = config.getString(path)
-
-  def url(url: String): URL = new URL(url)
 }

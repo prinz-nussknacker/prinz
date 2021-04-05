@@ -27,7 +27,7 @@ abstract class PMMLContainerUnitTest extends ContainerUnitTest {
 }
 
 object PMMLContainerUnitTest {
-
+modelDirectoryHrefSelector
   private val TIMEOUT_MINUTES = 5
 
   private val PMML_HTTP_SERVER_READY_REGEX = ".*Training models finished.*"
