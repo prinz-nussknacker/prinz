@@ -23,10 +23,9 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
       val results = collectOutputs(resultSeq).asJava
       Right(results)
     } catch {
-      case ex: PMMLException => {
+      case ex: PMMLException =>
         logger.warn("Got PMMLException: {}", ex)
         Left(new ModelRunException(ex.toString))
-      }
     }
   }
 
@@ -48,7 +47,7 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
       case 2 =>
         val builder = new VectorMultimapBuilder[String, Any]
         rows.foreach(r => builder ++= r)
-        builder.result().toMap()
+        builder.result().toMap
     }
   }
 }

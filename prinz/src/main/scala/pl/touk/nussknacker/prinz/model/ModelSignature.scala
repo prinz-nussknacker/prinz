@@ -4,7 +4,8 @@ import pl.touk.nussknacker.engine.api.definition.{NotBlankParameter, Parameter}
 import pl.touk.nussknacker.engine.api.typed.typing.{TypedObjectTypingResult, TypingResult}
 import pl.touk.nussknacker.prinz.util.exceptions.Assertions.assertIllegal
 
-case class ModelSignature private(signatureInputs: List[SignatureField], signatureOutputs: List[SignatureField]) {
+case class ModelSignature private(private val signatureInputs: List[SignatureField],
+                                  private val signatureOutputs: List[SignatureField]) {
 
   private val signatureInputMap = signatureInputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 

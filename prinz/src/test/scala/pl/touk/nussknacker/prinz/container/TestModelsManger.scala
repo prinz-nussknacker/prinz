@@ -4,7 +4,13 @@ import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelSignature}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
+import scala.concurrent.duration.FiniteDuration
+
 trait TestModelsManger {
+
+  def integrationName: String
+
+  def awaitTimeout: FiniteDuration
 
   def getRepository: ModelRepository
 

@@ -1,13 +1,13 @@
-package pl.touk.nussknacker.prinz
+package pl.touk.nussknacker.prinz.proxy
 
 import pl.touk.nussknacker.engine.api.typed.typing.Typed
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
+import pl.touk.nussknacker.prinz.H2Database
 import pl.touk.nussknacker.prinz.model.ModelInstance.ModelInputData
-import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.model.proxy.tranformer.ModelInputTransformer
+import pl.touk.nussknacker.prinz.model.{ModelSignature, SignatureField, SignatureName, SignatureType}
 
-import java.sql.ResultSet
-import java.sql.Types
+import java.sql.{ResultSet, Types}
 import scala.concurrent.Future
 
 class TestH2IdTransformedParamProvider(tableName: String) extends ModelInputTransformer {
@@ -15,13 +15,13 @@ class TestH2IdTransformedParamProvider(tableName: String) extends ModelInputTran
   private var cachedColumnNames: Option[List[SignatureField]] = None
 
   override def transformInputData(originalParameters: ModelInputData): Future[ModelInputData] = {
-    val ids = originalParameters.get(s"${tableName}_id")
-      .map(optVector => optVector.map(v => v.asInstanceOf[Int]))
-      .get
+    val ids = originalParameters.get(s"${tableName}_id").get
+      .map(v => v.asInstanceOf[Int])
     val extraInputsNames = cachedColumnNames
       .getOrElse(initExtraColumnFields())
       .map(_.signatureName.name)
-    Future(addExtraDataForIds(extraInputsNames, ids, originalParameters))
+    val filteredParameters = originalParameters.filterKeys(isNotId)
+    Future(addExtraDataForIds(extraInputsNames, ids, filteredParameters))
   }
 
   override def changeSignature(modelSignature: ModelSignature): ModelSignature = {
@@ -30,13 +30,13 @@ class TestH2IdTransformedParamProvider(tableName: String) extends ModelInputTran
       .map(_.signatureName.name)
       .toSet
     val filteredInputs = modelSignature
-      .signatureInputs
+      .getSignatureInputs
       .filter(input => !inputsToRemove.contains(input.signatureName.name))
     val extraInput = SignatureField(
       SignatureName(s"${tableName}_id"),
       SignatureType(Typed[Int])
     )
-    ModelSignature(extraInput::filteredInputs, modelSignature.signatureOutputs)
+    ModelSignature(extraInput::filteredInputs, modelSignature.getSignatureOutputs)
   }
 
   private def addExtraDataForIds(extraInputsNames: List[String], ids: Iterable[Int], inputData: ModelInputData): ModelInputData =
@@ -74,7 +74,9 @@ class TestH2IdTransformedParamProvider(tableName: String) extends ModelInputTran
     SignatureField(SignatureName(trimmedName), SignatureType(typing))
   }
 
-  private def isNotIdData(data: (String, Int)): Boolean = !s"${tableName}_id".equalsIgnoreCase(data._1)
+  private def isNotId(data: String): Boolean = !s"${tableName}_id".equalsIgnoreCase(data)
+
+  private def isNotIdData(data: (String, Int)): Boolean = isNotId(data._1)
 
   private def toColumnName(signatureColumn: String): String = s"${tableName}_$signatureColumn".toUpperCase
 }

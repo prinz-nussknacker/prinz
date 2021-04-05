@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.util.collection.immutable
 
 import scala.collection.mutable
 
-class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector[V]]) {
+class VectorMultimap[K, V](private val delegate: mutable.Map[K, Vector[V]]) {
 
   def add(key: K, value: V): VectorMultimap[K, V] = get(key) match {
     case None =>
@@ -26,6 +26,12 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
       }
     }
     VectorMultimap(created)
+  }
+
+  def filterKeys(keyPredicate: K => Boolean): VectorMultimap[K, V] = {
+    val filteredData = delegate.filterKeys(keyPredicate)
+    val filteredPairs = filteredData.flatMap(kv => kv._2.map((kv._1, _))).toArray
+    VectorMultimap(filteredPairs:_*)
   }
 
   def exists(key: K, p: V => Boolean): Boolean = get(key) match {
@@ -64,7 +70,7 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
 
   def containsKey(key: K): Boolean = delegate.contains(key)
 
-  def toMap(): Map[K, Vector[V]] = delegate.toMap
+  def toMap: Map[K, Vector[V]] = delegate.toMap
 
   override def toString: String = {
     val sb = new StringBuilder(s"${getClass.getName}[\n")
@@ -92,7 +98,7 @@ object VectorMultimap {
   def apply[K, V](elements: Iterable[(K, V)]): VectorMultimap[K, V] =
     buildCollection(elements)
 
-  def apply[K, V](delegate: mutable.LinkedHashMap[K, Vector[V]]): VectorMultimap[K, V] =
+  def apply[K, V](delegate: mutable.Map[K, Vector[V]]): VectorMultimap[K, V] =
     new VectorMultimap[K, V](delegate)
 
   private def buildCollection[K, V](elements: Iterable[(K, V)]): VectorMultimap[K, V] = {
@@ -102,6 +108,7 @@ object VectorMultimap {
   }
 
   class VectorMultimapBuilder[K, V] extends mutable.Builder[(K, V), VectorMultimap[K, V]] {
+
     private val elements = new mutable.LinkedHashMap[K, Vector[V]]
 
     override def +=(element: (K, V)): this.type = {

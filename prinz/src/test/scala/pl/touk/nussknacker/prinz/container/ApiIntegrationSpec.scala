@@ -4,13 +4,8 @@ import pl.touk.nussknacker.prinz.UnitTest
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Await
-import scala.concurrent.duration.FiniteDuration
 
 trait ApiIntegrationSpec extends UnitTest with TestModelsManger {
-
-  def integrationName: String
-
-  def awaitTimeout: FiniteDuration
 
   s"$integrationName " should "list some models" in {
     val repository = getRepository
