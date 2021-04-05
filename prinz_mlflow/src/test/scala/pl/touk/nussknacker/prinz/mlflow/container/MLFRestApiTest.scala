@@ -24,11 +24,11 @@ class MLFRestApiTest extends MLFContainerUnitTest
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
        |  mlflow {
-       |    serverUrl: "http://mlflow-proxy:${readEnv("MLFLOW_SERVER_PORT")}"
-       |    servedModelsUrl: "http://mlflow-proxy:${readEnv("MLFLOW_SERVER_PORT")}"
+       |    serverUrl: "http://localhost:${readEnv("MLFLOW_SERVER_PORT")}"
+       |    servedModelsUrl: "http://localhost:${readEnv("MLFLOW_SERVER_PORT")}"
        |    s3AccessKey: "mlflow-key"
        |    s3SecretKey: "mlflow-secret"
-       |    s3Url: "http://mlflow-proxy:${readEnv("NGINX_BUCKET_PORT")}"
+       |    s3Url: "http://localhost:${readEnv("NGINX_BUCKET_PORT")}"
        |    s3ModelRelativePath: "/model/MLmodel"
        |    s3BucketName: "mlflow"
        |  }
