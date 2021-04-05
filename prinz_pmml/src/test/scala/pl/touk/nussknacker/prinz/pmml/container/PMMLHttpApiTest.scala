@@ -23,7 +23,7 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
 
   override def getRepository: ModelRepository = new HttpPMMLModelRepository
 
-  override def awaitTimeout: FiniteDuration = FiniteDuration(100, TimeUnit.MILLISECONDS)
+  override def awaitTimeout: FiniteDuration = FiniteDuration(500, TimeUnit.MILLISECONDS)
 
   override def staticServerPath: String = STATIC_SERVER_PATH
 }

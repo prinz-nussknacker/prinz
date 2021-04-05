@@ -24,7 +24,7 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
       Right(results)
     } catch {
       case ex: PMMLException =>
-        logger.warn("Got PMMLException: {}", ex)
+        logger.warn("Got PMMLException:", ex)
         Left(new ModelRunException(ex.toString))
     }
   }

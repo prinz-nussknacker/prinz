@@ -49,7 +49,7 @@ trait ModelsProxySpec extends UnitTest
       .proxyComposedParam[ResultSet](
         _ => Future(H2Database.executeNonEmptyQuery("select * from input_data where id = 0;")),
         rs => extractResultSetValues(rs, List(
-          ("amount", _.getBigDecimal("amount")),
+          ("amount", _.getDouble("amount").asInstanceOf[AnyRef]),
           ("gender", _.getString("gender"))
         ))
       )
