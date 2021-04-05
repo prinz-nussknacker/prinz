@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.{LazyLogging, Logger}
 
 object ConfigReader extends LazyLogging {
 
-  def getConfigValue[T](path: String, default: T, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T = {
+  def getConfigValue[T](path: String, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T = {
     val fullPath = s"$basePath$path"
     if (config.hasPath(fullPath)) {
       val extracted = extractor(config, fullPath)
@@ -14,8 +14,7 @@ object ConfigReader extends LazyLogging {
       extracted
     }
     else {
-      logger.info("No config value {} defined. Using default value {}", fullPath, default)
-      default
+      throw new IllegalStateException(s"No config value defined for ${fullPath}")
     }
   }
 
