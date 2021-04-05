@@ -4,6 +4,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.MLFContainerUnitTest
 import pl.touk.nussknacker.prinz.MLFContainerUnitTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.readEnv
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.MLFRestRunId
@@ -20,7 +21,18 @@ class MLFRestApiTest extends MLFContainerUnitTest
   with ApiIntegrationSpec
   with ModelsProxySpec {
 
-  private implicit val config: Config = ConfigFactory.load()
+  private implicit val config: Config = ConfigFactory.parseString(
+    s"""
+       |  mlflow {
+       |    serverUrl: "http://mlflow-proxy:${readEnv("MLFLOW_SERVER_PORT")}"
+       |    servedModelsUrl: "http://mlflow-proxy:${readEnv("MLFLOW_SERVER_PORT")}"
+       |    s3AccessKey: "mlflow-key"
+       |    s3SecretKey: "mlflow-secret"
+       |    s3Url: "http://mlflow-proxy:${readEnv("NGINX_BUCKET_PORT")}"
+       |    s3ModelRelativePath: "/model/MLmodel"
+       |    s3BucketName: "mlflow"
+       |  }
+       |""".stripMargin)
 
   private implicit val mlfConfig: MLFConfig = MLFConfig()
 

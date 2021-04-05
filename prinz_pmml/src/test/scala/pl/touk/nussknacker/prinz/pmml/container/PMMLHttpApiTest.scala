@@ -2,6 +2,7 @@ package pl.touk.nussknacker.prinz.pmml.container
 
 import com.typesafe.config.{Config, ConfigFactory}
 import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
+import pl.touk.nussknacker.prinz.container.ContainerUnitTest.readEnv
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
@@ -15,7 +16,13 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
   with ApiIntegrationSpec
   with ModelsProxySpec {
 
-  private implicit val config: Config = ConfigFactory.load()
+  private implicit val config: Config = ConfigFactory.parseString(
+    s"""
+       |  pmml {
+       |    modelsDirectory: "http://localhost:${readEnv("PMML_SAMPLES_PORT")}"
+       |    modelDirectoryHrefSelector: "body > ul > li > a"
+       |  }
+       |""".stripMargin)
 
   private implicit val pmmlConfig: PMMLConfig = PMMLConfig()
 
