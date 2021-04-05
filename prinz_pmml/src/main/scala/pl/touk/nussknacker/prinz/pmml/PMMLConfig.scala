@@ -1,7 +1,7 @@
 package pl.touk.nussknacker.prinz.pmml
 
 import com.typesafe.config.Config
-import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl}
+import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getOptionConfigValue, getString, getUrl}
 
 import java.net.URL
 
@@ -11,5 +11,5 @@ final case class PMMLConfig(private implicit val config: Config) {
 
   val modelsDirectory: URL = getConfigValue("modelsDirectory", getUrl)
 
-  val modelDirectoryHrefSelector: String = getConfigValue("modelDirectoryHrefSelector", getString)
+  val modelDirectoryHrefSelector: Option[String] = getOptionConfigValue("modelDirectoryHrefSelector", getString)
 }

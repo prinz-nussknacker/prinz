@@ -9,6 +9,11 @@ import scala.collection.JavaConverters
 
 class HttpPMMLModelRepository(implicit config: PMMLConfig) extends PMMLModelRepository {
 
+  private val selector = config.modelDirectoryHrefSelector match {
+    case Some(value) => value
+    case None => throw new IllegalStateException("pmml.modelDirectoryHrefSelector should be defined when using HttpPMMLModelRepository")
+  }
+
   override protected def readPMMFilesData(url: URL, config: PMMLConfig): Iterable[PMMLModelPayload] = {
     val urlString = url.toString
 
@@ -19,7 +24,7 @@ class HttpPMMLModelRepository(implicit config: PMMLConfig) extends PMMLModelRepo
     else {
       val doc = Jsoup.connect(urlString).get()
       val elements = doc
-        .select(config.modelDirectoryHrefSelector)
+        .select(selector)
         .eachAttr("href")
       JavaConverters.iterableAsScalaIterable(elements)
         .filter(isPMMLFile)

@@ -6,15 +6,22 @@ import com.typesafe.scalalogging.LazyLogging
 
 object ConfigReader extends LazyLogging {
 
-  def getConfigValue[T](path: String, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T = {
+  def getConfigValue[T](path: String, extractor: (Config, String) => T)(implicit config: Config, basePath: String): T =
+    getOptionConfigValue(path, extractor) match {
+      case Some(value) => value
+      case None => throw new IllegalStateException(s"No config value defined for $basePath$path")
+    }
+
+  def getOptionConfigValue[T](path: String, extractor: (Config, String) => T)(implicit config: Config, basePath: String): Option[T] = {
     val fullPath = s"$basePath$path"
     if (config.hasPath(fullPath)) {
       val extracted = extractor(config, fullPath)
       logger.info("Config value {} defined with value {}", fullPath, extracted)
-      extracted
+      Some(extracted)
     }
     else {
-      throw new IllegalStateException(s"No config value defined for $fullPath")
+      logger.info("Config value {} not defined", fullPath)
+      None
     }
   }
 
