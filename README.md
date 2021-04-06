@@ -2,7 +2,7 @@
 
 ## Nussknacker - operation model
 
-![nussknacker_operation_model](./docs/imgs/nussknacker_operation_model.png)
+![nussknacker_operation_model](readme/nussknacker_operation_model.png)
 
 ## Configuring your own models
 
@@ -39,7 +39,7 @@ some of the data for the model - e.g. from a database with a customer profile, p
 
 ## Prinz's internal model
 
-![prinz_internal_model](./docs/imgs/prinz_internal_model.png)
+![prinz_internal_model](readme/prinz_internal_model.png)
 
 We assume that an API that will enable relatively easy addition of further implementations of model repositories / runtime
 ML models will be created.
@@ -95,7 +95,7 @@ For example to run MLflow one need to change the `DOCKER_COMPOSE_FILE` variable 
 to have the value `new File("./dev-environment/docker-compose-mlflow.yaml")` which will point to existing configuration file.
 
 Download the plugin and try to run selected test by clicking the green arrow near the code numbering
-![Run unit integration test](./docs/imgs/unit_integration_test.png)
+![Run unit integration test](readme/unit_integration_test.png)
 
 When running test fails with the message containing
 ```shell
@@ -103,11 +103,11 @@ services.proxy.ports value [':', ':', ':'] has non-unique elements
 ```
 (which means there are non-configured env variables which should be filled before setting the environment)
 the test configuration is generated in IDE and is accessible in the top of your IDE
-![Test configuration](./docs/imgs/test_run_configuration.png)
+![Test configuration](readme/test_run_configuration.png)
 
 In order to run test one need to edit generated configuration with downloaded
 plugin by entering the configuration setup and selecting the [.env](./.env) configuration
 file available in the repository
-![Add env file to configuration](./docs/imgs/env_file_configuration.png)
+![Add env file to configuration](readme/env_file_configuration.png)
 
 After adding this configuration file with environment definition running test should be possible from the IDE.
