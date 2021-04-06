@@ -1,6 +1,8 @@
 package pl.touk.nussknacker.prinz.mlflow.container
 
 import com.typesafe.config.{Config, ConfigFactory}
+import pl.touk.nussknacker.engine.api.typed.typing
+import pl.touk.nussknacker.engine.api.typed.typing.Typed
 import pl.touk.nussknacker.prinz.MLFContainerUnitTest
 import pl.touk.nussknacker.prinz.MLFContainerUnitTest.STATIC_SERVER_PATH
 import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
@@ -53,4 +55,33 @@ class MLFRestApiTest extends MLFContainerUnitTest
     runInfo.isDefined shouldBe true
     runInfo.map(_.info).map(_.artifact_uri).isDefined shouldBe true
   }
+
+  override def expectedWineInputs: List[(String, typing.TypingResult)] = List(
+    ("fixed acidity", Typed[Double]),
+    ("volatile acidity", Typed[Double]),
+    ("citric acid", Typed[Double]),
+    ("residual sugar", Typed[Double]),
+    ("chlorides", Typed[Double]),
+    ("free sulfur dioxide", Typed[Double]),
+    ("total sulfur dioxide", Typed[Double]),
+    ("density", Typed[Double]),
+    ("pH", Typed[Double]),
+    ("sulphates", Typed[Double]),
+    ("alcohol", Typed[Double])
+  )
+
+  override def expectedWineOutputs: List[(String, typing.TypingResult)] = List(
+    ("output_0", Typed[Double])
+  )
+
+  override def expectedFraudInputs: List[(String, typing.TypingResult)] = List(
+    ("age", Typed[String]),
+    ("gender", Typed[String]),
+    ("category", Typed[String]),
+    ("amount", Typed[Double])
+  )
+
+  override def expectedFraudOutputs: List[(String, typing.TypingResult)] = List(
+    ("output_0", Typed[Int])
+  )
 }

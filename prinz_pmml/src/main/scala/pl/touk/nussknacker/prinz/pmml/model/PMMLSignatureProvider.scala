@@ -13,7 +13,7 @@ object PMMLSignatureProvider extends SignatureProvider {
     case model: PMMLModel =>
       val evaluator = model.evaluator
       val signatureInputs = evaluator.getInputFields.map(modelFieldToSignatureField).toList
-      val signatureOutputs = evaluator.getOutputFields.map(modelFieldToSignatureField).toList
+      val signatureOutputs = evaluator.getTargetFields.map(modelFieldToSignatureField).toList
       Option(ModelSignature(signatureInputs, signatureOutputs))
     case _ => throw new IllegalArgumentException("PMMLSignatureInterpreter can interpret only PMMLModels")
   }
