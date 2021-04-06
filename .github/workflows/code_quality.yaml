@@ -3,9 +3,13 @@ on:
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - 'docs/**'
   push:
     branches:
       - master
+    paths-ignore:
+      - 'docs/**'
 jobs:
   check-code-quality:
     runs-on: ubuntu-latest
