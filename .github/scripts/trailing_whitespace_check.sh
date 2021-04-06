@@ -2,9 +2,9 @@
 
 set -e
 
-# copy "-o -path ./docs/imgs \" to add another directory to exclude in checking
+# Copy "-o <condition> \" to add more exceptions
 files="$(find . -type d \( -path ./.git \
-  -o -path ./docs/imgs \
+  -o -name "*.png" \
   \) -prune -o -type f -exec egrep -l " +$" {} \;)"
 
 exit_code=0
