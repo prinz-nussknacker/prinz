@@ -11,7 +11,7 @@ class S3Client(val endpoint: URL, val accessKey: String, val secretKey: String) 
   private val client = MinioClient.builder()
     .endpoint(endpoint)
     .credentials(accessKey, secretKey)
-    .build();
+    .build()
 
   def  downloadFile(bucket: String, objectPath: String): InputStream =
     client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(objectPath).build())

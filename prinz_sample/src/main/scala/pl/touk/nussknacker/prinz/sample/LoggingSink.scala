@@ -7,7 +7,7 @@ import pl.touk.nussknacker.engine.flink.api.process.BasicFlinkSink
 
 case class LoggingSink(prefix: String) extends BasicFlinkSink with LazyLogging {
 
-  override def testDataOutput: Option[(Any) => String] =
+  override def testDataOutput: Option[Any => String] =
     Some(value => s"$prefix - $value")
 
   override def toFlinkFunction: SinkFunction[Any] = new SinkFunction[Any] with Serializable {

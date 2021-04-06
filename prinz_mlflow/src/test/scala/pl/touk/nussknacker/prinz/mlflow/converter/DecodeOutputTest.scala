@@ -54,8 +54,4 @@ class DecodeOutputTest extends UnitTest {
 
     ModelSignature(List(), indexed_outputs)
   }
-
-  private def createInputMultimap(input: List[AnyRef], signature: ModelSignature): VectorMultimap[String, AnyRef] = {
-    VectorMultimap(signature.getInputNames.map(_.name).zip(input))
-  }
 }
