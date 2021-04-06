@@ -2,10 +2,11 @@
 
 set -e
 
-# Copy "-o <condition> \" to add more exceptions
-files="$(find . -type d \( -path ./.git \
-  -o -name "*.png" \
-  \) -prune -o -type f -exec egrep -l " +$" {} \;)"
+# Add lines "-o <condition> -prune" to add more exceptions
+files="$(find . \
+  -type d \( -path ./.git \) -prune \
+  -o -type f \( -name "*.jpg" -o -name "*.png" \) -prune \
+  -o -type f -exec egrep -l " +$" {} \;)"
 
 exit_code=0
 if [ ! -z "$files" ]; then
