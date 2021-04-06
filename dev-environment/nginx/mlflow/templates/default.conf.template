@@ -47,7 +47,7 @@ server {
 }
 
 server {
-    listen ${NGINX_BUCKET_PORT};
+    listen ${MLF_NGINX_BUCKET_PORT};
     server_name mlflow-aws;
     ignore_invalid_headers off;
     client_max_body_size 0;

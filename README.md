@@ -70,11 +70,22 @@ In order to run tests, custom docker images are needed. They can be build locall
 GitHub Dockerhub repository. Inorder to use the Docker images from this repository one need to be logged. Follow the
 [official guidelines](https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages#authenticating-to-github-packages) from GitHub to login to your account.
 
+## Repository location
+
+Before trying to run tests locally one have to define the environment variable that will point to
+root folder of this repository as an absolute path on file system. It is needed as running the tests from IDE 
+have the other relative home path than when running on CI pipeline. This can be done from terminal by running
+```shell
+export REPOSITORY_ABSOLUTE_ROOT=$(pwd) 
+```
+from repository root folder or by defining the environment variable in the IDE with proper absolute path to repository root.
+
 ## Command line
 
 Tests can be easily run using the _sbtwrapper_ and the commands the same as in the [unit_tests.yaml](./.github/workflows/unit_tests.yaml)
 file so for example to run MLflow integration tests one would use the command
 ```shell
+
 ./sbtwrapper prinz_mlflow/test
 ```
 
@@ -82,17 +93,6 @@ file so for example to run MLflow integration tests one would use the command
 
 There is a possibility to run the tests in the IDE and debug them step by step. In order to have the environment properly
 configured the extra [EnvFile](https://plugins.jetbrains.com/plugin/7861-envfile) plugin is needed.
-
-Before trying to run tests locally from the IDE one have to change the configuration of the location of
-docker compose file relative location. It is needed as running the tests from IDE have the other relative
-home path than when running on CI pipeline. The problem can be easily detected because when the path is
-not configured properly, after running tests we got the message which states that
-```
-Unable to parse YAML file from /home/user/IdeaProjects/prinz/../dev-environment/docker-compose
-```
-because such a file does not exist.
-For example to run MLflow one need to change the `DOCKER_COMPOSE_FILE` variable in [UnitIntegrationTest](./prinz_mlflow/src/test/scala/pl/touk/nussknacker/prinz/UnitIntegrationTest.scala)
-to have the value `new File("./dev-environment/docker-compose-mlflow.yaml")` which will point to existing configuration file.
 
 Download the plugin and try to run selected test by clicking the green arrow near the code numbering
 ![Run unit integration test](./docs/imgs/unit_integration_test.png)

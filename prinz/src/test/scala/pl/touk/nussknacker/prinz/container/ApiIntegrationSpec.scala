@@ -1,6 +1,8 @@
 package pl.touk.nussknacker.prinz.container
 
+import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.prinz.UnitTest
+import pl.touk.nussknacker.prinz.model.{SignatureField, SignatureName, SignatureType}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Await
@@ -80,4 +82,58 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManger {
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe true
   }
+
+  it should "have wine model with proper model signature" in {
+    val expectedSignatureInput = List(
+      ("fixed acidity", Typed[Double]),
+      ("volatile acidity", Typed[Double]),
+      ("citric acid", Typed[Double]),
+      ("residual sugar", Typed[Double]),
+      ("chlorides", Typed[Double]),
+      ("free sulfur dioxide", Typed[Double]),
+      ("total sulfur dioxide", Typed[Double]),
+      ("density", Typed[Double]),
+      ("pH", Typed[Double]),
+      ("sulphates", Typed[Double]),
+      ("alcohol", Typed[Double])
+    )
+    val instance = getModelInstance(getElasticnetWineModelModel(1))
+    val signature = instance.map(_.getSignature).get
+    val inputNames = signature.getInputNames
+    val outputNames = signature.getOutputNames
+
+    outputNames.size should equal(1)
+    signature.getOutputValueType(outputNames.head) should equal(Some(SignatureType(Typed[Double])))
+
+    inputNames.size should equal(expectedSignatureInput.size)
+    expectedSignatureInput.map(input)
+      .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
+    expectedSignatureInput.map(input)
+      .foreach(field => signature.getInputValueType(field.signatureName) should equal(Some(field.signatureType)))
+  }
+
+  it should "have fraud detection model with proper model signature" in {
+    val expectedSignatureInput = List(
+      ("age", Typed[String]),
+      ("gender", Typed[String]),
+      ("category", Typed[String]),
+      ("amount", Typed[Double])
+    )
+    val instance = getModelInstance(getFraudDetectionModel)
+    val signature = instance.map(_.getSignature).get
+    val inputNames = signature.getInputNames
+    val outputNames = signature.getOutputNames
+
+    outputNames.size should equal(1)
+    signature.getOutputValueType(outputNames.head) should equal(Some(SignatureType(Typed[Int])))
+
+    inputNames.size should equal(expectedSignatureInput.size)
+    expectedSignatureInput.map(input)
+      .foreach(field => inputNames.contains(field.signatureName) shouldBe true)
+    expectedSignatureInput.map(input)
+      .foreach(field => signature.getInputValueType(field.signatureName) should equal(Some(field.signatureType)))
+  }
+
+  private def input(definition: (String, TypingResult)) =
+    SignatureField(SignatureName(definition._1), SignatureType(definition._2))
 }
