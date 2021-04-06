@@ -73,10 +73,10 @@ GitHub Dockerhub repository. Inorder to use the Docker images from this reposito
 ## Repository location
 
 Before trying to run tests locally one have to define the environment variable that will point to
-root folder of this repository as an absolute path on file system. It is needed as running the tests from IDE 
+root folder of this repository as an absolute path on file system. It is needed as running the tests from IDE
 have the other relative home path than when running on CI pipeline. This can be done from terminal by running
 ```shell
-export REPOSITORY_ABSOLUTE_ROOT=$(pwd) 
+export REPOSITORY_ABSOLUTE_ROOT=$(pwd)
 ```
 from repository root folder or by defining the environment variable in the IDE with proper absolute path to repository root.
 
