@@ -30,4 +30,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_book
           commit_message: "Update docs on push"
-          publish_branch: pages  # default: gh-pages
+          publish_branch: pages
