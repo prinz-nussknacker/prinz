@@ -1,0 +1,270 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Testing · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2" data-path="testing.html">
+            
+                <a href="testing.html">
+            
+                    
+                    Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Testing</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="testing">Testing</h1>
+<h2 id="docker-image-access">Docker image access</h2>
+<p>In order to run tests, custom docker images are needed. They can be build locally, but they are also available on the
+GitHub Dockerhub repository. Inorder to use the Docker images from this repository one need to be logged. Follow the
+<a href="https://docs.github.com/en/packages/guides/configuring-docker-for-use-with-github-packages#authenticating-to-github-packages" target="_blank">official guidelines</a> from GitHub to login to your account.</p>
+<h2 id="command-line">Command line</h2>
+<p>Tests can be easily run using the <em>sbtwrapper</em> and the commands the same as in the <a href="https://github.com/prinz-nussknacker/prinz/tree/master/.github/workflows/unit_tests.yaml" target="_blank">unit_tests.yaml</a>
+file so for example to run MLflow integration tests one would use the command</p>
+<pre><code class="lang-shell">./sbtwrapper prinz_mlflow/test
+</code></pre>
+<h2 id="intellij-idea-integration">Intellij IDEA integration</h2>
+<p>There is a possibility to run the tests in the IDE and debug them step by step. In order to have the environment properly
+configured the extra <a href="https://plugins.jetbrains.com/plugin/7861-envfile" target="_blank">EnvFile</a> plugin is needed.</p>
+<p>Before trying to run tests locally from the IDE one have to change the configuration of the location of
+docker compose file relative location. It is needed as running the tests from IDE have the other relative
+home path than when running on CI pipeline. The problem can be easily detected because when the path is
+not configured properly, after running tests we got the message which states that</p>
+<pre><code>Unable to parse YAML file from /home/user/IdeaProjects/prinz/../dev-environment/docker-compose
+</code></pre><p>because such a file does not exist.
+For example to run MLflow one need to change the <code>DOCKER_COMPOSE_FILE</code> variable in <a href="https://github.com/prinz-nussknacker/prinz/tree/master/prinz_mlflow/src/test/scala/pl/touk/nussknacker/prinz/UnitIntegrationTest.scala" target="_blank">UnitIntegrationTest</a>
+to have the value <code>new File(&quot;./dev-environment/docker-compose-mlflow.yaml&quot;)</code> which will point to existing configuration file.</p>
+<p>Download the plugin and try to run selected test by clicking the green arrow near the code numbering
+<img src="images/testing-intellij/unit_integration_test.png" alt="Run unit integration test"></p>
+<p>When running test fails with the message containing</p>
+<pre><code class="lang-shell">services.proxy.ports value [&apos;:&apos;, &apos;:&apos;, &apos;:&apos;] has non-unique elements
+</code></pre>
+<p>(which means there are non-configured env variables which should be filled before setting the environment)
+the test configuration is generated in IDE and is accessible in the top of your IDE
+<img src="images/testing-intellij/test_run_configuration.png" alt="Test configuration"></p>
+<p>In order to run test one need to edit generated configuration with downloaded
+plugin by entering the configuration setup and selecting the <a href="https://github.com/prinz-nussknacker/prinz/tree/master/.env" target="_blank">.env</a> configuration
+file available in the repository
+<img src="images/testing-intellij/env_file_configuration.png" alt="Add env file to configuration"></p>
+<p>After adding this configuration file with environment definition running test should be possible from the IDE.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Testing","level":"1.2","depth":1,"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{"repoUrl":"https://github.com/prinz-nussknacker/prinz/","sourcesRootUrl":"https://github.com/prinz-nussknacker/prinz/tree/master/","nussknackerUrl":"https://nussknacker.io/"},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"testing.md","mtime":"2021-04-07T15:08:57.553Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-07T15:09:48.677Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
