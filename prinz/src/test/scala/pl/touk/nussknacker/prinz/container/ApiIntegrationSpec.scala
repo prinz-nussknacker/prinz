@@ -7,7 +7,7 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.Await
 
-trait ApiIntegrationSpec extends UnitTest with TestModelsManger {
+trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
 
   s"$integrationName " should "list some models" in {
     val repository = getRepository

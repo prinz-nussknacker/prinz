@@ -98,7 +98,7 @@ object VectorMultimap {
   def apply[K, V](elements: Iterable[(K, V)]): VectorMultimap[K, V] =
     buildCollection(elements)
 
-  def apply[K, V](delegate: mutable.Map[K, Vector[V]]): VectorMultimap[K, V] =
+  def apply[K, V](delegate: mutable.LinkedHashMap[K, Vector[V]]): VectorMultimap[K, V] =
     new VectorMultimap[K, V](delegate)
 
   private def buildCollection[K, V](elements: Iterable[(K, V)]): VectorMultimap[K, V] = {

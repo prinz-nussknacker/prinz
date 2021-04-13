@@ -6,7 +6,7 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import scala.concurrent.duration.FiniteDuration
 
-trait TestModelsManger {
+trait TestModelsManager {
 
   def integrationName: String
 

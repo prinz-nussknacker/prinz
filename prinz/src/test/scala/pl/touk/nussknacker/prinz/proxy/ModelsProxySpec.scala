@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.proxy
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
-import pl.touk.nussknacker.prinz.container.TestModelsManger
+import pl.touk.nussknacker.prinz.container.TestModelsManager
 import pl.touk.nussknacker.prinz.model.SignatureName
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
@@ -12,7 +12,7 @@ import java.sql.ResultSet
 import scala.concurrent.{Await, Future}
 
 trait ModelsProxySpec extends UnitTest
-  with TestModelsManger {
+  with TestModelsManager {
 
   def staticServerPath: String
 
