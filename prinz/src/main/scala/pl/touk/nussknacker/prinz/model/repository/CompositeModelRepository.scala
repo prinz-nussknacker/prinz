@@ -10,9 +10,15 @@ class CompositeModelRepository private(repositories: List[ModelRepository]) exte
     }
 
   override def getModel(name: ModelName): RepositoryResponse[Model] = {
-    val firstRepository = repositories.head
-    repositories.drop(1)
-      .foldLeft(firstRepository.getModel(name))(accumulateFirstAvailable(name))
+    val results = repositories.map(_.getModel(name))
+      .partition(_.isRight)
+    val (responses, errors) = results
+    if (responses.nonEmpty) {
+      responses.head
+    }
+    else {
+      errors.head
+    }
   }
 
   private def accumulateFirstAvailable(name: ModelName)(acc: RepositoryResponse[Model], repository: ModelRepository): RepositoryResponse[Model] =
