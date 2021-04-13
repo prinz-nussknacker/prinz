@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.util.collection.immutable
 
 import scala.collection.mutable
 
-class VectorMultimap[K, V](private val delegate: mutable.Map[K, Vector[V]]) {
+class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector[V]]) {
 
   def add(key: K, value: V): VectorMultimap[K, V] = get(key) match {
     case None =>
