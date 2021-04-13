@@ -16,6 +16,10 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Login to Docker
@@ -25,6 +29,7 @@ jobs:
       - name: Run Unit Tests
         run: >
           cd dev-environment/ && ./clear_environment.sh && cd .. &&
+          export REPOSITORY_ABSOLUTE_ROOT=$(pwd) &&
           ./sbtwrapper prinz/test &&
           ./sbtwrapper prinz_mlflow/test &&
           ./sbtwrapper prinz_pmml/test

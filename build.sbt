@@ -88,6 +88,7 @@ lazy val prinz = (project in file("prinz"))
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.h2database" % "h2" % h2V % Test,
+        "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
       )
     }
   )
@@ -96,12 +97,7 @@ lazy val prinz_mlflow = (project in file("prinz_mlflow"))
   .settings(commonSettings)
   .settings(
     name := "prinz-mlflow",
-    Test / fork := true,
-    libraryDependencies ++= {
-      Seq(
-        "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
-      )
-    }
+    Test / fork := true
   )
   .dependsOn(prinz % "compile->compile;test->test")
 

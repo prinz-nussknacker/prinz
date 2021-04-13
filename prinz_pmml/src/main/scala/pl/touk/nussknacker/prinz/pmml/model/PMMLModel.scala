@@ -8,9 +8,9 @@ import java.io.{File, InputStream}
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
-  val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)
+  private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)
 
-  val optionalModelName: Option[String] = Option(evaluatorBuilder.getModel.getModelName)
+  private val optionalModelName: Option[String] = Option(evaluatorBuilder.getModel.getModelName)
 
   val evaluator: Evaluator = evaluatorBuilder.build()
 
@@ -26,7 +26,7 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
   override def getVersion: ModelVersion = PMMLModelVersion(payload.version)
 
-  override def toModelInstance: ModelInstance = new PMMLModelInstance(evaluator, this)
+  override def toModelInstance: ModelInstance = PMMLModelInstance(evaluator, this)
 
   private def extractName: PMMLModelName = PMMLModelName(optionalModelName.getOrElse(payload.name))
 }

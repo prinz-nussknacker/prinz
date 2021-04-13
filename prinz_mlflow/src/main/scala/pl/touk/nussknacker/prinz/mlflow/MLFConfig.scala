@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.mlflow
 
 import com.typesafe.config.Config
 import pl.touk.nussknacker.prinz.mlflow.model.api.{LocalMLFModelLocationStrategy, MLFModelLocationStrategy}
-import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl, url}
+import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getString, getUrl}
 
 import java.net.URL
 
@@ -15,17 +15,17 @@ final case class MLFConfig(modelLocationStrategy: MLFModelLocationStrategy = Loc
 
   val basePreviewApiPath: String = "/api/2.0/preview/mlflow"
 
-  val serverUrl: URL = getConfigValue("serverUrl", url("http://localhost:5000"), getUrl)
+  val serverUrl: URL = getConfigValue("serverUrl", getUrl)
 
-  val servedModelsUrl: URL = getConfigValue("servedModelsUrl", url("http://localhost:5000"), getUrl)
+  val servedModelsUrl: URL = getConfigValue("servedModelsUrl", getUrl)
 
-  val s3AccessKey: String = getConfigValue("s3AccessKey", "mlflow-key", getString)
+  val s3AccessKey: String = getConfigValue("s3AccessKey", getString)
 
-  val s3SecretKey: String = getConfigValue("s3SecretKey", "mlflow-secret", getString)
+  val s3SecretKey: String = getConfigValue("s3SecretKey", getString)
 
-  val s3Url: URL = getConfigValue("s3Url", url("http://localhost:9000"), getUrl)
+  val s3Url: URL = getConfigValue("s3Url", getUrl)
 
-  val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", "/model/MLmodel", getString)
+  val s3ModelRelativePath: String = getConfigValue("s3ModelRelativePath", getString)
 
-  val s3BucketName: String = getConfigValue("s3BucketName", "mlflow", getString)
+  val s3BucketName: String = getConfigValue("s3BucketName", getString)
 }

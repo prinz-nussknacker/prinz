@@ -21,11 +21,13 @@ def evaluate_metrics(actual, predicted):
     return rmse, mae, r2
 
 output_path = sys.argv[1]
+id = sys.argv[2]
 
 if __name__ != "__main__":
     sys.exit()
 
 warnings.filterwarnings("ignore")
+np.random.seed(40)
 
 # Prepare dataset
 try:
@@ -44,26 +46,26 @@ data_y = data[["fraud"]]
 train_x, test_x, train_y, test_y = train_test_split(data_x, data_y)
 
 # Define pipeline
-numeric_features = ['amount']
+numeric_features = ["amount"]
 numeric_transformer = Pipeline(
     steps=[
-        ('imputer', SimpleImputer(strategy='median')),
-        ('scaler', StandardScaler())])
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler())])
 
-categorical_features = ['age', 'gender', 'category']
-categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+categorical_features = ["age", "gender", "category"]
+categorical_transformer = OneHotEncoder(handle_unknown="ignore")
 
 preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric', numeric_transformer, numeric_features),
-        ('categorical', categorical_transformer, categorical_features)])
+        ("numeric", numeric_transformer, numeric_features),
+        ("categorical", categorical_transformer, categorical_features)])
 
-lr = LogisticRegression(multi_class='ovr')
-lr.pmml_name_ = 'FraudDetection'
+lr = LogisticRegression(multi_class="ovr")
+lr.pmml_name_ = f"PMML-FraudDetection-{id}"
 
 classifier = PMMLPipeline([
-    ('preprocessor', preprocessor),
-    ('classifier', lr)
+    ("preprocessor", preprocessor),
+    ("classifier", lr)
 ])
 
 # Build model
@@ -73,6 +75,10 @@ classifier.fit(train_x, train_y)
 test_actual = test_y
 test_predicted = classifier.predict(test_x)
 (rmse, mae, r2) = evaluate_metrics(test_actual, test_predicted)
-print("Classifier metrics: MAE={}, RMSE={}, R2={}".format(mae, rmse, r2))
+print("FraudDetection model:")
+print("  RMSE: {}".format(rmse))
+print("  MAE: {}".format(mae))
+print("  R2: {}".format(r2))
 
 sklearn2pmml(classifier, output_path, with_repr = True)
+print("Fraud detection model exported")
