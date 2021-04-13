@@ -20,14 +20,6 @@ class CompositeModelRepository private(repositories: List[ModelRepository]) exte
       errors.head
     }
   }
-
-  private def accumulateFirstAvailable(name: ModelName)(acc: RepositoryResponse[Model], repository: ModelRepository): RepositoryResponse[Model] =
-    if (acc.isRight) {
-      acc
-    }
-    else {
-      repository.getModel(name)
-    }
 }
 
 object CompositeModelRepository {
