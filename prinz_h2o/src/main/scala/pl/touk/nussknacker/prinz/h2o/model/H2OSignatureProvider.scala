@@ -20,7 +20,7 @@ object H2OSignatureProvider extends SignatureProvider {
   private def fromNameDomainToSignatureField(name: String, domain: Array[String]): SignatureField = {
     SignatureField(
       SignatureName(name),
-      SignatureType(typingResult = if(domain == null) Typed[Double] else Typed[String])
+      SignatureType(typingResult = if (domain == null) Typed[Double] else Typed[String])
     )
   }
 }
