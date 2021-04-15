@@ -3,7 +3,8 @@ name: Publish docs
 on:
   push:
     branches:
-      - master
+      - 'master'
+      - 'avan1235/doc'
     paths:
       - '.github/workflows/docs.yaml'
       - 'docs/**'
