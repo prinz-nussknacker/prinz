@@ -26,6 +26,8 @@ services:
     networks:
       - pmml-net
       - dev-bridge-net
+    depends_on:
+      - pmml-samples
 
 networks:
   pmml-net:

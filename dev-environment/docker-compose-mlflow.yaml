@@ -70,6 +70,9 @@ services:
     networks:
       - mlflow-net
       - dev-bridge-net
+    depends_on:
+      - mlflow-server
+      - aws-mlflow
 
 networks:
   mlflow-net:
