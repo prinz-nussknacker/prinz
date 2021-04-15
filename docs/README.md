@@ -4,3 +4,4 @@ Prinz provides machine learning integrations for [Nussknacker]({{ book.nussknack
 
 Useful links:
 * [Project repository]({{ book.repoUrl }})
+* [Project presentation]({{ book.pagesUrl }}/presentation.html)

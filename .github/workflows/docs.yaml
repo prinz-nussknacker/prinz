@@ -17,13 +17,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '13'
       - name: Install GitBook and build docs
         run: |
-          npm install gitbook-cli gitbook-plugin-include-html
+          npm install gitbook-cli
           node_modules/gitbook-cli/bin/gitbook.js build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
