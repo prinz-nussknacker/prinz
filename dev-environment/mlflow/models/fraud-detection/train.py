@@ -27,6 +27,8 @@ if __name__ != "__main__":
     sys.exit()
 
 warnings.filterwarnings("ignore")
+logging.basicConfig(level=logging.WARN)
+logger = logging.getLogger(__name__)
 model_id = int(sys.argv[2])
 
 # Prepare dataset
@@ -91,7 +93,7 @@ with mlflow.start_run():
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
-    model_name = "FraudDetection-{}".format(model_id)
+    model_name = "MLF-FraudDetection-{}".format(model_id)
     mlflow.sklearn.log_model(
         classifier,
         "model",

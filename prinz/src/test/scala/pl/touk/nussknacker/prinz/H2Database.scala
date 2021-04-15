@@ -35,7 +35,7 @@ object H2Database {
     stmt.executeUpdate(query)
   }
 
-  private def cleanDatabase(): Unit = {
+  def cleanDatabase(): Unit = {
     new Directory(new File(DATABASE_PARENT_DIR)).deleteRecursively()
   }
 }

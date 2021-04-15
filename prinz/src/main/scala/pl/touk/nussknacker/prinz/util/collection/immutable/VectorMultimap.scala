@@ -28,10 +28,18 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
     VectorMultimap(created)
   }
 
+  def filterKeys(keyPredicate: K => Boolean): VectorMultimap[K, V] = {
+    val filteredData = delegate.filterKeys(keyPredicate)
+    val filteredPairs = filteredData.flatMap(kv => kv._2.map((kv._1, _))).toArray
+    VectorMultimap(filteredPairs:_*)
+  }
+
   def exists(key: K, p: V => Boolean): Boolean = get(key) match {
     case None => false
     case Some(vector) => vector exists p
   }
+
+  def map[B](f: ((K, Vector[V])) => B): Iterable[B] = delegate.map(f)
 
   def mapValues[B](f: V => B): VectorMultimap[K, B] = {
     val mapped = for {
@@ -40,6 +48,8 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
     } yield (key, f(value))
     VectorMultimap(mapped)
   }
+
+  def mapVectors[B](f: Vector[V] => B): scala.collection.Map[K, B] = delegate.mapValues(f)
 
   def contains(key: K, value: V): Boolean =
     exists(key, x => x equals value)
@@ -59,6 +69,8 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
   def size: Int = delegate.values.map(_.size).sum
 
   def containsKey(key: K): Boolean = delegate.contains(key)
+
+  def toMap: Map[K, Vector[V]] = delegate.toMap
 
   override def toString: String = {
     val sb = new StringBuilder(s"${getClass.getName}[\n")
@@ -95,7 +107,8 @@ object VectorMultimap {
     builder.result()
   }
 
-  private class VectorMultimapBuilder[K, V] extends mutable.Builder[(K, V), VectorMultimap[K, V]] {
+  class VectorMultimapBuilder[K, V] extends mutable.Builder[(K, V), VectorMultimap[K, V]] {
+
     private val elements = new mutable.LinkedHashMap[K, Vector[V]]
 
     override def +=(element: (K, V)): this.type = {

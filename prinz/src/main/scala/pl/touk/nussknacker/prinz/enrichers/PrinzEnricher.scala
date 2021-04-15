@@ -22,7 +22,10 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
     val inputMap = createInputMap(params)
     logger.info("input params in enricher: " + params)
     logger.info("input map for model run: " + inputMap)
-    modelInstance.run(inputMap).map(response => response.toOption.get)
+    modelInstance.run(inputMap).map {
+      case Right(runResult) => runResult
+      case Left(exc) => throw exc
+    }
   }
 
   override def parameterDefinition: List[Parameter] =

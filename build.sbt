@@ -16,6 +16,7 @@ val typesafeConfigV = "1.4.1"
 val typesafeLogV = "3.9.2"
 val logbackV = "1.2.3"
 val h2V = "1.4.200"
+val jsoupV = "1.13.1"
 
 
 ThisBuild / organization := "pl.touk.nussknacker.prinz"
@@ -87,6 +88,7 @@ lazy val prinz = (project in file("prinz"))
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.h2database" % "h2" % h2V % Test,
+        "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
       )
     }
   )
@@ -95,12 +97,7 @@ lazy val prinz_mlflow = (project in file("prinz_mlflow"))
   .settings(commonSettings)
   .settings(
     name := "prinz-mlflow",
-    Test / fork := true,
-    libraryDependencies ++= {
-      Seq(
-        "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
-      )
-    }
+    Test / fork := true
   )
   .dependsOn(prinz % "compile->compile;test->test")
 
@@ -115,6 +112,7 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "pmml-evaluator-extension" % jpmmlV,
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
+        "org.jsoup" % "jsoup" % jsoupV,
         "ch.qos.logback" % "logback-classic" % logbackV,
       )
     }

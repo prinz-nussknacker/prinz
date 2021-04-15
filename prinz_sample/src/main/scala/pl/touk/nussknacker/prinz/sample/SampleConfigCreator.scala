@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.sample
 
+import com.typesafe.config.Config
 import pl.touk.nussknacker.engine.api.Service
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
 import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
@@ -11,6 +12,10 @@ import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
+import pl.touk.nussknacker.prinz.model.Model
+import pl.touk.nussknacker.prinz.model.repository.CompositeModelRepository
+import pl.touk.nussknacker.prinz.pmml.PMMLConfig
+import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
@@ -28,15 +33,26 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
-    val modelLocationStrategy = LocalMLFModelLocationStrategy
-    implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)(processObjectDependencies.config)
-    val repo = new MLFModelRepository()
-    val response = repo.listModels
+    implicit val config: Config = processObjectDependencies.config
 
-    val result = response.right.map(
-      modelsList => modelsList.foldLeft(Map.empty[String, WithCategories[Service]])(
-        (services, model) => services + (model.getName.name -> allCategories(PrinzEnricher(model)))
-    ))
+    val modelLocationStrategy = LocalMLFModelLocationStrategy
+    implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)
+    implicit val pmmlConfig: PMMLConfig = PMMLConfig()
+    val mlfRepository = new MLFModelRepository()
+    val pmmlRepository = new HttpPMMLModelRepository()
+
+    val repository = CompositeModelRepository(
+      mlfRepository,
+      pmmlRepository
+    )
+    val modelsResult = repository.listModels
+
+    val result = for {
+      models <- modelsResult
+    } yield models.foldLeft(Map.empty[String, WithCategories[Service]]) {
+        (services, model) => services + createModelEnricherRepresentation(model)
+    }
+
     result match {
       case Right(services) => services
       case Left(exception) => throw exception
@@ -45,4 +61,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
     ExceptionHandlerFactory.noParams(VerboselyLoggingExceptionHandler(_))
+
+  private def createModelEnricherRepresentation(model: Model): (String, WithCategories[Service]) =
+    model.getName.toString -> allCategories(PrinzEnricher(model))
 }
