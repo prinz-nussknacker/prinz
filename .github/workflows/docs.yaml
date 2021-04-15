@@ -23,7 +23,7 @@ jobs:
           node-version: '13'
       - name: Install GitBook and build docs
         run: |
-          npm install gitbook-cli
+          npm install gitbook-cli gitbook-plugin-include-html
           node_modules/gitbook-cli/bin/gitbook.js build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
