@@ -18,7 +18,7 @@ from repository root folder or by defining the environment variable in the IDE w
 
 ## Command line
 
-Tests can be easily run using the `sbtwrapper` and the commands the same as in the `unit_tests.yaml`
+Tests can be easily run using the `sbtwrapper` and the commands the same as in the [unit_tests.yaml]({{ book.sourcesRootUrl }}.github/workflows/unit_tests.yaml)
 file so for example to run MLflow integration tests one would use the command
 ```shell
 
@@ -42,7 +42,7 @@ the test configuration is generated in IDE and is accessible in the top of your 
 ![Test configuration](images/testing-intellij/test_run_configuration.png)
 
 In order to run test one need to edit generated configuration with downloaded
-plugin by entering the configuration setup and selecting the `.env` configuration
+plugin by entering the configuration setup and selecting the [.env]({{ book.sourcesRootUrl }}.env) configuration
 file available in the repository
 ![Add env file to configuration](images/testing-intellij/env_file_configuration.png)
 
