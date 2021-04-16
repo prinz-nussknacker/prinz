@@ -12,9 +12,13 @@ class H2OModel(payload: H2OModelPayload) extends Model {
     private val genModel: GenModel = ModelMojoReader.readFrom(modelReaderBackend)
     val modelWrapper: EasyPredictModelWrapper = new EasyPredictModelWrapper(genModel)
 
-    override def getName: ModelName = ???
+    override def getName: ModelName = H2OModelName(payload.name)
 
-    override def getVersion: ModelVersion = ???
+    override def getVersion: ModelVersion = H2OModelVersion(payload.version)
 
     override def toModelInstance: ModelInstance = ???
 }
+
+case class H2OModelName(name: String) extends ModelName(name)
+
+case class H2OModelVersion(version: String) extends ModelVersion
