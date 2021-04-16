@@ -16,7 +16,7 @@ class H2OModel(payload: H2OModelPayload) extends Model {
 
     override def getVersion: ModelVersion = H2OModelVersion(payload.version)
 
-    override def toModelInstance: ModelInstance = ???
+    override def toModelInstance: ModelInstance = H2OModelInstance(modelWrapper, this)
 }
 
 case class H2OModelName(name: String) extends ModelName(name)
