@@ -107,13 +107,13 @@ class: center, middle
 
 - PMML
 
-    1.1 Introduction to PMML
+ 1.1 Introduction to PMML
 
-    1.2 Structure of a PMML file
+ 1.2 Structure of a PMML file
 
-    1.3 Examples
+ 1.3 Examples
 
-    1.4 Pros and cons
+ 1.4 Pros and cons
 ]
 
 --
@@ -122,15 +122,15 @@ class: center, middle
 
 - MLflow
 
-    2.1 Introduction to MLflow
+ 2.1 Introduction to MLflow
 
-    2.2 Tracking
+ 2.2 Tracking
 
-    2.3 Projects
+ 2.3 Projects
 
-    2.4 Models
+ 2.4 Models
 
-    2.5 Registry
+ 2.5 Registry
 ]
 
 --
@@ -139,13 +139,13 @@ class: center, middle
 
 - H20
 
-    3.1 Introduction to H20
-    
-    3.2 H2O models formats
+ 3.1 Introduction to H20
 
-    3.3 POJO vs MOJO
+ 3.2 H2O models formats
 
-    3.4 MOJO's graphical representation
+ 3.3 POJO vs MOJO
+
+ 3.4 MOJO's graphical representation
 ]
 
 ---
@@ -212,16 +212,16 @@ PMML is supported by numerous products, including Apache Spark and SAS or IBM st
 
 ```xml
 <DataDictionary numberOfFields="3">
-    <DataField dataType="double" name="Value" optype="continuous">
-        <Interval closure="openClosed" rightMargin="60" />
-    </DataField>
-    <DataField dataType="string" name="Element" optype="categorical">
-        <Value property="valid" value="Magnesium" />
-        <Value property="valid" value="Sodium" />
-        <Value property="valid" value="Calcium" />
-        <Value property="valid" value="Radium" />
-    </DataField>
-    <DataField dataType="double" name="Risk" optype="continuous" />
+ <DataField dataType="double" name="Value" optype="continuous">
+ <Interval closure="openClosed" rightMargin="60" />
+ </DataField>
+ <DataField dataType="string" name="Element" optype="categorical">
+ <Value property="valid" value="Magnesium" />
+ <Value property="valid" value="Sodium" />
+ <Value property="valid" value="Calcium" />
+ <Value property="valid" value="Radium" />
+ </DataField>
+ <DataField dataType="double" name="Risk" optype="continuous" />
 </DataDictionary>
 ```
 
@@ -233,16 +233,16 @@ PMML is supported by numerous products, including Apache Spark and SAS or IBM st
 
 ```xml
 <NeuralLayer numberOfNeurons="2">
-    <Neuron id="3" bias="-3.1808306946637">
-        <Con from="0" weight="0.119477686963504" />
-        <Con from="1" weight="-1.97301278112877" />
-        <Con from="2" weight="3.04381251760906" />
-    </Neuron>
-    <Neuron id="4" bias="0.743161353729323">
-        <Con from="0" weight="-0.49411146396721" />
-        <Con from="1" weight="2.18588757615864" />
-        <Con from="2" weight="-2.01213331163562" />
-    </Neuron>
+ <Neuron id="3" bias="-3.1808306946637">
+ <Con from="0" weight="0.119477686963504" />
+ <Con from="1" weight="-1.97301278112877" />
+ <Con from="2" weight="3.04381251760906" />
+ </Neuron>
+ <Neuron id="4" bias="0.743161353729323">
+ <Con from="0" weight="-0.49411146396721" />
+ <Con from="1" weight="2.18588757615864" />
+ <Con from="2" weight="-2.01213331163562" />
+ </Neuron>
 </NeuralLayer>
 ```
 
@@ -279,7 +279,7 @@ class: mlflow
 
 ## MLflow
 
-<img  id="mlflow-logo" src="./images/h2o.png" alt="MLflow logo" title="MLflow logo" />
+<img id="mlflow-logo" src="./images/h2o.png" alt="MLflow logo" title="MLflow logo" />
 
 - A platform for managing complete ML lifecycle
 - Open source project with an open interface for integrations
@@ -291,13 +291,13 @@ class: mlflow, mlflow-components
 ## MLflow components
 
 - ### Tracking
-  Save parameters and metrics of runs
+ Save parameters and metrics of runs
 - ### Projects
-  Capture data science code for sharing
+ Capture data science code for sharing
 - ### Models
-  Deploy models in varying enviroments
+ Deploy models in varying enviroments
 - ### Registry
-  Store and annotate models
+ Store and annotate models
 
 ---
 class: mlflow
@@ -319,13 +319,13 @@ class: mlflow
 import mlflow
 
 with mlflow.start_run():
-    mlflow.log_param("alpha", alpha)
-    
-    # train model
+ mlflow.log_param("alpha", alpha)
 
-    mlflow.log_metric("mse", model.mse())
-    mlflow.log_artifact("plot", model.plot(test_df))
-    mlflow.tensorflow.log_model(model)
+ # train model
+
+ mlflow.log_metric("mse", model.mse())
+ mlflow.log_artifact("plot", model.plot(test_df))
+ mlflow.tensorflow.log_model(model)
 ```
 
 ---
@@ -375,12 +375,12 @@ MLproject:
 conda_env: conda.yaml
 
 entry_points:
-  main:
-    parameters:
-      training_data: path
-      lambda: {type: float, default: 0.1}
-    command: python main.py {training_data}
-             {lambda}
+ main:
+ parameters:
+ training_data: path
+ lambda: {type: float, default: 0.1}
+ command: python main.py {training_data}
+ {lambda}
 ```
 
 ]
@@ -392,7 +392,7 @@ class: mlflow
 
 - MLflow Model standarises packaging machine learning models
 - Each model can be stored in multiple flavors (`pytorch`, TensorFlow model, R code etc.)
-- Models can include signatures 
+- Models can include signatures
 - It's easy to deploy models from MLflow
 
 ---
@@ -424,11 +424,11 @@ MLmodel:
 time_created: 2020-12-20T17:28:53.35
 
 flavors:
-  sklearn:
-    sklearn_version: 0.19.1
-    pickled_model: model.pkl
-  python_function:
-    loader_module: mlflow.sklearn
+ sklearn:
+ sklearn_version: 0.19.1
+ pickled_model: model.pkl
+ python_function:
+ loader_module: mlflow.sklearn
 ```
 
 ]
@@ -439,8 +439,8 @@ class: mlflow
 ## Models: Signatures
 
 - It's often required to know properties of the model, e.g.:
-  - what inputs does it expect?
-  - what are the outputs?
+ - what inputs does it expect?
+ - what are the outputs?
 - `MLModel` file can store model signature
 - When scoring, inputs are checked against the signature
 - API enables querying for model signatures
@@ -454,17 +454,17 @@ class: mlflow
 
 ```yaml
 signature:
-  inputs: >
-    [
-      {"name": "sepal length (cm)", "type": "double"},
-      {"name": "sepal width (cm)", "type": "double"},
-      {"name": "petal length (cm)", "type": "double"},
-      {"name": "petal width (cm)", "type": "double"}
-    ]
-  outputs: >
-    [
-      {"type": "integer"}
-    ]
+ inputs: >
+ [
+ {"name": "sepal length (cm)", "type": "double"},
+ {"name": "sepal width (cm)", "type": "double"},
+ {"name": "petal length (cm)", "type": "double"},
+ {"name": "petal width (cm)", "type": "double"}
+ ]
+ outputs: >
+ [
+ {"type": "integer"}
+ ]
 ```
 
 ---
@@ -473,9 +473,9 @@ class: mlflow
 ## Models: Deployments
 
 - MLflow can deploy models:
-  - locally as REST endpoints
-  - as a Docker container with `pandas` and a REST endpoint
-  - to specialized ML environments like Microsoft Azure ML
+ - locally as REST endpoints
+ - as a Docker container with `pandas` and a REST endpoint
+ - to specialized ML environments like Microsoft Azure ML
 
 ---
 class: mlflow
@@ -484,15 +484,15 @@ class: mlflow
 
 - Latest addition to MLflow
 - Stores model information:
-    - Which experiment and run created the model
-    - Model versioning
-    - Transitions between stages (e.g. from staging to production)
-    - Extra annotations
+ - Which experiment and run created the model
+ - Model versioning
+ - Transitions between stages (e.g. from staging to production)
+ - Extra annotations
 
 ---
 
 ## Introduction to H20
-    
+
 H2O is primary product of H2O.ai company. It's a open source, in-memory, distributed,
 ML and predictive analytics platform allowing you to build and productionize ML models.
 
@@ -500,22 +500,22 @@ H2O contains supervised and unsupervised models like GLM and K-Means clustering,
 and a simple to use web-UI called Flow.
 
 .centered-flex[
-    <img  id="h20ai-logo" src="./images/h2o.png" alt="H2O.ai logo" title="H2O.ai logo" />
+ <img id="h20ai-logo" src="./images/h2o.png" alt="H2O.ai logo" title="H2O.ai logo" />
 ]
-    
+
 ---
-    
+
 ## H2O models formats
-    
+
 H2O supports POJO and MOJO model formats.
 
 - POJO - Plain Old Java Object
 
 - MOJO - Model ObJect, Optimized
 
-Both this formats allow to easily embed them into Java 
+Both this formats allow to easily embed them into Java
 environment. The only required dependency for compilation and runtime is `h2o-genmodel.jar`.
-    
+
 ---
 
 ## POJO vs MOJO
@@ -557,11 +557,11 @@ Example GBM model:
 <img src="http://docs.h2o.ai/h2o/latest-stable/h2o-docs/_images/gbm_mojo_graph.png" style="width: 30em; margin: 0;">
 ]
 
-    </textarea>
+ </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js">
 </script>
 <script>
-      var slideshow = remark.create();
-    </script>
+    var slideshow = remark.create();
+</script>
 </body>
 </html>
