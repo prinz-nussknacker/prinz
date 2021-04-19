@@ -1,11 +1,11 @@
-# Prinz Mlflow integration
+# Prinz MLflow integration
 
-## Mlflow introduction
+## MLflow introduction
 
-Mlflow is an opensource project for managing machine learning models lifecycle, including:
+MLflow is an opensource project for managing machine learning models lifecycle, including:
 
 1. Experimentation and reproducibility - it allows to convert many machine learning models 
-   format to standardized model format. User of Mlflow gets the ability to record and query
+   format to standardized model format. User of MLflow gets the ability to record and query
    experiments in standard formats which simplifies the reproduction process of model 
    deployment
 
@@ -17,16 +17,16 @@ Mlflow is an opensource project for managing machine learning models lifecycle, 
    application for model versioning. It allows keeping models versions in single place a
    nd make them easily accessible for all developers in organization.
 
-## Mlflow environment
+## MLflow environment
 
-To work with Mlflow developer need some instance of Mlflow server which would serve as 
+To work with MLflow developer need some instance of MLflow server which would serve as 
 the models' registry. Additionally, there are standalone webservices for realtime models
 querying using web requests.
 
 The whole environment in this repository is build from parts defined in docker-compose.yaml
 file which includes the definition for
 
-1. `mlflow-server` which works as the Mlflow model registry server and can be queried for
+1. `mlflow-server` which works as the MLflow model registry server and can be queried for
    already trained models and their train data specification. It has also the information 
    about the location of models signature location (which is a standalone S3 bucket)
 
@@ -37,20 +37,20 @@ file which includes the definition for
 4. `proxy` keeps all the containers organized in a way that simulates the real-world
    example of models deployment.
 
-To start the environment with the Nussknacker deployed with the Mlflow environment
+To start the environment with the Nussknacker deployed with the MLflow environment
 use the [create_environment.sh](../dev-environment/create_environment.sh) script. 
 
 ## Model serving process
 
-After the Mlflow environment is created there are sample models trained. They are just 
+After the MLflow environment is created there are sample models trained. They are just 
 samples which aren't provided as real-world usage examples so shouldn't be used in production.
 
 The models can be seen in web GUI of mlflow registry which is available as the web application
-when Mlflow start. 
+when MLflow start. 
 
 ### Models scoring convention
 
-Mlflow doesn't include the information of models' location for scoring. There are some conventions
+MLflow doesn't include the information of models' location for scoring. There are some conventions
 that can be observed in the most popular platforms for using machine learning models like:
 
 - [Databricks](https://docs.databricks.com/applications/mlflow/model-serving.html) which specifies

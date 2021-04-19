@@ -1,2 +1,2 @@
-* [Mlflow implementation](mlflow.md)
+* [MLflow implementation](mlflow.md)
 * [Testing](testing.md)
