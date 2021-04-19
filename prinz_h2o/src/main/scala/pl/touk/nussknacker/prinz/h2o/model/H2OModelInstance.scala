@@ -1,16 +1,23 @@
 package pl.touk.nussknacker.prinz.h2o.model
 
 import com.typesafe.scalalogging.LazyLogging
+import hex.ModelCategory
 import hex.genmodel.easy.{EasyPredictModelWrapper, RowData}
 import hex.genmodel.easy.exception.PredictException
-import hex.genmodel.easy.prediction.AbstractPrediction
+import hex.genmodel.easy.prediction.{
+  AbstractPrediction, AnomalyDetectionPrediction, BinomialModelPrediction, ClusteringModelPrediction,
+  CoxPHModelPrediction, KLimeModelPrediction, MultinomialModelPrediction, OrdinalModelPrediction,
+  RegressionModelPrediction
+}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
+import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap.VectorMultimapBuilder
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimapUtils.VectorMultimapAsRowset
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
-import scala.jdk.CollectionConverters.{mapAsJavaMapConverter}
+import scala.jdk.CollectionConverters.mapAsJavaMapConverter
 
 case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
                             override val model: H2OModel)
@@ -21,7 +28,8 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     try {
       val resultSeq = inputMap.mapRows(evaluateRow)
       logger.info("Mapped rows: {}", resultSeq)
-      Right(Map.empty[String, Any].asJava)
+      val results = collectOutputs(resultSeq).asJava
+      Right(results)
     } catch {
       case ex: PredictException =>
         logger.warn("Got PredictException:", ex)
@@ -36,8 +44,30 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     logger.info("Args for H2O evaluator: {}", rowData)
     val result = modelWrapper.predict(rowData)
     logger.info("Evaluation result: {}", result)
-    // TODO: Extract result from AbstractPrediction based on modelWrapper.getModel().getModelCategory
-    // See https://github.com/h2oai/h2o-3/blob/master/h2o-genmodel/src/main/java/hex/genmodel/easy/EasyPredictModelWrapper.java#L354
     result
+  }
+
+  def getTransformer(modelCategory: ModelCategory): (AbstractPrediction => _) = modelCategory match {
+    case ModelCategory.AnomalyDetection => (p: AbstractPrediction) => p.asInstanceOf[AnomalyDetectionPrediction].isAnomaly
+    case ModelCategory.Binomial         => (p: AbstractPrediction) => p.asInstanceOf[BinomialModelPrediction].labelIndex
+    case ModelCategory.Multinomial      => (p: AbstractPrediction) => p.asInstanceOf[MultinomialModelPrediction].labelIndex
+    case ModelCategory.Ordinal          => (p: AbstractPrediction) => p.asInstanceOf[OrdinalModelPrediction].labelIndex
+    case ModelCategory.Clustering       => (p: AbstractPrediction) => p.asInstanceOf[ClusteringModelPrediction].cluster
+    case ModelCategory.KLime            => (p: AbstractPrediction) => p.asInstanceOf[KLimeModelPrediction].cluster
+    case ModelCategory.CoxPH            => (p: AbstractPrediction) => p.asInstanceOf[CoxPHModelPrediction].value
+    case ModelCategory.Regression       => (p: AbstractPrediction) => p.asInstanceOf[RegressionModelPrediction].value
+    case _ => throw new ModelRunException("ModelCategory " + modelCategory.toString() + " not supported.")
+  }
+
+  def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
+    rows.take(1).size match {
+      case 0 => Map[String, Any]()
+      case 1 =>
+        val transformer = getTransformer(modelWrapper.m.getModelCategory)
+        var results = new ListBuffer[Any]()
+        rows.foreach(r => results += transformer(r))
+        val returnFieldDef = signatureProvider.provideSignature(model).get.getSignatureOutputs.head
+        Map(returnFieldDef.signatureName.name -> results.toSeq)
+    }
   }
 }
