@@ -1,0 +1,311 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>MLflow implementation · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="testing.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2" data-path="mlflow.html">
+            
+                <a href="mlflow.html">
+            
+                    
+                    MLflow implementation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="testing.html">
+            
+                <a href="testing.html">
+            
+                    
+                    Testing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >MLflow implementation</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="prinz-mlflow-integration">Prinz MLflow integration</h1>
+<h2 id="mlflow-introduction">MLflow introduction</h2>
+<p>MLflow is an opensource project for managing machine learning models lifecycle, including:</p>
+<ol>
+<li><p>Experimentation and reproducibility - it allows to convert many machine learning models
+format to standardized model format. User of MLflow gets the ability to record and query
+experiments in standard formats which simplifies the reproduction process of model
+deployment</p>
+</li>
+<li><p>Deployment - it allows to real-time serve the logged models as the webservices.
+There are integrations with well known platforms for machine learning including
+Microsoft Azure ML, Amazon SageMaker and Apache Spark UDF</p>
+</li>
+<li><p>Central model registry - it can be used as a single repository with dedicated web
+application for model versioning. It allows keeping models versions in single place a
+nd make them easily accessible for all developers in organization.</p>
+</li>
+</ol>
+<h2 id="mlflow-environment">MLflow environment</h2>
+<p>To work with MLflow developer need some instance of MLflow server which would serve as
+the models&apos; registry. Additionally, there are standalone webservices for realtime models
+querying using web requests.</p>
+<p>The whole environment in this repository is build from parts defined in docker-compose.yaml
+file which includes the definition for</p>
+<ol>
+<li><p><code>mlflow-server</code> which works as the MLflow model registry server and can be queried for
+already trained models and their train data specification. It has also the information
+about the location of models signature location (which is a standalone S3 bucket)</p>
+</li>
+<li><p><code>postgres-mlflow</code> is a database supporting the <code>mlflow-server</code> backend.</p>
+</li>
+<li><p><code>aws-mlflow</code> acts as a S3 bucket server for holding models artifact storage</p>
+</li>
+<li><p><code>proxy</code> keeps all the containers organized in a way that simulates the real-world
+example of models deployment.</p>
+</li>
+</ol>
+<p>To start the environment with the Nussknacker deployed with the MLflow environment
+use the <a href="../dev-environment/create_environment.sh">create_environment.sh</a> script.</p>
+<h2 id="model-serving-process">Model serving process</h2>
+<p>After the MLflow environment is created there are sample models trained. They are just
+samples which aren&apos;t provided as real-world usage examples so shouldn&apos;t be used in production.</p>
+<p>The models can be seen in web GUI of mlflow registry which is available as the web application
+when MLflow start.</p>
+<h3 id="models-scoring-convention">Models scoring convention</h3>
+<p>MLflow doesn&apos;t include the information of models&apos; location for scoring. There are some conventions
+that can be observed in the most popular platforms for using machine learning models like:</p>
+<ul>
+<li><p><a href="https://docs.databricks.com/applications/mlflow/model-serving.html" target="_blank">Databricks</a> which specifies
+the invocation url by the pattern <code>&lt;databricks-instance&gt;/model/&lt;registered-model-name&gt;/&lt;model-version&gt;/invocations</code></p>
+</li>
+<li><p>Prinz internal convention which specifies the invocation url by <code>&lt;localhost-instance&gt;/model/&lt;registered-model-name&gt;/invocations</code>
+(so the version is missed as there are created randomly choson models versions for test purposes which
+don&apos;t differ by anything more than the version number)</p>
+</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="testing.html" class="navigation navigation-next " aria-label="Next page: Testing">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"MLflow implementation","level":"1.2","depth":1,"next":{"title":"Testing","level":"1.3","depth":1,"path":"testing.md","ref":"testing.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{"repoUrl":"https://github.com/prinz-nussknacker/prinz/","pagesUrl":"https://prinz-nussknacker.github.io/prinz/","sourcesRootUrl":"https://github.com/prinz-nussknacker/prinz/tree/master/","nussknackerUrl":"https://nussknacker.io/"},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"mlflow.md","mtime":"2021-04-20T08:26:43.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-20T08:27:19.234Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
