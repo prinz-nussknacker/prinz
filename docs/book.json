@@ -1,6 +1,7 @@
 {
     "variables": {
         "repoUrl": "https://github.com/prinz-nussknacker/prinz/",
+        "pagesUrl": "https://prinz-nussknacker.github.io/prinz/",
         "sourcesRootUrl": "https://github.com/prinz-nussknacker/prinz/tree/master/",
         "nussknackerUrl": "https://nussknacker.io/"
     }

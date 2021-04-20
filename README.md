@@ -14,9 +14,9 @@ etc. Some elements (filters, etc.) are predefined, others are common across diff
     * References to external services
     * UI configuration: Links to the documentation, default values etc.
 
-## What will be the “product” - i.e. what will Prinz be?
+## What is Prinz?
 
-Prinz will be a library of extensions for Nussknacker. Moreover, it should also provide an API that will allow adding new
+Prinz is a library of extensions for Nussknacker. Moreover, it also provides an API that allow adding new
 integrations with model repositories / engines for ML models.
 For now, it can be assumed that there will be no separate runtime - i.e. a separate application, we assume that the NK
  library will communicate with the model repositories and retrieve the necessary information / artifacts on an ongoing basis.
