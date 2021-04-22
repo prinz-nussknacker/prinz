@@ -12,10 +12,8 @@ import hex.genmodel.easy.prediction.{
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
-import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap.VectorMultimapBuilder
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimapUtils.VectorMultimapAsRowset
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.mapAsJavaMapConverter
 
@@ -39,7 +37,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
 
   def evaluateRow(row: Map[String, AnyRef]): AbstractPrediction = {
     logger.info("Evaluate row {}", row)
-    var rowData = new RowData()
+    val rowData = new RowData()
     rowData.putAll(row.asJava)
     logger.info("Args for H2O evaluator: {}", rowData)
     val result = modelWrapper.predict(rowData)
@@ -47,7 +45,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     result
   }
 
-  def getTransformer(modelCategory: ModelCategory): (AbstractPrediction => _) = modelCategory match {
+  private def getTransformer(modelCategory: ModelCategory): (AbstractPrediction => _) = modelCategory match {
     case ModelCategory.AnomalyDetection => (p: AbstractPrediction) => p.asInstanceOf[AnomalyDetectionPrediction].isAnomaly
     case ModelCategory.Binomial         => (p: AbstractPrediction) => p.asInstanceOf[BinomialModelPrediction].labelIndex
     case ModelCategory.Multinomial      => (p: AbstractPrediction) => p.asInstanceOf[MultinomialModelPrediction].labelIndex
@@ -56,18 +54,16 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     case ModelCategory.KLime            => (p: AbstractPrediction) => p.asInstanceOf[KLimeModelPrediction].cluster
     case ModelCategory.CoxPH            => (p: AbstractPrediction) => p.asInstanceOf[CoxPHModelPrediction].value
     case ModelCategory.Regression       => (p: AbstractPrediction) => p.asInstanceOf[RegressionModelPrediction].value
-    case _ => throw new ModelRunException("ModelCategory " + modelCategory.toString() + " not supported.")
+    case _ => throw new ModelRunException(s"ModelCategory ${modelCategory.toString()} not supported.")
   }
 
-  def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
+  private def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
     rows.take(1).size match {
       case 0 => Map[String, Any]()
       case 1 =>
-        val transformer = getTransformer(modelWrapper.m.getModelCategory)
-        var results = new ListBuffer[Any]()
-        rows.foreach(r => results += transformer(r))
         val returnFieldDef = signatureProvider.provideSignature(model).get.getSignatureOutputs.head
-        Map(returnFieldDef.signatureName.name -> results.toSeq)
+        val transformer = getTransformer(modelWrapper.m.getModelCategory)
+        Map(returnFieldDef.signatureName.name -> rows.map(transformer))
     }
   }
 }
