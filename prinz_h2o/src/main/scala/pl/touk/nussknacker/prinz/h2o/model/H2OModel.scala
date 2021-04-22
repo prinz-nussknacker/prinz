@@ -1,18 +1,24 @@
 package pl.touk.nussknacker.prinz.h2o.model
 
-import hex.genmodel.{GenModel, MojoModel}
+import hex.genmodel.{GenModel, ModelMojoReader, MojoReaderBackendFactory}
+import hex.genmodel.MojoReaderBackendFactory.CachingStrategy
 import hex.genmodel.easy.EasyPredictModelWrapper
+import pl.touk.nussknacker.prinz.h2o.repository.H2OModelPayload
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion}
 
-class H2OModel extends Model {
-    //TODO placeholder model - we should create this model based on some config
-    private val genModel: GenModel = MojoModel.load("")
-    //TODO similarly to evaluator in PMMLModel we can use this wrapper to extract signature and score the model in ModelInstance
+class H2OModel(payload: H2OModelPayload) extends Model {
+    // TODO: Should caching strategy be configurable?
+    private val modelReaderBackend = MojoReaderBackendFactory.createReaderBackend(payload.inputStream, CachingStrategy.MEMORY)
+    private val genModel: GenModel = ModelMojoReader.readFrom(modelReaderBackend)
     val modelWrapper: EasyPredictModelWrapper = new EasyPredictModelWrapper(genModel)
 
-    override def getName: ModelName = ???
+    override def getName: ModelName = H2OModelName(payload.name)
 
-    override def getVersion: ModelVersion = ???
+    override def getVersion: ModelVersion = H2OModelVersion(payload.version)
 
-    override def toModelInstance: ModelInstance = ???
+    override def toModelInstance: ModelInstance = H2OModelInstance(modelWrapper, this)
 }
+
+case class H2OModelName(name: String) extends ModelName(name)
+
+case class H2OModelVersion(version: String) extends ModelVersion
