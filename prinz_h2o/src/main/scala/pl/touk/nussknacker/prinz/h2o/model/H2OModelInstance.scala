@@ -35,7 +35,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     }
   }
 
-  def evaluateRow(row: Map[String, AnyRef]): AbstractPrediction = {
+  private def evaluateRow(row: Map[String, AnyRef]): AbstractPrediction = {
     logger.info("Evaluate row {}", row)
     val rowData = new RowData()
     rowData.putAll(row.asJava)
