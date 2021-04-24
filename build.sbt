@@ -24,6 +24,9 @@ ThisBuild / version      := "0.0.1-SNAPSHOT"
 ThisBuild / scalaVersion := scalaV
 ThisBuild / envFileName  := ".env"
 
+ThisBuild / githubOwner := "prinz-nussknacker"
+ThisBuild / githubRepository := "prinz"
+
 def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
   case PathList(ps@_*) if ps.last == "module-info.class" => MergeStrategy.first
