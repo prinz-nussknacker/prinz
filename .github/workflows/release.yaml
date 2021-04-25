@@ -1,7 +1,8 @@
 name: Release new version
 on:
   push:
-    branches: ['*']
+    branches:
+      - 'master'
     tags: [v*]
 jobs:
   release-package:

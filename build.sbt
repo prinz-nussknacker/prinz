@@ -177,12 +177,11 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     name := "prinz-sample",
     libraryDependencies ++= {
       Seq(
-        // declare dependencies to Prinz like this
-        /*
-        "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
-        "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
-        "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
-        */
+        // declare dependencies to Prinz when building outside Prinz repository
+        // "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
+        // "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
+        // "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
+
         "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
@@ -193,13 +192,12 @@ lazy val prinz_sample = (project in file("prinz_sample"))
       )
     },
     // add GitHub packages resolver dependency with GitHub token declared to download prinz
-    /*
     githubTokenSource := TokenSource.Or(
       TokenSource.Environment("GITHUB_TOKEN"),
       TokenSource.GitConfig("github.token")
     ),
     resolvers += Resolver.githubPackages(repositoryOwner, repositoryName),
-    */
+
     publishArtifact := false,
     publish / skip  := true,
   )
