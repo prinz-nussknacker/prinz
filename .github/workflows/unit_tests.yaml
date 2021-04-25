@@ -19,7 +19,7 @@ jobs:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.8.0
         with:
-          access_token: ${{ github.token }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Login to Docker
@@ -27,6 +27,8 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login
           https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
       - name: Run Unit Tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           cd dev-environment/ && ./clear_environment.sh && cd .. &&
           export REPOSITORY_ABSOLUTE_ROOT=$(pwd) &&
