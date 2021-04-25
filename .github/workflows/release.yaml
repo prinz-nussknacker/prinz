@@ -1,4 +1,4 @@
-name: Run unit tests
+name: Release new version
 on:
   push:
     branches: ['*']

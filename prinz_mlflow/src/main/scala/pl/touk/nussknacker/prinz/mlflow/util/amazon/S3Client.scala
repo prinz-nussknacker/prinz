@@ -1,4 +1,4 @@
-package pl.touk.nussknacker.prinz.util.amazon
+package pl.touk.nussknacker.prinz.mlflow.util.amazon
 
 import java.io.InputStream
 import java.net.URL

@@ -2,6 +2,9 @@ import sbtassembly.MergeStrategy
 
 val prinzV = "0.0.1-SNAPSHOT"
 val prinzOrg = "pl.touk.nussknacker.prinz"
+val repositoryOwner = "prinz-nussknacker"
+val repositoryName = "prinz"
+
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.3.0"
@@ -49,8 +52,8 @@ lazy val commonSettings = Seq(
   ),
 
   publishMavenStyle := true,
-  githubOwner := "prinz-nussknacker",
-  githubRepository := "prinz",
+  githubOwner := repositoryOwner,
+  githubRepository := repositoryName,
   githubTokenSource := TokenSource.Or(
     TokenSource.Environment("GITHUB_TOKEN"),
     TokenSource.GitConfig("github.token")
@@ -61,6 +64,14 @@ lazy val commonSettings = Seq(
   scalastyleConfig := file("project/scalastyle_config.xml"),
   Test / scalastyleConfig := file("project/scalastyle_test_config.xml"),
   Test / fork := true,
+
+  libraryDependencies ++= {
+    Seq(
+      "ch.qos.logback" % "logback-classic" % logbackV,
+      "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
+      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+    )
+  },
 
   dependencyOverrides ++= Seq(
     "io.circe" %% "circe-core" % circeV,
@@ -79,32 +90,52 @@ lazy val root = (project in file("."))
     publish / skip := true
   )
 
+lazy val prinz_util = (project in file("prinz_util"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-util",
+    libraryDependencies ++= {
+      Seq(
+        "org.scala-lang" % "scala-reflect" % scalaV,
+
+        "com.softwaremill.sttp.client3" %% "core" % sttpV,
+        "com.softwaremill.sttp.client3" %% "circe" % sttpV,
+        "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % sttpV,
+
+        "io.circe" %% "circe-core" % circeV,
+        "io.circe" %% "circe-generic" % circeV,
+        "io.circe" %% "circe-parser" % circeV,
+      )
+    }
+  )
+
 lazy val prinz = (project in file("prinz"))
   .settings(commonSettings)
   .settings(
     name := "prinz",
     libraryDependencies ++= {
       Seq(
-        "com.softwaremill.sttp.client3" %% "core" % sttpV,
-        "com.softwaremill.sttp.client3" %% "circe" % sttpV,
-        "com.softwaremill.sttp.client3" %% "async-http-client-backend-future" % sttpV,
-        "io.minio" % "minio" % minioS3V,
-        "io.circe" %% "circe-core" % circeV,
-        "io.circe" %% "circe-generic" % circeV,
-        "io.circe" %% "circe-parser" % circeV,
-        "io.circe" %% "circe-yaml" % circeYamlV,
         "com.typesafe" % "config" % typesafeConfigV,
-        "org.scala-lang" % "scala-reflect" % scalaV,
-        "ch.qos.logback" % "logback-classic" % logbackV,
-        "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
-        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
-        "com.h2database" % "h2" % h2V % Test,
         "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
       )
     }
   )
+
+lazy val prinz_proxy = (project in file("prinz_proxy"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-proxy",
+    libraryDependencies ++= {
+      Seq(
+        "com.h2database" % "h2" % h2V % Test,
+      )
+    }
+  )
+  .dependsOn(prinz_util % "compile->compile;test->test")
+  .dependsOn(prinz % "compile->compile;test->test")
 
 lazy val prinz_mlflow = (project in file("prinz_mlflow"))
   .settings(commonSettings)
@@ -112,11 +143,17 @@ lazy val prinz_mlflow = (project in file("prinz_mlflow"))
     name := "prinz-mlflow",
     libraryDependencies ++= {
       Seq(
-        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+        "io.minio" % "minio" % minioS3V,
+        "io.circe" %% "circe-core" % circeV,
+        "io.circe" %% "circe-generic" % circeV,
+        "io.circe" %% "circe-parser" % circeV,
+        "io.circe" %% "circe-yaml" % circeYamlV,
       )
     }
   )
+  .dependsOn(prinz_util % "compile->compile;test->test")
   .dependsOn(prinz % "compile->compile;test->test")
+  .dependsOn(prinz_proxy % "test->test")
 
 lazy val prinz_pmml = (project in file("prinz_pmml"))
   .settings(commonSettings)
@@ -129,19 +166,28 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
         "org.jsoup" % "jsoup" % jsoupV,
-        "ch.qos.logback" % "logback-classic" % logbackV,
-        "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
       )
     }
   )
   .dependsOn(prinz % "compile->compile;test->test")
+  .dependsOn(prinz_proxy % "test->test")
 
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
     name := "prinz-sample",
+
+    resolvers += Resolver.githubPackages(repositoryOwner, repositoryName),
+    githubTokenSource := TokenSource.Or(
+      TokenSource.Environment("GITHUB_TOKEN"),
+      TokenSource.GitConfig("github.token")
+    ),
     libraryDependencies ++= {
       Seq(
+//        "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
+//        "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
+//        "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
+
         "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
@@ -154,6 +200,6 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     publishArtifact := false,
     publish / skip := true
   )
-  .dependsOn(prinz)
-  .dependsOn(prinz_mlflow)
-  .dependsOn(prinz_pmml)
+  .dependsOn(prinz % "compile->compile;test->test")
+  .dependsOn(prinz_mlflow % "compile->compile;test->test")
+  .dependsOn(prinz_pmml % "compile->compile;test->test")
