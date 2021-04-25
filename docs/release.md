@@ -1,7 +1,7 @@
 # Release process
 
 Release is automated by GitHub actions workflow configured in [release.yaml]({{ book.sourcesRootUrl }}.github/workflows/release.yaml)
-file. It contains two jobs i.e. releasing current version to GitHub packages repository and creating a GitHub release 
+file. It contains two jobs i.e. releasing current version to GitHub packages repository and creating a GitHub release
 with sources from release version.
 
 To trigger release process one should push the tagged git commit to `master` branch with tag having the `v` prefix.
