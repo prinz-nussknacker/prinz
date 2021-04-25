@@ -24,8 +24,9 @@ val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
 
-ThisBuild / scalaVersion := scalaV
-ThisBuild / envFileName  := ".env"
+ThisBuild / scalaVersion  := scalaV
+ThisBuild / versionScheme := Some("semver-spec")
+ThisBuild / envFileName   := ".env"
 
 
 def prinzMergeStrategy: String => MergeStrategy = {
@@ -42,7 +43,7 @@ def prinzMergeStrategy: String => MergeStrategy = {
 
 lazy val commonSettings = Seq(
   organization := prinzOrg,
-  version := prinzV,
+  version      := prinzV,
   scalaVersion := scalaV,
 
   resolvers ++= Seq(
@@ -50,18 +51,18 @@ lazy val commonSettings = Seq(
   ),
 
   publishMavenStyle := true,
-  githubOwner := repositoryOwner,
-  githubRepository := repositoryName,
+  githubOwner       := repositoryOwner,
+  githubRepository  := repositoryName,
   githubTokenSource := TokenSource.Or(
     TokenSource.Environment("GITHUB_TOKEN"),
     TokenSource.GitConfig("github.token")
   ),
-  assembly / test := {},
-  assembly / assemblyMergeStrategy := prinzMergeStrategy,
 
-  scalastyleConfig := file("project/scalastyle_config.xml"),
+  assembly / assemblyMergeStrategy := prinzMergeStrategy,
+  assembly / test                  := {},
+  scalastyleConfig        := file("project/scalastyle_config.xml"),
   Test / scalastyleConfig := file("project/scalastyle_test_config.xml"),
-  Test / fork := true,
+  Test / fork             := true,
 
   libraryDependencies ++= {
     Seq(
@@ -85,7 +86,7 @@ lazy val root = (project in file("."))
   .settings(commonSettings)
   .settings(
     publishArtifact := false,
-    publish / skip := true
+    publish / skip  := true
   )
 
 lazy val prinz_util = (project in file("prinz_util"))
@@ -174,17 +175,12 @@ lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
     name := "prinz-sample",
-
-    resolvers += Resolver.githubPackages(repositoryOwner, repositoryName),
-    githubTokenSource := TokenSource.Or(
-      TokenSource.Environment("GITHUB_TOKEN"),
-      TokenSource.GitConfig("github.token")
-    ),
     libraryDependencies ++= {
       Seq(
-//        "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
-//        "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
-//        "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
+        // declare dependencies to prinz in this way
+        // "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
+        // "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
+        // "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
 
         "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
@@ -195,8 +191,15 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
       )
     },
+    // add GitHub packages resolver dependency with GitHub token declared
+    githubTokenSource := TokenSource.Or(
+      TokenSource.Environment("GITHUB_TOKEN"),
+      TokenSource.GitConfig("github.token")
+    ),
+    resolvers += Resolver.githubPackages(repositoryOwner, repositoryName),
+
     publishArtifact := false,
-    publish / skip := true
+    publish / skip  := true,
   )
   .dependsOn(prinz % "compile->compile;test->test")
   .dependsOn(prinz_mlflow % "compile->compile;test->test")

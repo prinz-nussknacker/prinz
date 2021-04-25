@@ -18,6 +18,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           ./sbtwrapper prinz/publish &&
+          ./sbtwrapper prinz_util/publish &&
+          ./sbtwrapper prinz_proxy/publish &&
           ./sbtwrapper prinz_mlflow/publish &&
           ./sbtwrapper prinz_pmml/publish
 
