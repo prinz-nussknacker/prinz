@@ -1,5 +1,7 @@
 import sbtassembly.MergeStrategy
 
+val prinzV = "0.0.1-SNAPSHOT"
+val prinzOrg = "pl.touk.nussknacker.prinz"
 // Dependency versions
 val scalaV = "2.12.10"
 val nussknackerV = "0.3.0"
@@ -19,13 +21,11 @@ val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
 
-ThisBuild / organization := "pl.touk.nussknacker.prinz"
-ThisBuild / version      := "0.0.1-SNAPSHOT"
+ThisBuild / organization := prinzOrg
+ThisBuild / version      := prinzV
 ThisBuild / scalaVersion := scalaV
 ThisBuild / envFileName  := ".env"
 
-ThisBuild / githubOwner := "prinz-nussknacker"
-ThisBuild / githubRepository := "prinz"
 
 def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
@@ -40,26 +40,35 @@ def prinzMergeStrategy: String => MergeStrategy = {
 }
 
 lazy val commonSettings = Seq(
-  test in assembly := {},
-  assemblyMergeStrategy in assembly := prinzMergeStrategy,
+  organization := prinzOrg,
+  version := prinzV,
   scalaVersion := scalaV,
-  addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
+
   resolvers ++= Seq(
     "Sonatype snaphots" at "https://oss.sonatype.org/content/groups/public/",
   ),
-  libraryDependencies ++= {
-    Seq(
-      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
-      "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
-    )
-  },
+
+  publishMavenStyle := true,
+  githubOwner := "prinz-nussknacker",
+  githubRepository := "prinz",
+  githubTokenSource := TokenSource.Or(
+    TokenSource.Environment("GITHUB_TOKEN"),
+    TokenSource.GitConfig("github.token")
+  ),
+  assembly / test := {},
+  assembly / assemblyMergeStrategy := prinzMergeStrategy,
+
   scalastyleConfig := file("project/scalastyle_config.xml"),
-  (scalastyleConfig in Test) := file("project/scalastyle_test_config.xml"),
+  Test / scalastyleConfig := file("project/scalastyle_test_config.xml"),
+  Test / fork := true,
+
   dependencyOverrides ++= Seq(
     "io.circe" %% "circe-core" % circeV,
     "io.circe" %% "circe-generic" % circeV,
     "io.circe" %% "circe-parser" % circeV
-  )
+  ),
+
+  addCompilerPlugin("org.scalamacros" % "paradise" % paradiseV cross CrossVersion.full),
 )
 
 lazy val root = (project in file("."))
@@ -74,7 +83,6 @@ lazy val prinz = (project in file("prinz"))
   .settings(commonSettings)
   .settings(
     name := "prinz",
-    Test / fork := true,
     libraryDependencies ++= {
       Seq(
         "com.softwaremill.sttp.client3" %% "core" % sttpV,
@@ -88,6 +96,8 @@ lazy val prinz = (project in file("prinz"))
         "com.typesafe" % "config" % typesafeConfigV,
         "org.scala-lang" % "scala-reflect" % scalaV,
         "ch.qos.logback" % "logback-classic" % logbackV,
+        "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
+        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.h2database" % "h2" % h2V % Test,
@@ -100,7 +110,11 @@ lazy val prinz_mlflow = (project in file("prinz_mlflow"))
   .settings(commonSettings)
   .settings(
     name := "prinz-mlflow",
-    Test / fork := true
+    libraryDependencies ++= {
+      Seq(
+        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+      )
+    }
   )
   .dependsOn(prinz % "compile->compile;test->test")
 
@@ -108,7 +122,6 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
   .settings(commonSettings)
   .settings(
     name := "prinz-pmml",
-    Test / fork := true,
     libraryDependencies ++= {
       Seq(
         "org.jpmml" % "pmml-evaluator" % jpmmlV,
@@ -117,6 +130,7 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
         "org.jsoup" % "jsoup" % jsoupV,
         "ch.qos.logback" % "logback-classic" % logbackV,
+        "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
       )
     }
   )
@@ -136,7 +150,9 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
       )
-    }
+    },
+    publishArtifact := false,
+    publish / skip := true
   )
   .dependsOn(prinz)
   .dependsOn(prinz_mlflow)
