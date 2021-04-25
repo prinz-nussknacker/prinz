@@ -177,11 +177,12 @@ lazy val prinz_sample = (project in file("prinz_sample"))
     name := "prinz-sample",
     libraryDependencies ++= {
       Seq(
-        // declare dependencies to prinz in this way
-        // "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
-        // "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
-        // "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
-
+        // declare dependencies to Prinz like this
+        /*
+        "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
+        "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
+        "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
+        */
         "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
@@ -191,16 +192,18 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
       )
     },
-    // add GitHub packages resolver dependency with GitHub token declared
+    // add GitHub packages resolver dependency with GitHub token declared to download prinz
+    /*
     githubTokenSource := TokenSource.Or(
       TokenSource.Environment("GITHUB_TOKEN"),
       TokenSource.GitConfig("github.token")
     ),
     resolvers += Resolver.githubPackages(repositoryOwner, repositoryName),
-
+    */
     publishArtifact := false,
     publish / skip  := true,
   )
+  // but actually in local build use the latest version of packages compiled locally
   .dependsOn(prinz % "compile->compile;test->test")
   .dependsOn(prinz_mlflow % "compile->compile;test->test")
   .dependsOn(prinz_pmml % "compile->compile;test->test")
