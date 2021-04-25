@@ -24,8 +24,6 @@ val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
 
-ThisBuild / organization := prinzOrg
-ThisBuild / version      := prinzV
 ThisBuild / scalaVersion := scalaV
 ThisBuild / envFileName  := ".env"
 
