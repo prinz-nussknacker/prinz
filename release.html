@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Introduction · GitBook</title>
+        <title>Release process · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,8 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="mlflow.html" />
     
+    <link rel="prev" href="configuration.html" />
     
 
     </head>
@@ -87,7 +87,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -139,7 +139,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5" data-path="release.html">
+        <li class="chapter active" data-level="1.5" data-path="release.html">
             
                 <a href="release.html">
             
@@ -182,7 +182,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >Introduction</a>
+        <a href="." >Release process</a>
     </h1>
 </div>
 
@@ -197,13 +197,16 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p><img src="images/prinz-logo.svg" alt="Prinz logo"></p>
-<p>Prinz provides machine learning integrations for <a href="https://nussknacker.io/" target="_blank">Nussknacker</a>.</p>
-<p>Useful links:</p>
-<ul>
-<li><a href="https://github.com/prinz-nussknacker/prinz/" target="_blank">Project repository</a></li>
-<li><a href="https://prinz-nussknacker.github.io/prinz//presentation.html" target="_blank">Project presentation</a></li>
-</ul>
+                                <h1 id="release-process">Release process</h1>
+<p>Release is automated by GitHub actions workflow configured in <a href="https://github.com/prinz-nussknacker/prinz/tree/master/.github/workflows/release.yaml" target="_blank">release.yaml</a>
+file. It contains two jobs i.e. releasing current version to GitHub packages repository and creating a GitHub release
+with sources from release version.</p>
+<p>To trigger release process one should push the tagged git commit to <code>master</code> branch with tag having the <code>v</code> prefix.
+Description of GitHub release has to be added manually after automatic release process but the version of release
+is taken from git tag.</p>
+<p>In order to keep everything in order one have to follow <a href="https://semver.org/" target="_blank">Semantic Versioning</a>
+rules. Additionally, there are <code>SNAPSHOT</code> releases that are published before official release and can be updated before
+the official release process.</p>
 
                                 
                                 </section>
@@ -231,10 +234,10 @@
 
             
                 
-                
-                <a href="mlflow.html" class="navigation navigation-next navigation-unique" aria-label="Next page: MLflow implementation">
-                    <i class="fa fa-angle-right"></i>
+                <a href="configuration.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Configuration">
+                    <i class="fa fa-angle-left"></i>
                 </a>
+                
                 
             
         
@@ -243,7 +246,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"MLflow implementation","level":"1.2","depth":1,"path":"mlflow.md","ref":"mlflow.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{"repoUrl":"https://github.com/prinz-nussknacker/prinz/","pagesUrl":"https://prinz-nussknacker.github.io/prinz/","sourcesRootUrl":"https://github.com/prinz-nussknacker/prinz/tree/master/","nussknackerUrl":"https://nussknacker.io/"},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2021-04-29T17:36:59.532Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-29T17:37:52.966Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Release process","level":"1.5","depth":1,"previous":{"title":"Configuration","level":"1.4","depth":1,"path":"configuration.md","ref":"configuration.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{"repoUrl":"https://github.com/prinz-nussknacker/prinz/","pagesUrl":"https://prinz-nussknacker.github.io/prinz/","sourcesRootUrl":"https://github.com/prinz-nussknacker/prinz/tree/master/","nussknackerUrl":"https://nussknacker.io/"},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"release.md","mtime":"2021-04-29T17:36:59.536Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-04-29T17:37:52.966Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
