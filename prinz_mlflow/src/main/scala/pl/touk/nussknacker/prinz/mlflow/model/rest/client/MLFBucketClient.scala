@@ -5,7 +5,7 @@ import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import java.io.InputStream
 import java.net.URL
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.MLFBucketClient.extractBucketRelativePath
-import pl.touk.nussknacker.prinz.util.amazon.S3Client
+import pl.touk.nussknacker.prinz.mlflow.util.amazon.S3Client
 
 case class MLFBucketClient(private val config: MLFBucketClientConfig) {
 

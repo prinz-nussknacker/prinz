@@ -1,6 +1,7 @@
 #!/bin/bash
 
 scalaV="2.12"
+prinzV="0.0.1-SNAPSHOT"
 
 COMP_FILES=""
 ENV_FILE="-f docker-compose-env.yaml"
@@ -33,7 +34,7 @@ then
     ./sbtwrapper prinz_sample/assembly &&
     cd - &&
     mkdir -p nussknacker/opt/prinz/ &&
-    cp "../prinz_sample/target/scala-${scalaV}/prinz-sample-assembly-0.0.1-SNAPSHOT.jar" "./nussknacker/opt/prinz-sample/"
+    cp "../prinz_sample/target/scala-${scalaV}/prinz-sample-assembly-${prinzV}.jar" "./nussknacker/opt/prinz-sample/"
 fi
 
 # Create external network to communication between nussknacker and mlflow proxy
