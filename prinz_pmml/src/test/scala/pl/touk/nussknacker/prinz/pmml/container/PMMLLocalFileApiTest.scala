@@ -7,7 +7,6 @@ import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest.readEnv
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.STATIC_SERVER_PATH
-import pl.touk.nussknacker.prinz.pmml.repository.{HttpPMMLModelRepository, LocalFilePMMLModelRepository}
 import pl.touk.nussknacker.prinz.pmml.{PMMLConfig, PMMLContainerUnitTest}
 import pl.touk.nussknacker.prinz.proxy.ModelsProxySpec
 

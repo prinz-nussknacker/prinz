@@ -1,6 +1,7 @@
 package pl.touk.nussknacker.prinz.pmml.repository
 
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository.{NAME_VERSION_SEPARATOR, PMML_FILE_EXTENSION}
+import pl.touk.nussknacker.prinz.util.repository.{ModelPayload, RepositoryClient}
 
 import java.io.InputStream
 
@@ -8,8 +9,8 @@ final case class PMMLModelPayload(inputStream: InputStream, name: String, versio
 
 object PMMLModelPayload {
 
-  def apply(inputStream: InputStream, filename: String): PMMLModelPayload = {
-    val (name, version) = splitFilenameToNameAndVersion(filename)
+  def apply(payload: ModelPayload, inputStream: InputStream): PMMLModelPayload = {
+    val (name, version) = splitFilenameToNameAndVersion(payload.filename)
     PMMLModelPayload(inputStream, name, version)
   }
 
