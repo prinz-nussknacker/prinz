@@ -5,13 +5,12 @@ import pl.touk.nussknacker.prinz.model.repository.{ModelRepository}
 import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
 import pl.touk.nussknacker.prinz.pmml.model.PMMLModel
-import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository.PMML_FILE_EXTENSION
 import pl.touk.nussknacker.prinz.util.repository.{ModelPayload, RepositoryClient}
 
 class PMMLModelRepository(implicit config: PMMLConfig)
   extends ModelRepository with LazyLogging {
 
-  private val client = new RepositoryClient(PMML_FILE_EXTENSION)
+  private val client = new RepositoryClient
   private val uri = config.modelsDirectory
 
   override def listModels: RepositoryResponse[List[PMMLModel]] =
@@ -23,12 +22,11 @@ class PMMLModelRepository(implicit config: PMMLConfig)
       .map(it => PMMLModel(it.head))
 
   private def mapPayload(payload: ModelPayload): PMMLModelPayload =
-    PMMLModelPayload(payload, client.openModelFile(payload.path))
+    PMMLModelPayload(payload, client.openModelFile(payload.path), config.fileExtension)
 }
 
 object PMMLModelRepository {
 
+  //TODO: I think this also should be in config
   val NAME_VERSION_SEPARATOR: String = "-v"
-
-  val PMML_FILE_EXTENSION: String = ".pmml"
 }

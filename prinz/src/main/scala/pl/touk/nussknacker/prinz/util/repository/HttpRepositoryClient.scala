@@ -9,7 +9,7 @@ import java.io.{File, InputStream}
 import scala.collection.JavaConverters
 
 
-class HttpRepositoryClient(fileExtension: String) extends AbstractRepositoryClient(fileExtension) {
+class HttpRepositoryClient(fileExtension: String, selector: String) extends AbstractRepositoryClient(fileExtension) {
 
   override protected def readPath(path: URI): Iterable[ModelPayload] = {
     if(isCorrectFile(path)) {
@@ -19,7 +19,7 @@ class HttpRepositoryClient(fileExtension: String) extends AbstractRepositoryClie
       val pathString = path.toString
       try {
         val doc = Jsoup.connect(pathString).get
-        val elements = doc.select(SELECTOR_TMP)
+        val elements = doc.select(selector)
           .eachAttr("href")
         JavaConverters.iterableAsScalaIterable(elements)
           .map(createURIForSingleFile(pathString))
@@ -38,6 +38,4 @@ class HttpRepositoryClient(fileExtension: String) extends AbstractRepositoryClie
     val fixedUrlString = if (urlString.endsWith(File.separator)) urlString else s"$urlString/"
     new URI(s"$fixedUrlString$fileName")
   }
-
-  private val SELECTOR_TMP = "body > ul > li > a"
 }
