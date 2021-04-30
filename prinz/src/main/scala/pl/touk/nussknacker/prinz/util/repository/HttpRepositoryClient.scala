@@ -1,6 +1,8 @@
 package pl.touk.nussknacker.prinz.util.repository
 
-import java.net.{URI, URL}
+import com.typesafe.scalalogging.LazyLogging
+
+import java.net.URI
 import org.jsoup.Jsoup
 
 import java.io.{File, InputStream}
@@ -15,13 +17,18 @@ class HttpRepositoryClient(fileExtension: String) extends AbstractRepositoryClie
     }
     else {
       val pathString = path.toString
-      val doc = Jsoup.connect(pathString).get
-      val elements = doc.select(SELECTOR_TMP)
-        .eachAttr("href")
-      JavaConverters.iterableAsScalaIterable(elements)
-        .map(createURIForSingleFile(pathString))
-        .filter(isCorrectFile)
-        .map(f => ModelPayload(f))
+      try {
+        val doc = Jsoup.connect(pathString).get
+        val elements = doc.select(SELECTOR_TMP)
+          .eachAttr("href")
+        JavaConverters.iterableAsScalaIterable(elements)
+          .map(createURIForSingleFile(pathString))
+          .filter(isCorrectFile)
+          .map(f => ModelPayload(f))
+      }
+      catch {
+        case ex: Exception => throw ex
+      }
     }
   }
 
