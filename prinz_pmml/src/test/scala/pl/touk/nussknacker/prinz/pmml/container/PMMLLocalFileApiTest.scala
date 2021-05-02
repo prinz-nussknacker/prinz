@@ -24,6 +24,7 @@ class PMMLLocalFileApiTest extends PMMLContainerUnitTest
       |    fileExtension: ".pmml"
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/pmml-samples/exports"
       |    modelDirectoryHrefSelector: ""
+      |    modelVersionSeparator: "-v"
       |  }
       |""".stripMargin)
 

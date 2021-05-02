@@ -24,6 +24,7 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
        |    fileExtension: ".pmml"
        |    modelsDirectory: "http://localhost:${readEnv("PMML_SAMPLES_PORT")}"
        |    modelDirectoryHrefSelector: "body > ul > li > a"
+       |    modelVersionSeparator: "-v"
        |  }
        |""".stripMargin)
 

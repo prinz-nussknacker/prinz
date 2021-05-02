@@ -23,9 +23,3 @@ class H2OModelRepository(implicit val config: H2OConfig)
   private def mapPayload(payload: ModelPayload): H2OModelPayload =
     H2OModelPayload(payload, config.fileExtension, config.modelVersionSeparator)
 }
-
-object H2OModelRepository {
-
-  //TODO: I think this also should be in config
-  val NAME_VERSION_SEPARATOR: String = "-v"
-}
