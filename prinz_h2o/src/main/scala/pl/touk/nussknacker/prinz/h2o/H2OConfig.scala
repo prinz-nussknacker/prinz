@@ -6,5 +6,5 @@ import pl.touk.nussknacker.prinz.util.repository.payload.ModelVersionConfig
 
 class H2OConfig(protected implicit val config: Config) extends RepositoryClientConfig with ModelVersionConfig {
 
-  override protected implicit def BASE_CONFIG_PATH: String = "h2o."
+  override protected implicit def baseConfigPath: String = "h2o."
 }
