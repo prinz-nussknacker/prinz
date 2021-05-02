@@ -6,5 +6,4 @@ import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getSt
 trait ModelVersionConfig extends BaseConfig {
 
   val modelVersionSeparator: String = getConfigValue("modelVersionSeparator", getString)
-
 }

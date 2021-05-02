@@ -7,8 +7,8 @@ import pl.touk.nussknacker.prinz.util.repository.payload.ModelVersionConfig
 
 import java.net.{URI, URL}
 
-final case class PMMLConfig(protected implicit val config: Config) extends RepositoryClientConfig
+final case class PMMLConfig(override protected implicit val config: Config) extends RepositoryClientConfig
   with ModelVersionConfig {
 
-  protected implicit val BASE_CONFIG_PATH: String = "pmml."
+  override protected implicit def BASE_CONFIG_PATH: String = "pmml."
 }
