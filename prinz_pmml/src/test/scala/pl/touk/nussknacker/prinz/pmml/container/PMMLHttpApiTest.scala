@@ -7,6 +7,7 @@ import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest.readEnv
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.STATIC_SERVER_PATH
+import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 import pl.touk.nussknacker.prinz.pmml.{PMMLConfig, PMMLContainerUnitTest}
 import pl.touk.nussknacker.prinz.proxy.ModelsProxySpec
 
@@ -20,6 +21,7 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
        |  pmml {
+       |    fileExtension: ".pmml"
        |    modelsDirectory: "http://localhost:${readEnv("PMML_SAMPLES_PORT")}"
        |    modelDirectoryHrefSelector: "body > ul > li > a"
        |  }
@@ -29,7 +31,7 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
 
   override def integrationName: String = "PMML http server"
 
-  override def getRepository: ModelRepository = new HttpPMMLModelRepository
+  override def getRepository: ModelRepository = new PMMLModelRepository
 
   override def awaitTimeout: FiniteDuration = FiniteDuration(500, TimeUnit.MILLISECONDS)
 

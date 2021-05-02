@@ -1,18 +1,17 @@
-package pl.touk.nussknacker.prinz.util.repository
+package pl.touk.nussknacker.prinz.util.repository.client
 
-import com.typesafe.scalalogging.LazyLogging
-
-import java.net.URI
 import org.jsoup.Jsoup
+import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 
 import java.io.{File, InputStream}
+import java.net.URI
 import scala.collection.JavaConverters
 
 
 class HttpRepositoryClient(fileExtension: String, selector: String) extends AbstractRepositoryClient(fileExtension) {
 
-  override protected def readPath(path: URI): Iterable[ModelPayload] = {
-    if(isCorrectFile(path)) {
+  override protected def loadModelsOnPath(path: URI): Iterable[ModelPayload] = {
+    if(isValidFile(path)) {
       List(ModelPayload(path))
     }
     else {
@@ -23,7 +22,7 @@ class HttpRepositoryClient(fileExtension: String, selector: String) extends Abst
           .eachAttr("href")
         JavaConverters.iterableAsScalaIterable(elements)
           .map(createURIForSingleFile(pathString))
-          .filter(isCorrectFile)
+          .filter(isValidFile)
           .map(f => ModelPayload(f))
       }
       catch {

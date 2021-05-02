@@ -1,16 +1,16 @@
 package pl.touk.nussknacker.prinz.pmml.repository
 
 import com.typesafe.scalalogging.LazyLogging
-import pl.touk.nussknacker.prinz.model.repository.{ModelRepository}
+import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
 import pl.touk.nussknacker.prinz.pmml.model.PMMLModel
-import pl.touk.nussknacker.prinz.util.repository.{ModelPayload, RepositoryClient}
+import pl.touk.nussknacker.prinz.util.repository.client.{RepositoryClient, RepositoryClientFactory}
+import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 
-class PMMLModelRepository(implicit config: PMMLConfig)
-  extends ModelRepository with LazyLogging {
+class PMMLModelRepository(implicit val config: PMMLConfig)
+  extends ModelRepository with RepositoryClient {
 
-  private val client = new RepositoryClient
   private val uri = config.modelsDirectory
 
   override def listModels: RepositoryResponse[List[PMMLModel]] =
@@ -22,11 +22,5 @@ class PMMLModelRepository(implicit config: PMMLConfig)
       .map(it => PMMLModel(it.head))
 
   private def mapPayload(payload: ModelPayload): PMMLModelPayload =
-    PMMLModelPayload(payload, client.openModelFile(payload.path), config.fileExtension)
-}
-
-object PMMLModelRepository {
-
-  //TODO: I think this also should be in config
-  val NAME_VERSION_SEPARATOR: String = "-v"
+    PMMLModelPayload(payload, client.openModelFile(payload.path), config.fileExtension, config.modelVersionSeparator)
 }

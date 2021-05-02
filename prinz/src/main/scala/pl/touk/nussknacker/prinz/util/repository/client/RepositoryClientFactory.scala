@@ -1,11 +1,12 @@
-package pl.touk.nussknacker.prinz.util.repository
+package pl.touk.nussknacker.prinz.util.repository.client
 
 import pl.touk.nussknacker.prinz.model.repository.ModelRepositoryException
+import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 
 import java.io.InputStream
 import java.net.URI
 
-class RepositoryClient(implicit config: RepositoryClientConfig) {
+class RepositoryClientFactory(implicit config: RepositoryClientConfig) {
 
   def listModelFiles(path: URI): Either[ModelRepositoryException, Iterable[ModelPayload]] =
     getClient(path).listModelFiles(path)
@@ -16,13 +17,14 @@ class RepositoryClient(implicit config: RepositoryClientConfig) {
     path.getScheme match {
       case "http" => new HttpRepositoryClient(config.fileExtension, selector)
       case "file" => new LocalFSRepositoryClient(config.fileExtension)
-      case _ => throw new IllegalArgumentException("Unsupported repository type.")
+      case _ => throw new IllegalArgumentException("Unsupported URI scheme in repository location")
     }
   }
 
   private val selector = config.modelDirectoryHrefSelector match {
     case Some(value) => value
-    case None => throw new IllegalStateException("pmml.modelDirectoryHrefSelector should be defined when using HttpPMMLModelRepository")
+    case None => throw new IllegalStateException("modelDirectoryHrefSelector should be defined when " +
+      "using repository based on HTTP")
   }
 
 }

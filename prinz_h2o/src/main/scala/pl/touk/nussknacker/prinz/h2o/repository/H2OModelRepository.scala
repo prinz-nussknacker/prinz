@@ -4,13 +4,13 @@ import com.typesafe.scalalogging.LazyLogging
 import pl.touk.nussknacker.prinz.h2o.H2OConfig
 import pl.touk.nussknacker.prinz.h2o.model.H2OModel
 import pl.touk.nussknacker.prinz.model.{Model, ModelName}
-import pl.touk.nussknacker.prinz.model.repository.{ModelRepository}
-import pl.touk.nussknacker.prinz.util.repository.{ModelPayload, RepositoryClient}
+import pl.touk.nussknacker.prinz.model.repository.ModelRepository
+import pl.touk.nussknacker.prinz.util.repository.client.{RepositoryClient, RepositoryClientFactory}
+import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 
-class H2OModelRepository(implicit config: H2OConfig)
-  extends ModelRepository with LazyLogging {
+class H2OModelRepository(implicit val config: H2OConfig)
+  extends ModelRepository with LazyLogging with RepositoryClient {
 
-  private val client = new RepositoryClient
   private val uri = config.modelsDirectory
 
   override def listModels: RepositoryResponse[List[H2OModel]] =
@@ -21,7 +21,7 @@ class H2OModelRepository(implicit config: H2OConfig)
     .map(it => new H2OModel(it.head))
 
   private def mapPayload(payload: ModelPayload): H2OModelPayload =
-    H2OModelPayload(payload, config.fileExtension)
+    H2OModelPayload(payload, config.fileExtension, config.modelVersionSeparator)
 }
 
 object H2OModelRepository {
