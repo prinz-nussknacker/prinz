@@ -4,8 +4,6 @@ import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvalua
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelVersion}
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
-import java.io.{File, InputStream}
-
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
   private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)

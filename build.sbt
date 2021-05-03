@@ -86,6 +86,7 @@ lazy val prinz = (project in file("prinz"))
         "com.typesafe" % "config" % typesafeConfigV,
         "org.scala-lang" % "scala-reflect" % scalaV,
         "ch.qos.logback" % "logback-classic" % logbackV,
+        "org.jsoup" % "jsoup" % jsoupV,
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.h2database" % "h2" % h2V % Test,
