@@ -8,9 +8,10 @@ import java.net.URI
 import scala.collection.JavaConverters
 
 
-class HttpRepositoryClient(fileExtension: String, selector: String) extends AbstractRepositoryClient(fileExtension) {
+class HttpRepositoryClient(path: URI, fileExtension: String, selector: String)
+  extends AbstractRepositoryClient(path, fileExtension) {
 
-  override protected def loadModelsOnPath(path: URI): Iterable[ModelPayload] = {
+  override protected def loadModelsOnPath: Iterable[ModelPayload] = {
     if(isValidFile(path)) {
       List(ModelPayload(path))
     }
@@ -23,7 +24,7 @@ class HttpRepositoryClient(fileExtension: String, selector: String) extends Abst
         JavaConverters.iterableAsScalaIterable(elements)
           .map(createURIForSingleFile(pathString))
           .filter(isValidFile)
-          .map(f => ModelPayload(f))
+          .map(ModelPayload(_))
       }
       catch {
         case ex: Exception => throw ex
