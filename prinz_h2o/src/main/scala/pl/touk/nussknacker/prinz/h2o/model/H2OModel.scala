@@ -8,7 +8,7 @@ import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVe
 
 class H2OModel(payload: H2OModelPayload) extends Model {
     // TODO: Should caching strategy be configurable?
-    private val modelReaderBackend = MojoReaderBackendFactory.createReaderBackend(payload.inputStream, CachingStrategy.MEMORY)
+    private val modelReaderBackend = MojoReaderBackendFactory.createReaderBackend(payload.path, CachingStrategy.MEMORY)
     private val genModel: GenModel = ModelMojoReader.readFrom(modelReaderBackend)
     val modelWrapper: EasyPredictModelWrapper = new EasyPredictModelWrapper(genModel)
 

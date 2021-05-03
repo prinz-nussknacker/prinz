@@ -15,7 +15,7 @@ import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.Model
 import pl.touk.nussknacker.prinz.model.repository.CompositeModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
-import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
+import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
@@ -39,7 +39,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
     implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)
     implicit val pmmlConfig: PMMLConfig = PMMLConfig()
     val mlfRepository = new MLFModelRepository()
-    val pmmlRepository = new HttpPMMLModelRepository()
+    val pmmlRepository = new PMMLModelRepository()
 
     val repository = CompositeModelRepository(
       mlfRepository,
