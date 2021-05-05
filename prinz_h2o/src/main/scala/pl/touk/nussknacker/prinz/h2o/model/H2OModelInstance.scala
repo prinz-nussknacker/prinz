@@ -4,7 +4,10 @@ import com.typesafe.scalalogging.LazyLogging
 import hex.ModelCategory
 import hex.genmodel.easy.{EasyPredictModelWrapper, RowData}
 import hex.genmodel.easy.exception.PredictException
-import hex.genmodel.easy.prediction.{AbstractPrediction, AnomalyDetectionPrediction, BinomialModelPrediction, ClusteringModelPrediction, CoxPHModelPrediction, KLimeModelPrediction, MultinomialModelPrediction, OrdinalModelPrediction, RegressionModelPrediction}
+import hex.genmodel.easy.prediction.{
+  AbstractPrediction, AnomalyDetectionPrediction, BinomialModelPrediction,
+  ClusteringModelPrediction, CoxPHModelPrediction, KLimeModelPrediction,
+  MultinomialModelPrediction, OrdinalModelPrediction, RegressionModelPrediction}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.h2o.converter.H2ODataConverter
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
