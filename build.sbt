@@ -23,6 +23,7 @@ val logbackV = "1.2.3"
 val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 
+val h2oV = "3.32.0.5"
 
 ThisBuild / scalaVersion  := scalaV
 ThisBuild / versionScheme := Some("semver-spec")
@@ -38,6 +39,7 @@ def prinzMergeStrategy: String => MergeStrategy = {
   case PathList("com", "sun", "activation", xs @ _*) => MergeStrategy.first
   case PathList("javax", "activation", xs @ _*) => MergeStrategy.first
   case PathList("org", "slf4j", "impl", xs @ _*) => MergeStrategy.first
+  case PathList("org", "apache", "log4j", xs @ _*) => MergeStrategy.first
   case x: Any => MergeStrategy.defaultMergeStrategy(x)
 }
 
@@ -116,6 +118,8 @@ lazy val prinz = (project in file("prinz"))
       Seq(
         "com.typesafe" % "config" % typesafeConfigV,
 
+        "org.jsoup" % "jsoup" % jsoupV,
+
         "org.scalatest" %% "scalatest" % scalatestV % Test,
         "org.scalatest" %% "scalatest-funsuite" % scalatestV % Test,
         "com.dimafeng" %% "testcontainers-scala-scalatest" % testContainersV % Test,
@@ -171,6 +175,20 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
   .dependsOn(prinz % "compile->compile;test->test")
   .dependsOn(prinz_proxy % "test->test")
 
+lazy val prinz_h2o = (project in file("prinz_h2o"))
+  .settings(commonSettings)
+  .settings(
+    name := "prinz-h2o",
+    libraryDependencies ++= {
+      Seq(
+        "ai.h2o" % "h2o-genmodel" % h2oV,
+        "ai.h2o" % "h2o-core" % h2oV,
+      )
+    }
+  )
+  .dependsOn(prinz % "compile->compile;test->test")
+  .dependsOn(prinz_proxy % "test->test")
+
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
   .settings(
@@ -205,3 +223,4 @@ lazy val prinz_sample = (project in file("prinz_sample"))
   .dependsOn(prinz % "compile->compile;test->test")
   .dependsOn(prinz_mlflow % "compile->compile;test->test")
   .dependsOn(prinz_pmml % "compile->compile;test->test")
+  .dependsOn(prinz_h2o % "compile->compile;test->test")

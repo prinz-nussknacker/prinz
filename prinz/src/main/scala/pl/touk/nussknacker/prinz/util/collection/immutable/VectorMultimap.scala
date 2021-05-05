@@ -49,6 +49,14 @@ class VectorMultimap[K, V](private val delegate: mutable.LinkedHashMap[K, Vector
     VectorMultimap(mapped)
   }
 
+  def mapValuesWithKeys[B](f: (K, V) => B): VectorMultimap[K, B] = {
+    val mapped = for {
+      key <- keys.toList
+      value <- get(key).get
+    } yield (key, f(key, value))
+    VectorMultimap(mapped)
+  }
+
   def mapVectors[B](f: Vector[V] => B): scala.collection.Map[K, B] = delegate.mapValues(f)
 
   def contains(key: K, value: V): Boolean =

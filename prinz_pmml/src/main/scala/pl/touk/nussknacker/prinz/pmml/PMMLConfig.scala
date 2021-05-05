@@ -1,15 +1,12 @@
 package pl.touk.nussknacker.prinz.pmml
 
 import com.typesafe.config.Config
-import pl.touk.nussknacker.prinz.util.config.ConfigReader.{getConfigValue, getOptionConfigValue, getString, getUrl}
+import pl.touk.nussknacker.prinz.util.repository.client.RepositoryClientConfig
+import pl.touk.nussknacker.prinz.util.repository.payload.ModelVersionConfig
 
-import java.net.URL
+final case class PMMLConfig(override protected implicit val config: Config)
+  extends RepositoryClientConfig
+    with ModelVersionConfig {
 
-final case class PMMLConfig(private implicit val config: Config) {
-
-  private implicit val BASE_CONFIG_PATH: String = "pmml."
-
-  val modelsDirectory: URL = getConfigValue("modelsDirectory", getUrl)
-
-  val modelDirectoryHrefSelector: Option[String] = getOptionConfigValue("modelDirectoryHrefSelector", getString)
+  override protected implicit def baseConfigPath: String = "pmml."
 }

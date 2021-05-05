@@ -9,13 +9,15 @@ import pl.touk.nussknacker.engine.flink.util.sink.EmptySink
 import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
 import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
+import pl.touk.nussknacker.prinz.h2o.H2OConfig
+import pl.touk.nussknacker.prinz.h2o.repository.H2OModelRepository
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.Model
 import pl.touk.nussknacker.prinz.model.repository.CompositeModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
-import pl.touk.nussknacker.prinz.pmml.repository.HttpPMMLModelRepository
+import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 
 class SampleConfigCreator extends EmptyProcessConfigCreator {
 
@@ -38,12 +40,16 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
     val modelLocationStrategy = LocalMLFModelLocationStrategy
     implicit val mlfConfig: MLFConfig = MLFConfig(modelLocationStrategy)
     implicit val pmmlConfig: PMMLConfig = PMMLConfig()
+    implicit val h2oConfig: H2OConfig = H2OConfig()
+
     val mlfRepository = new MLFModelRepository()
-    val pmmlRepository = new HttpPMMLModelRepository()
+    val pmmlRepository = new PMMLModelRepository()
+    val h2oRepository = new H2OModelRepository()
 
     val repository = CompositeModelRepository(
       mlfRepository,
-      pmmlRepository
+      pmmlRepository,
+      h2oRepository
     )
     val modelsResult = repository.listModels
 

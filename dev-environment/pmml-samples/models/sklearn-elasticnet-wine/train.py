@@ -39,7 +39,7 @@ if __name__ != "__main__":
 warnings.filterwarnings("ignore")
 np.random.seed(40)
 
-csv_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv")
+csv_url = ("https://raw.githubusercontent.com/zygmuntz/wine-quality/master/winequality/winequality-red.csv")
 try:
     data = pd.read_csv(csv_url, sep=";")
 except Exception as e:

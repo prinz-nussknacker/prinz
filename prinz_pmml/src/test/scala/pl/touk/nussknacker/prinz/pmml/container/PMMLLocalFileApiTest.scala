@@ -7,7 +7,7 @@ import pl.touk.nussknacker.prinz.container.ApiIntegrationSpec
 import pl.touk.nussknacker.prinz.container.ContainerUnitTest.readEnv
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.pmml.PMMLContainerUnitTest.STATIC_SERVER_PATH
-import pl.touk.nussknacker.prinz.pmml.repository.{HttpPMMLModelRepository, LocalFilePMMLModelRepository}
+import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 import pl.touk.nussknacker.prinz.pmml.{PMMLConfig, PMMLContainerUnitTest}
 import pl.touk.nussknacker.prinz.proxy.ModelsProxySpec
 
@@ -21,8 +21,10 @@ class PMMLLocalFileApiTest extends PMMLContainerUnitTest
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
       |  pmml {
+      |    fileExtension: ".pmml"
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/pmml-samples/exports"
       |    modelDirectoryHrefSelector: ""
+      |    modelVersionSeparator: "-v"
       |  }
       |""".stripMargin)
 
@@ -30,9 +32,9 @@ class PMMLLocalFileApiTest extends PMMLContainerUnitTest
 
   override def integrationName: String = "PMML local file"
 
-  override def getRepository: ModelRepository = new LocalFilePMMLModelRepository
+  override def getRepository: ModelRepository = new PMMLModelRepository
 
-  override def awaitTimeout: FiniteDuration = FiniteDuration(500, TimeUnit.MILLISECONDS)
+  override def awaitTimeout: FiniteDuration = FiniteDuration(1000, TimeUnit.MILLISECONDS)
 
   override def staticServerPath: String = STATIC_SERVER_PATH
 

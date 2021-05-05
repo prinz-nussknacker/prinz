@@ -70,7 +70,7 @@ server {
 
 server {
     listen ${MLF_NGINX_STATIC_PORT};
-    server_name static-data;
+    server_name mlflow-static-data;
 
     location /static/int {
         rewrite /static/int /int break;

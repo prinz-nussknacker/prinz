@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.util.config
 
-import java.net.URL
+import java.net.{URI, URL}
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 
@@ -30,4 +30,6 @@ object ConfigReader extends LazyLogging {
   def getInt(config: Config, path: String): Int = config.getInt(path)
 
   def getString(config: Config, path: String): String = config.getString(path)
+
+  def getUri(config: Config, path: String): URI = new URI(config.getString(path))
 }

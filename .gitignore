@@ -15,7 +15,15 @@ project/plugins/project/
 
 # Docker data
 dev-environment/data
+
 dev-environment/mlflow/models/*/mlruns
+
+dev-environment/pmml-samples/exports/*
+!dev-environment/pmml-samples/exports/.gitkeep
+
+dev-environment/h2o/exports/*
+!dev-environment/h2o/exports/.gitkeep
+
 dev-environment/nussknacker/opt/prinz/*.jar
 dev-environment/nussknacker/opt/prinz-sample/*.jar
 
