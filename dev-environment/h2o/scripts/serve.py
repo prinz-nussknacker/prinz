@@ -2,7 +2,7 @@ import http.server
 import socketserver
 import os
 
-PORT = int(os.environ["PMML_MODELS_SERVER_PORT"])
+PORT = int(os.environ["H2O_MODELS_SERVER_PORT"])
 DIRECTORY = "exports"
 
 

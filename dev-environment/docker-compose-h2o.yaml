@@ -7,13 +7,34 @@ services:
     environment:
       - H2O_WORK_DIR=${H2O_WORK_DIR}
       - H2O_SERVER_PORT=${H2O_SERVER_PORT}
+      - H2O_MODELS_SERVER_PORT=${H2O_MODELS_SERVER_PORT}
     ports:
       - "${H2O_SERVER_PORT}:${H2O_SERVER_PORT}"
+      - "${H2O_MODELS_SERVER_PORT}:${H2O_MODELS_SERVER_PORT}"
     volumes:
       - ./h2o/models:${H2O_WORK_DIR}/models
       - ./h2o/exports:${H2O_WORK_DIR}/exports
+      - ./h2o/scripts:${H2O_WORK_DIR}/scripts
     networks:
       - h2o-net
+
+  h2o-proxy:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/h2o/templates:/etc/nginx/templates
+      - ./nginx/h2o/static:/etc/nginx/html
+    ports:
+      - "${H2O_SAMPLES_PORT}:${H2O_SAMPLES_PORT}"
+      - "${H2O_NGINX_STATIC_PORT}:${H2O_NGINX_STATIC_PORT}"
+    environment:
+      - H2O_SAMPLES_PORT=${H2O_SAMPLES_PORT}
+      - H2O_SAMPLES_URL=h2o-server:${H2O_MODELS_SERVER_PORT}
+      - H2O_NGINX_STATIC_PORT=${H2O_NGINX_STATIC_PORT}
+    networks:
+      - h2o-net
+      - dev-bridge-net
+    depends_on:
+      - h2o-server
 
 networks:
   h2o-net:

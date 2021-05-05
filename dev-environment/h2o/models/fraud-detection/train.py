@@ -25,16 +25,15 @@ def evaluate_metrics(model):
 if __name__ != "__main__":
     sys.exit()
 
+print(sys.argv)
+model_id = int(sys.argv[1])
+
 h2o_port = int(os.environ['H2O_SERVER_PORT'])
 h2o.init(port=h2o_port)
 
 # Prepare dataset
-try:
-    csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
-    data = h2o.import_file(csv_url, sep=",", header=0)
-except Exception as e:
-    logging.exception("Could not read CSV file: {}".format(e))
-    exit(1)
+csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
+data = h2o.import_file(csv_url, sep=",", header=0)
 
 data.na_omit()
 data = data.drop(["step", "customer", "zipcodeOri", "merchant", "zipMerchant"])
@@ -58,5 +57,8 @@ print("FraudDetection model:")
 print("  RMSE: {}".format(rmse))
 print("  R2: {}".format(r2))
 
-glm.save_mojo("exports")
+model_path = glm.save_mojo("exports", force=True)
 print(f"Fraud detection model exported as {glm.model_id}.zip")
+print(model_path)
+renamed_model_path = model_path.replace(f"{glm.model_id}.zip", f"H2O-FraudDetection-{model_id}-v0-{model_id}.zip")
+os.rename(model_path, renamed_model_path)

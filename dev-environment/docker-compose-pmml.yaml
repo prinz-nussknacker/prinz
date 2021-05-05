@@ -5,9 +5,11 @@ services:
   pmml-samples:
     image: docker.pkg.github.com/prinz-nussknacker/prinz/pmml-samples:0.0.1
     environment:
-      - PMML_SERVER_PORT=${PMML_SERVER_PORT}
+      - PMML_MODELS_SERVER_PORT=${PMML_MODELS_SERVER_PORT}
     volumes:
-      - ./pmml-samples/:/home/pmml
+      - ./pmml-samples/models:/home/pmml/models
+      - ./pmml-samples/exports:/home/pmml/exports
+      - ./pmml-samples/scripts:/home/pmml/scripts
     networks:
       - pmml-net
 
@@ -21,7 +23,7 @@ services:
       - "${PMML_NGINX_STATIC_PORT}:${PMML_NGINX_STATIC_PORT}"
     environment:
       - PMML_SAMPLES_PORT=${PMML_SAMPLES_PORT}
-      - PMML_SAMPLES_URL=pmml-samples:${PMML_SERVER_PORT}
+      - PMML_SAMPLES_URL=pmml-samples:${PMML_MODELS_SERVER_PORT}
       - PMML_NGINX_STATIC_PORT=${PMML_NGINX_STATIC_PORT}
     networks:
       - pmml-net

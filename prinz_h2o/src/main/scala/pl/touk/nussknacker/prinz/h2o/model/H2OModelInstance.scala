@@ -4,12 +4,9 @@ import com.typesafe.scalalogging.LazyLogging
 import hex.ModelCategory
 import hex.genmodel.easy.{EasyPredictModelWrapper, RowData}
 import hex.genmodel.easy.exception.PredictException
-import hex.genmodel.easy.prediction.{
-  AbstractPrediction, AnomalyDetectionPrediction, BinomialModelPrediction, ClusteringModelPrediction,
-  CoxPHModelPrediction, KLimeModelPrediction, MultinomialModelPrediction, OrdinalModelPrediction,
-  RegressionModelPrediction
-}
+import hex.genmodel.easy.prediction.{AbstractPrediction, AnomalyDetectionPrediction, BinomialModelPrediction, ClusteringModelPrediction, CoxPHModelPrediction, KLimeModelPrediction, MultinomialModelPrediction, OrdinalModelPrediction, RegressionModelPrediction}
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
+import pl.touk.nussknacker.prinz.h2o.converter.H2ODataConverter
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimapUtils.VectorMultimapAsRowset
@@ -24,7 +21,9 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
 
   override def run(inputMap: ModelInputData): ModelRunResult = Future {
     try {
-      val resultSeq = inputMap.mapRows(evaluateRow)
+      val convertedInputMap = H2ODataConverter.inputToTypedModelInput(inputMap, getSignature)
+      logger.info("Converted input: {}", convertedInputMap)
+      val resultSeq = convertedInputMap.mapRows(evaluateRow)
       logger.info("Mapped rows: {}", resultSeq)
       val results = collectOutputs(resultSeq).asJava
       Right(results)
@@ -45,16 +44,16 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     result
   }
 
-  private def getTransformer(modelCategory: ModelCategory): (AbstractPrediction => _) = modelCategory match {
-    case ModelCategory.AnomalyDetection => (p: AbstractPrediction) => p.asInstanceOf[AnomalyDetectionPrediction].isAnomaly
-    case ModelCategory.Binomial         => (p: AbstractPrediction) => p.asInstanceOf[BinomialModelPrediction].labelIndex
-    case ModelCategory.Multinomial      => (p: AbstractPrediction) => p.asInstanceOf[MultinomialModelPrediction].labelIndex
-    case ModelCategory.Ordinal          => (p: AbstractPrediction) => p.asInstanceOf[OrdinalModelPrediction].labelIndex
-    case ModelCategory.Clustering       => (p: AbstractPrediction) => p.asInstanceOf[ClusteringModelPrediction].cluster
-    case ModelCategory.KLime            => (p: AbstractPrediction) => p.asInstanceOf[KLimeModelPrediction].cluster
-    case ModelCategory.CoxPH            => (p: AbstractPrediction) => p.asInstanceOf[CoxPHModelPrediction].value
-    case ModelCategory.Regression       => (p: AbstractPrediction) => p.asInstanceOf[RegressionModelPrediction].value
-    case _ => throw new ModelRunException(s"ModelCategory ${modelCategory} not supported.")
+  private def getTransformer(modelCategory: ModelCategory)(p: AbstractPrediction): Any = modelCategory match {
+    case ModelCategory.AnomalyDetection => p.asInstanceOf[AnomalyDetectionPrediction].isAnomaly
+    case ModelCategory.Binomial         => p.asInstanceOf[BinomialModelPrediction].labelIndex
+    case ModelCategory.Multinomial      => p.asInstanceOf[MultinomialModelPrediction].labelIndex
+    case ModelCategory.Ordinal          => p.asInstanceOf[OrdinalModelPrediction].labelIndex
+    case ModelCategory.Clustering       => p.asInstanceOf[ClusteringModelPrediction].cluster
+    case ModelCategory.KLime            => p.asInstanceOf[KLimeModelPrediction].cluster
+    case ModelCategory.CoxPH            => p.asInstanceOf[CoxPHModelPrediction].value
+    case ModelCategory.Regression       => p.asInstanceOf[RegressionModelPrediction].value
+    case _ => throw new ModelRunException(s"ModelCategory $modelCategory not supported.")
   }
 
   private def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
@@ -62,7 +61,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
       case 0 => Map[String, Any]()
       case 1 =>
         val returnFieldDef = signatureProvider.provideSignature(model).get.getSignatureOutputs.head
-        val transformer = getTransformer(modelWrapper.m.getModelCategory)
+        val transformer = getTransformer(modelWrapper.m.getModelCategory)(_)
         Map(returnFieldDef.signatureName.name -> rows.map(transformer))
     }
   }

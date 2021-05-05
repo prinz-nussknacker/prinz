@@ -3,29 +3,33 @@ import sys
 import os
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 
-if __name__ == "__main__":
-    h2o_port = int(os.environ['H2O_SERVER_PORT'])
-    h2o.init(port = h2o_port)
+if __name__ != "__main__":
+    sys.exit()
 
-    csv_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv")
-    try:
-        data = h2o.import_file(csv_url)
-    except Exception as e:
-        logger.exception("Unable to download training & test CSV, check your internet connection. Error: {}".format(e))
+print(sys.argv)
+alpha = float(sys.argv[1])
+model_id = int(sys.argv[2])
 
-    predictors = data.columns[:-1]
-    response = "quality"
+h2o_port = int(os.environ['H2O_SERVER_PORT'])
+h2o.init(port = h2o_port)
 
-    train, valid = data.split_frame(ratios = [.8])
+csv_url = ("https://raw.githubusercontent.com/zygmuntz/wine-quality/master/winequality/winequality-red.csv")
+data = h2o.import_file(csv_url)
 
-    alpha = float(sys.argv[1])
+predictors = data.columns[:-1]
+response = "quality"
 
-    glm = H2OGeneralizedLinearEstimator(alpha = .25)
-    glm.train(x = predictors, y = response, training_frame = train, validation_frame = valid)
+train, valid = data.split_frame(ratios = [.8])
 
-    print("H2OGeneralizedLinearEstimator model (alpha={}):".format(alpha))
-    print("  RMSE: {}".format(glm.rmse(valid=True)))
-    print("  MAE: {}".format(glm.mae(valid=True)))
-    print("  R2: {}".format(glm.r2(valid=True)))
+glm = H2OGeneralizedLinearEstimator(alpha = .25)
+glm.train(x = predictors, y = response, training_frame = train, validation_frame = valid)
 
-    glm.save_mojo("exports")
+print("H2OWineGeneralizedLinearEstimator model (alpha={}):".format(alpha))
+print("  RMSE: {}".format(glm.rmse(valid=True)))
+print("  MAE: {}".format(glm.mae(valid=True)))
+print("  R2: {}".format(glm.r2(valid=True)))
+
+model_path = glm.save_mojo("exports", force=True)
+print(f"Wine model exported as {glm.model_id}.zip")
+renamed_model_path = model_path.replace(f"{glm.model_id}.zip", f"H2O-ElasticnetWineModel-{model_id}-v0-{model_id}.zip")
+os.rename(model_path, renamed_model_path)

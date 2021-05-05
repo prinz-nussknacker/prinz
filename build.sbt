@@ -178,7 +178,6 @@ lazy val prinz_h2o = (project in file("prinz_h2o"))
   .settings(commonSettings)
   .settings(
     name := "prinz-h2o",
-    Test / fork := true,
     libraryDependencies ++= {
       Seq(
         "ai.h2o" % "h2o-genmodel" % h2oV,
@@ -187,6 +186,7 @@ lazy val prinz_h2o = (project in file("prinz_h2o"))
     }
   )
   .dependsOn(prinz % "compile->compile;test->test")
+  .dependsOn(prinz_proxy % "test->test")
 
 lazy val prinz_sample = (project in file("prinz_sample"))
   .settings(commonSettings)
