@@ -39,6 +39,7 @@ def prinzMergeStrategy: String => MergeStrategy = {
   case PathList("com", "sun", "activation", xs @ _*) => MergeStrategy.first
   case PathList("javax", "activation", xs @ _*) => MergeStrategy.first
   case PathList("org", "slf4j", "impl", xs @ _*) => MergeStrategy.first
+  case PathList("org", "apache", "log4j", xs @ _*) => MergeStrategy.first
   case x: Any => MergeStrategy.defaultMergeStrategy(x)
 }
 
