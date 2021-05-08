@@ -29,7 +29,7 @@ Exact behavior is implementation dependent, but this call should:
 1. prepare model for signature extraction,
 1. prepare model for scoring.
 
-Operation may require additional communication with the storage.
+Operation may require additional communication with the service.
 At this point model would usually get loaded into memory if it is needed.
 
 ### Signatures
@@ -38,7 +38,7 @@ Each machine learning models has inputs and outputs.
 Their names (or ordering) along with data types form a model signature.
 Since range of supported types varies between different libraries, Prinz also abstracts signatures.
 
-Each `ModelInstance` is instantiated with a signature provider, which will extract inputs and outputs from the model.
+Each `ModelInstance` is instantiated with a signature provider, which will supply inputs and outputs of the model.
 External data types are mapped to internal `SignatureType`s based on types supported by Nussknacker (see `TypingResult`).
 Extracted features and outputs are available in the Nussknacker UI for process designers.
 
@@ -50,7 +50,7 @@ When computation reaches Prinz enricher, it triggers scoring for supplied inputs
 Scoring starts by calling `run` on a `PrinzEnricher`.
 During the scoring phase Prinz:
 1. converts inputs to external types based on the model signature,
-1. triggers scoring and receives inputs,
-1. translates output from external types to the ones used by Nussknacker.
+1. triggers scoring and receives outputs,
+1. translates results from external types to the ones used by Nussknacker.
 
 Received outputs may be used for further processing.
