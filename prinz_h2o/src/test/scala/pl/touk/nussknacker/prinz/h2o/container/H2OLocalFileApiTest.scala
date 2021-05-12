@@ -23,7 +23,7 @@ class H2OLocalFileApiTest extends H2OContainerUnitTest
       |  h2o {
       |    fileExtension: ".zip"
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/h2o/exports"
-      |    modelDirectoryHrefSelector: ""
+      |    cachingStrategy: "MEMORY"
       |    modelVersionSeparator: "-v"
       |  }
       |""".stripMargin)
