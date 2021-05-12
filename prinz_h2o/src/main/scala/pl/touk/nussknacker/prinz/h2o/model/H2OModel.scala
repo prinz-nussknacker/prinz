@@ -6,10 +6,10 @@ import hex.genmodel.easy.EasyPredictModelWrapper
 import pl.touk.nussknacker.prinz.h2o.repository.H2OModelPayload
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion}
 
-class H2OModel(payload: H2OModelPayload) extends Model {
+class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
 
     private val modelReaderBackend: MojoReaderBackend =
-        MojoReaderBackendFactory.createReaderBackend(payload.path, CachingStrategy.MEMORY)
+        MojoReaderBackendFactory.createReaderBackend(payload.path, cachingStrategy)
 
     private val genModel: GenModel = ModelMojoReader.readFrom(modelReaderBackend)
 
