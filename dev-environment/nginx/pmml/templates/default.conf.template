@@ -13,7 +13,7 @@ server {
 
 server {
     listen ${PMML_NGINX_STATIC_PORT};
-    server_name static-data;
+    server_name pmml-static-data;
 
     location /static/int {
         rewrite /static/int /int break;

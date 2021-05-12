@@ -20,6 +20,7 @@ services:
       - MODEL_3_PORT=${MODEL_3_PORT}
     volumes:
       - ./mlflow/models:/home/mlflow/models
+      - ./mlflow/scripts:/home/mlflow/scripts
     networks:
       - mlflow-net
     depends_on:

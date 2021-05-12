@@ -9,7 +9,7 @@ COMPILE=true
 
 if [ $# -eq 0 ]
 then
-    COMP_FILES="-f docker-compose-mlflow.yaml -f docker-compose-pmml.yaml"
+    COMP_FILES="-f docker-compose-mlflow.yaml -f docker-compose-pmml.yaml -f docker-compose-h2o.yaml"
 else
     for ARG in $@
     do
@@ -23,6 +23,9 @@ else
         elif [ $ARG = "pmml" ]
         then
             COMP_FILES+="-f docker-compose-pmml.yaml "
+        elif [ $ARG = "h2o" ]
+        then
+            COMP_FILES+="-f docker-compose-h2o.yaml "
         fi
     done
 fi
