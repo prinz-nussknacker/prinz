@@ -1,3 +1,4 @@
+* [Architecture overview](architecture-overview.md)
 * [MLflow implementation](mlflow.md)
 * [Testing](testing.md)
 * [Configuration](configuration.md)
