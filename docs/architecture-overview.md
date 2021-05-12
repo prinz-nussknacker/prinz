@@ -34,9 +34,9 @@ At this point model would usually get loaded into memory if it is needed.
 
 ### Signatures
 
-Each machine learning models has inputs and outputs.
+Each machine learning model has inputs and outputs.
 Their names (or ordering) along with data types form a model signature.
-Since range of supported types varies between different libraries, Prinz also abstracts signatures.
+Since the range of supported types varies between different libraries, Prinz also abstracts signatures.
 
 Each `ModelInstance` is instantiated with a signature provider, which will supply inputs and outputs of the model.
 External data types are mapped to internal `SignatureType`s based on types supported by Nussknacker (see `TypingResult`).
@@ -45,7 +45,7 @@ Extracted features and outputs are available in the Nussknacker UI for process d
 ## Scoring
 
 In a deployed Nussknacker process events move through the flow sequentially triggering computations at each step.
-When computation reaches Prinz enricher, it triggers scoring for supplied inputs.
+When computation reaches a Prinz enricher, it triggers scoring for supplied inputs.
 (At this point system does not support batching).
 Scoring starts by calling `run` on a `PrinzEnricher`.
 During the scoring phase Prinz:
