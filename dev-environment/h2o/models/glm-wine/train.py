@@ -21,7 +21,7 @@ response = "quality"
 
 train, valid = data.split_frame(ratios = [.8])
 
-glm = H2OGeneralizedLinearEstimator(alpha = .25)
+glm = H2OGeneralizedLinearEstimator(alpha = alpha)
 glm.train(x = predictors, y = response, training_frame = train, validation_frame = valid)
 
 print("H2OWineGeneralizedLinearEstimator model (alpha={}):".format(alpha))

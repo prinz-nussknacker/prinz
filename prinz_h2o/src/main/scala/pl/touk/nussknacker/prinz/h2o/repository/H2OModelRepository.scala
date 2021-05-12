@@ -19,15 +19,15 @@ class H2OModelRepository(implicit val config: H2OConfig)
         .toList
       )
 
+  private def mapPayload(payload: ModelPayload): H2OModelPayload =
+    H2OModelPayload(payload, config.fileExtension, config.modelVersionSeparator)
+
   override def getModel(name: ModelName): RepositoryResponse[Model] = {
     client.listModelFiles
       .right.map(payloads => payloads
-      .map(mapPayload)
-      .filter(p => p.name == name.internal)
-    )
+        .map(mapPayload)
+        .filter(p => p.name == name.internal)
+      )
       .map(_.head).map(new H2OModel(_))
   }
-
-  private def mapPayload(payload: ModelPayload): H2OModelPayload =
-    H2OModelPayload(payload, config.fileExtension, config.modelVersionSeparator)
 }

@@ -15,7 +15,7 @@ object H2ODataConverter extends LazyLogging {
   private def wrappedByDefinitionFrom(signature: ModelSignature)(key: String, value: AnyRef): AnyRef =
     signature.getInputValueType(SignatureName(key)) match {
       case Some(signatureType) => mapValueBySignature(value, signatureType)
-      case None => throw new IllegalStateException(s"Found data column not defined in signature wit name: $key")
+      case None => throw new IllegalStateException(s"Found data column not defined in signature with name: $key")
     }
 
   private def mapValueBySignature(value: AnyRef, signatureType: SignatureType): AnyRef =
@@ -27,11 +27,10 @@ object H2ODataConverter extends LazyLogging {
 
   private def wrapStringInput(input: AnyRef): AnyRef = {
     input match {
-      case stringValue: String => {
+      case stringValue: String =>
         val beginFixed = if (stringValue.startsWith(STRING_WRAPPER)) stringValue else STRING_WRAPPER + stringValue
         val endFixed = if (beginFixed.endsWith(STRING_WRAPPER)) beginFixed else beginFixed + STRING_WRAPPER
         endFixed
-      }
       case _ => throw new IllegalStateException("Expected String value on field encoded as String typed input")
     }
   }
