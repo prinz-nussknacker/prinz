@@ -15,7 +15,7 @@ class H2OModelRepository(implicit val config: H2OConfig)
     client.listModelFiles.right
       .map(payloads => payloads
         .map(mapPayload)
-        .map(new H2OModel(_))
+        .map(new H2OModel(_, config.cachingStrategy))
         .toList
       )
 
@@ -28,6 +28,6 @@ class H2OModelRepository(implicit val config: H2OConfig)
         .map(mapPayload)
         .filter(p => p.name == name.internal)
       )
-      .map(_.head).map(new H2OModel(_))
+      .map(_.head).map(new H2OModel(_, config.cachingStrategy))
   }
 }

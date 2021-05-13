@@ -23,6 +23,7 @@ class H2OHttpApiTest extends H2OContainerUnitTest
       |  h2o {
       |    fileExtension: ".zip"
       |    modelsDirectory: "http://localhost:${readEnv("H2O_SAMPLES_PORT")}"
+      |    cachingStrategy: "MEMORY"
       |    modelDirectoryHrefSelector: "body > ul > li > a"
       |    modelVersionSeparator: "-v"
       |  }
