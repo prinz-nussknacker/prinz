@@ -4,7 +4,7 @@ import com.typesafe.config.Config
 import pl.touk.nussknacker.engine.api.Service
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
 import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
-import pl.touk.nussknacker.engine.flink.util.exception.{BrieflyLoggingExceptionHandler, VerboselyLoggingExceptionHandler}
+import pl.touk.nussknacker.engine.flink.util.exception.VerboselyLoggingExceptionHandler
 import pl.touk.nussknacker.engine.flink.util.sink.EmptySink
 import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
@@ -69,5 +69,5 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
     ExceptionHandlerFactory.noParams(VerboselyLoggingExceptionHandler(_))
 
   private def createModelEnricherRepresentation(model: Model): (String, WithCategories[Service]) =
-    model.getName.toString -> allCategories(PrinzEnricher(model))
+    model.getMetadata.modelName.internal -> allCategories(PrinzEnricher(model))
 }

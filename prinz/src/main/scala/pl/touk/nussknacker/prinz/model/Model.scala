@@ -4,24 +4,26 @@ import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 
 trait Model {
 
+  def getMetadata: ModelMetadata = ModelMetadata(getName, getVersion, getSignature, getParameterDefinition)
+
+  def toModelInstance: ModelInstance
+
   protected val signatureOption: ProvideSignatureResult
 
+  override def toString: String = s"Model $getName version: $getVersion"
+
   // defines input of scored external model
-  final def getSignature: ModelSignature = signatureOption match {
+  protected final def getSignature: ModelSignature = signatureOption match {
     case Right(value) => value
     case Left(exception) => throw SignatureNotFoundException(exception)
   }
 
   // defines input of enricher model
-  def getParameterDefinition: ModelSignature = getSignature
+  protected def getParameterDefinition: ModelSignature = getSignature
 
-  def getName: ModelName
+  protected def getName: ModelName
 
-  def getVersion: ModelVersion
-
-  def toModelInstance: ModelInstance
-
-  override def toString: String = s"Model $getName version: $getVersion"
+  protected def getVersion: ModelVersion
 }
 
 class ModelName(name: String) {

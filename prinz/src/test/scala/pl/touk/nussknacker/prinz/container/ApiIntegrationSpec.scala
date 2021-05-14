@@ -22,7 +22,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
     val models = repository.listModels.toOption
 
     models.isDefined shouldBe true
-    models.get.groupBy(_.getName).size should be > 1
+    models.get.groupBy(_.getMetadata.modelName).size should be > 1
   }
 
   it should "have model instance available" in {
@@ -33,7 +33,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
 
   it should "have model that has signature defined" in {
     val model = getModel()
-    val signature = model.map(_.getSignature)
+    val signature = model.map(_.getMetadata.signature)
 
     signature.isDefined shouldBe true
   }
@@ -41,7 +41,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
   it should "allow to run model with sample data" in {
     val model = getModel().get
     val instance = getModelInstance().get
-    val signature = model.getSignature
+    val signature = model.getMetadata.signature
     val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
@@ -57,7 +57,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
       getModelInstance(getElasticnetWineModelModel(1)).get,
       getModelInstance(getElasticnetWineModelModel(2)).get
     )
-    val signatures = models.map(_.getSignature)
+    val signatures = models.map(_.getMetadata.signature)
     val sampleInputs = signatures.map(constructInputMap(0.235.asInstanceOf[AnyRef], _))
 
     (instances, sampleInputs)
@@ -90,7 +90,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
 
   it should "have wine model with proper model signature" in {
     val model = getModel(getElasticnetWineModelModel(1))
-    val signature = model.map(_.getSignature).get
+    val signature = model.map(_.getMetadata.signature).get
     val inputNames = signature.getInputNames
     val outputNames = signature.getOutputNames
 
@@ -100,7 +100,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
 
   it should "have fraud detection model with proper model signature" in {
     val model = getModel(getFraudDetectionModel)
-    val signature = model.map(_.getSignature).get
+    val signature = model.map(_.getMetadata.signature).get
     val inputNames = signature.getInputNames
     val outputNames = signature.getOutputNames
 

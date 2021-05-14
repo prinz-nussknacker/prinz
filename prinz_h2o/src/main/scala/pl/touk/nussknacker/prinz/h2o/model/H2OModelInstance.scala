@@ -24,7 +24,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
 
   override def run(inputMap: ModelInputData): ModelRunResult = Future {
     try {
-      val convertedInputMap = H2ODataConverter.inputToTypedModelInput(inputMap, model.getSignature)
+      val convertedInputMap = H2ODataConverter.inputToTypedModelInput(inputMap, model.getMetadata.signature)
       logger.info("Converted input: {}", convertedInputMap)
       val resultSeq = convertedInputMap.mapRows(evaluateRow)
       logger.info("Mapped rows: {}", resultSeq)
@@ -63,7 +63,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     rows.take(1).size match {
       case 0 => Map[String, Any]()
       case 1 =>
-        val returnFieldDef = model.getSignature.getSignatureOutputs.head
+        val returnFieldDef = model.getMetadata.signature.getSignatureOutputs.head
         val transformer = getTransformer(modelWrapper.m.getModelCategory)(_)
         Map(returnFieldDef.signatureName.name -> rows.map(transformer))
     }

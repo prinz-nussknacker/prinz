@@ -22,8 +22,6 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
                              metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
     val inputMap = createInputMap(params)
-    logger.info("input params in enricher: " + params)
-    logger.info("input map for model run: " + inputMap)
     modelInstance.run(inputMap).map {
       case Right(runResult) => runResult
       case Left(exc) => throw exc
@@ -32,12 +30,14 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
 
   override def parameterDefinition: List[Parameter] =
     model
-      .getParameterDefinition
+      .getMetadata
+      .parameterDefinition
       .toInputParameterDefinition
 
   override def returnType: typing.TypingResult =
     model
-      .getParameterDefinition
+      .getMetadata
+      .parameterDefinition
       .getOutputDefinition
 
   def createInputMap(inputs: List[AnyRef]): ModelInputData =

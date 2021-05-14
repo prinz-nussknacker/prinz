@@ -20,9 +20,7 @@ class ProxiedInputModel private(model: Model,
 
   private val proxiedName: ModelName = modelName
 
-  private val modelMetadata: ModelMetadata = ModelMetadata(model.getName, model.getVersion, model.getSignature)
-
-  private val proxiedModelInstance: ModelInstance = proxySupplier(modelMetadata, originalModelInstance)
+  private val proxiedModelInstance: ModelInstance = proxySupplier(model.getMetadata, originalModelInstance)
 
   def this(model: Model,
            proxiedParams: Iterable[ProxiedModelInputParam],
@@ -60,11 +58,11 @@ class ProxiedInputModel private(model: Model,
     )
   }
 
-  override def getName: ModelName = proxiedName
-
-  override def getVersion: ModelVersion = model.getVersion
-
   override def toModelInstance: ModelInstance = proxiedModelInstance
+
+  override protected def getName: ModelName = proxiedName
+
+  override protected def getVersion: ModelVersion = model.getVersion
 }
 
 object ProxiedInputModel {

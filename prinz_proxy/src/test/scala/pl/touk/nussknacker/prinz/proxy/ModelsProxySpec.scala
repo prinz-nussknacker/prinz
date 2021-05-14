@@ -87,7 +87,7 @@ trait ModelsProxySpec extends UnitTest
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
     val proxiedModel = ProxiedInputModel(model, paramProvider)
     val instance = proxiedModel.toModelInstance
-    val enricherInputsDefinition = proxiedModel.getParameterDefinition.getSignatureInputs
+    val enricherInputsDefinition = proxiedModel.getMetadata.parameterDefinition.getSignatureInputs
     val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
 
     inputsNames should contain(s"${tableName}_id")

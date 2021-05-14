@@ -14,7 +14,7 @@ class TransformedSignatureProvider(transformer: SignatureTransformer) extends Si
   override def provideSignature(modelSignatureLocationMetadata: ModelSignatureLocationMetadata): ProvideSignatureResult =
   modelSignatureLocationMetadata match {
     case metadata: ProxiedModelSignatureLocationMetadata =>
-      val signature = metadata.proxiedModel.getSignature
+      val signature = metadata.proxiedModel.getMetadata.signature
       Right(transformer.changeSignature(signature))
     case _: Any => Left(new IllegalArgumentException("TransformedSignatureProvider can provide signature only for ProxiedModels"))
   }

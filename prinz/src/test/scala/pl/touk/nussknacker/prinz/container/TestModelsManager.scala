@@ -27,10 +27,10 @@ trait TestModelsManager {
   }
 
   def getFraudDetectionModel(models: List[Model]): Model =
-    models.filter(_.getName.toString.contains("FraudDetection")).head
+    models.filter(_.getMetadata.modelName.toString.contains("FraudDetection")).head
 
   def getElasticnetWineModelModel(modelId: Int)(models: List[Model]): Model =
-    models.filter(_.getName.toString.contains("ElasticnetWineModel-" + modelId)).head
+    models.filter(_.getMetadata.modelName.toString.contains("ElasticnetWineModel-" + modelId)).head
 
   def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
     val names = signature.getInputNames.map(_.name)
