@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.createMLFModelSignatureLocationMetadata
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.extractLatestVersion
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.model.{Model, ModelMetadata, ModelName, ModelSignatureLocationMetadata, ModelVersion}
@@ -18,18 +18,17 @@ final case class MLFRegisteredModel(name: MLFRegisteredModelName,
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
 
   override protected val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
-    .provideSignature(createMLFModelSignatureLocationMetadata(name, latestVersions))
+    .provideSignature(MLFModelSignatureLocationMetadata(name, extractLatestVersion(latestVersions)))
 
   override protected def getName: MLFRegisteredModelName = name
 
-  override protected def getVersion: MLFRegisteredModelVersion = latestVersions.maxBy(_.lastUpdatedTimestamp)
+  override protected def getVersion: MLFRegisteredModelVersion = extractLatestVersion(latestVersions)
 }
 
 object MLFRegisteredModel {
 
-  private def createMLFModelSignatureLocationMetadata(name: MLFRegisteredModelName,
-                                                      latestVersions: List[MLFRegisteredModelVersion]):
-  MLFModelSignatureLocationMetadata = MLFModelSignatureLocationMetadata(name, )
+  private def extractLatestVersion(latestVersions: List[MLFRegisteredModelVersion]): MLFRegisteredModelVersion =
+    latestVersions.maxBy(_.lastUpdatedTimestamp)
 }
 
 final case class MLFRegisteredModelName(name: String) extends ModelName(name)
