@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
-import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelVersion, SignatureProvider}
 
 import java.time.Instant
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
@@ -10,6 +10,8 @@ case class MLFRegisteredModel(name: MLFRegisteredModelName,
                               lastUpdatedTimestamp: Instant,
                               latestVersions: List[MLFRegisteredModelVersion],
                               private val repository: MLFModelRepository) extends Model {
+
+  override val signatureProvider: SignatureProvider = MLFSignatureProvider(repository.config)
 
   override def getName: MLFRegisteredModelName = name
 

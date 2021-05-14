@@ -1,6 +1,18 @@
 package pl.touk.nussknacker.prinz.model
 
+import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
+
 trait Model {
+
+  val signatureProvider: SignatureProvider
+
+  private val signatureOption: ProvideSignatureResult =
+    signatureProvider.provideSignature(this)
+
+  def getSignature: ModelSignature = signatureOption match {
+    case Some(value) => value
+    case None => throw SignatureNotFoundException(this)
+  }
 
   def getName: ModelName
 

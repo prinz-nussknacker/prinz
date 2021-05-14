@@ -4,9 +4,11 @@ import hex.genmodel.{GenModel, ModelMojoReader, MojoReaderBackend, MojoReaderBac
 import hex.genmodel.MojoReaderBackendFactory.CachingStrategy
 import hex.genmodel.easy.EasyPredictModelWrapper
 import pl.touk.nussknacker.prinz.h2o.repository.H2OModelPayload
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelVersion, SignatureProvider}
 
 class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
+
+    override val signatureProvider: SignatureProvider = H2OSignatureProvider
 
     private val modelReaderBackend: MojoReaderBackend =
         MojoReaderBackendFactory.createReaderBackend(payload.path, cachingStrategy)

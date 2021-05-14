@@ -1,25 +1,16 @@
 package pl.touk.nussknacker.prinz.model
 
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
-import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 
 import java.util.{Map => JMap}
 import scala.concurrent.Future
 
-abstract class ModelInstance(val model: Model, val signatureProvider: SignatureProvider) {
-
-  private val signatureOption: ProvideSignatureResult =
-    signatureProvider.provideSignature(model)
+abstract class ModelInstance(val model: Model) {
 
   def run(inputMap: ModelInputData): ModelRunResult
 
-  def getSignature: ModelSignature = signatureOption match {
-    case Some(value) => value
-    case None => throw SignatureNotFoundException(this)
-  }
-
-  def getParameterDefinition: ModelSignature = getSignature
+  def getParameterDefinition: ModelSignature = model.getSignature
 
   override def toString: String = s"ModelInstance for: $model"
 }

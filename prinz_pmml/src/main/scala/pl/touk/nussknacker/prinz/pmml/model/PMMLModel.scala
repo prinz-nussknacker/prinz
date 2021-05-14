@@ -1,10 +1,12 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
 import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvaluator, PMMLException}
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelVersion, SignatureProvider}
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
+
+  override val signatureProvider: SignatureProvider = PMMLSignatureProvider
 
   private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)
 
