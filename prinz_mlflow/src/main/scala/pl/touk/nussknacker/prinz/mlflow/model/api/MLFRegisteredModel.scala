@@ -13,18 +13,16 @@ final case class MLFRegisteredModel(name: MLFRegisteredModelName,
                                     latestVersions: List[MLFRegisteredModelVersion],
                                     private val repository: MLFModelRepository) extends Model {
 
-  override val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
-    .provideSignature(createMLFModelSignatureLocationMetadata(name, latestVersions))
-
-  override def getMetadata: ModelMetadata = MLFModelSignatureLocationMetadata(name, latestVersions.maxBy(_.lastUpdatedTimestamp))
-
-  override def getName: MLFRegisteredModelName = name
-
-  override def getVersion: MLFRegisteredModelVersion = latestVersions.maxBy(_.lastUpdatedTimestamp)
-
   def getVersionName: MLFRegisteredModelVersionName = MLFRegisteredModelVersionName(latestVersions.maxBy(_.lastUpdatedTimestamp).name)
 
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
+
+  override protected val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
+    .provideSignature(createMLFModelSignatureLocationMetadata(name, latestVersions))
+
+  override protected def getName: MLFRegisteredModelName = name
+
+  override protected def getVersion: MLFRegisteredModelVersion = latestVersions.maxBy(_.lastUpdatedTimestamp)
 }
 
 object MLFRegisteredModel {

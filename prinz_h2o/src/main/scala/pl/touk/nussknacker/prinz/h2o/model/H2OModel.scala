@@ -12,12 +12,6 @@ import java.net.URL
 
 class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
 
-    override protected val signatureOption: ProvideSignatureResult = {
-        val model = loadGenModel(payload.path, cachingStrategy)
-        val metadata = H2OModelSignatureLocationMetadata(model)
-        H2OSignatureProvider.provideSignature(metadata)
-    }
-
     private val modelReaderBackend: MojoReaderBackend =
         MojoReaderBackendFactory.createReaderBackend(payload.path, cachingStrategy)
 
@@ -25,11 +19,17 @@ class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) exten
 
     val modelWrapper: EasyPredictModelWrapper = new EasyPredictModelWrapper(genModel)
 
-    override def getName: ModelName = H2OModelName(payload.name)
-
-    override def getVersion: ModelVersion = H2OModelVersion(payload.version)
-
     override def toModelInstance: ModelInstance = H2OModelInstance(modelWrapper, this)
+
+    override protected val signatureOption: ProvideSignatureResult = {
+        val model = loadGenModel(payload.path, cachingStrategy)
+        val metadata = H2OModelSignatureLocationMetadata(model)
+        H2OSignatureProvider.provideSignature(metadata)
+    }
+
+    override protected def getName: ModelName = H2OModelName(payload.name)
+
+    override protected def getVersion: ModelVersion = H2OModelVersion(payload.version)
 }
 
 object H2OModel {

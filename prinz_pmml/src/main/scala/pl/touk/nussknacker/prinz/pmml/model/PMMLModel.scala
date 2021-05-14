@@ -2,8 +2,8 @@ package pl.touk.nussknacker.prinz.pmml.model
 
 import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, PMMLException}
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException,
-  ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.pmml.model.PMMLModel.extractName
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
@@ -28,13 +28,11 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
     inputStream.close()
   }
 
-  override def getName: PMMLModelName = extractName
-
-  override def getVersion: ModelVersion = PMMLModelVersion(payload.version)
-
   override def toModelInstance: ModelInstance = PMMLModelInstance(evaluator, this)
 
-  private def extractName: PMMLModelName = PMMLModelName(optionalModelName.getOrElse(payload.name))
+  override protected def getName: PMMLModelName = extractName(optionalModelName, payload)
+
+  override protected def getVersion: ModelVersion = PMMLModelVersion(payload.version)
 }
 
 final case class PMMLModelName(name: String) extends ModelName(name)
@@ -46,4 +44,7 @@ final case class PMMLModelSignatureLocationMetadata(payload: PMMLModelPayload) e
 object PMMLModel {
 
   def apply(payload: PMMLModelPayload): PMMLModel = new PMMLModel(payload)
+
+  private def extractName(optionalModelName: Option[String], payload: PMMLModelPayload): PMMLModelName =
+    PMMLModelName(optionalModelName.getOrElse(payload.name))
 }
