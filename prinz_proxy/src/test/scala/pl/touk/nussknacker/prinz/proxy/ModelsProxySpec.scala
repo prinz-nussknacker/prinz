@@ -86,7 +86,6 @@ trait ModelsProxySpec extends UnitTest
     val model = getModel(getFraudDetectionModel).get
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
     val proxiedModel = ProxiedInputModel(model, paramProvider)
-    val instance = proxiedModel.toModelInstance
     val enricherInputsDefinition = proxiedModel.getMetadata.parameterDefinition.getSignatureInputs
     val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
 

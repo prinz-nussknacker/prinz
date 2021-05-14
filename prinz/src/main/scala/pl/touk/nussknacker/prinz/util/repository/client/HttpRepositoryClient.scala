@@ -9,7 +9,7 @@ import scala.collection.JavaConverters
 
 
 class HttpRepositoryClient(path: URI, fileExtension: String, selector: String)
-  extends AbstractRepositoryClient(path, fileExtension) {
+  extends AbstractRepositoryClient(fileExtension) {
 
   override protected def loadModelsOnPath: Iterable[ModelPayload] = {
     if(isValidFile(path)) {

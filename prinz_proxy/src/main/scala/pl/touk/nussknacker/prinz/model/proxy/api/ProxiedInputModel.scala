@@ -62,7 +62,7 @@ class ProxiedInputModel private(model: Model,
 
   override protected def getName: ModelName = proxiedName
 
-  override protected def getVersion: ModelVersion = model.getVersion
+  override protected def getVersion: ModelVersion = model.getMetadata.modelVersion
 }
 
 object ProxiedInputModel {

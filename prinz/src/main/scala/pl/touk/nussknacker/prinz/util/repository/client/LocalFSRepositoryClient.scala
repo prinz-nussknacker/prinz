@@ -6,7 +6,7 @@ import java.io.{FileInputStream, InputStream}
 import java.net.URI
 import java.nio.file.Paths
 
-class LocalFSRepositoryClient(path: URI, fileExtension: String) extends AbstractRepositoryClient(path, fileExtension) {
+class LocalFSRepositoryClient(path: URI, fileExtension: String) extends AbstractRepositoryClient(fileExtension) {
 
   override protected def loadModelsOnPath: Iterable[ModelPayload] = {
     val file = Paths.get(path).toFile

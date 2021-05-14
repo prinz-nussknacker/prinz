@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.mlflow.model.api
 import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.extractLatestVersion
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelMetadata, ModelName, ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelSignatureLocationMetadata, ModelVersion}
 
 import java.time.Instant
 

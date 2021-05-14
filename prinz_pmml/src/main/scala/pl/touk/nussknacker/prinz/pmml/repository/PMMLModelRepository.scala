@@ -4,7 +4,7 @@ import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.pmml.PMMLConfig
 import pl.touk.nussknacker.prinz.pmml.model.PMMLModel
-import pl.touk.nussknacker.prinz.util.repository.client.{RepositoryClient}
+import pl.touk.nussknacker.prinz.util.repository.client.RepositoryClient
 import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 
 class PMMLModelRepository(implicit val config: PMMLConfig)
