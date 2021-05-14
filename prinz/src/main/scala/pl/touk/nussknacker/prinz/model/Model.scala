@@ -4,15 +4,16 @@ import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 
 trait Model {
 
-  val signatureProvider: SignatureProvider
+  protected val signatureOption: ProvideSignatureResult
 
-  private val signatureOption: ProvideSignatureResult =
-    signatureProvider.provideSignature(this)
-
-  def getSignature: ModelSignature = signatureOption match {
-    case Some(value) => value
-    case None => throw SignatureNotFoundException(this)
+  // defines input of scored external model
+  final def getSignature: ModelSignature = signatureOption match {
+    case Right(value) => value
+    case Left(exception) => throw SignatureNotFoundException(exception)
   }
+
+  // defines input of enricher model
+  def getParameterDefinition: ModelSignature = getSignature
 
   def getName: ModelName
 

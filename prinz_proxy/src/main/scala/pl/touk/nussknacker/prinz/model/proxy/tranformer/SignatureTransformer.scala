@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.model.proxy.tranformer
 
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureProvider}
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedModelSignatureLocationMetadata
+import pl.touk.nussknacker.prinz.model.{ModelSignature, ModelSignatureLocationMetadata, SignatureProvider}
 
 trait SignatureTransformer {
 
@@ -10,8 +11,11 @@ trait SignatureTransformer {
 
 class TransformedSignatureProvider(transformer: SignatureTransformer) extends SignatureProvider {
 
-  override def provideSignature(model: Model): ProvideSignatureResult =
-    model.signatureProvider
-      .provideSignature(model)
-      .map(transformer.changeSignature)
+  override def provideSignature(modelSignatureLocationMetadata: ModelSignatureLocationMetadata): ProvideSignatureResult =
+  modelSignatureLocationMetadata match {
+    case metadata: ProxiedModelSignatureLocationMetadata =>
+      val signature = metadata.proxiedModel.getSignature
+      Right(transformer.changeSignature(signature))
+    case _: Any => Left(new IllegalArgumentException("TransformedSignatureProvider can provide signature only for ProxiedModels"))
+  }
 }

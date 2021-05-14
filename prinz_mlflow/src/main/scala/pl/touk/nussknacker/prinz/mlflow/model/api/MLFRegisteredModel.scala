@@ -1,17 +1,20 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
-import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelVersion, SignatureProvider}
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.createMLFModelSignatureLocationMetadata
+import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
+import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
+import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelSignature, ModelSignatureLocationMetadata, ModelVersion, SignatureProvider}
 
 import java.time.Instant
-import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 
-case class MLFRegisteredModel(name: MLFRegisteredModelName,
-                              creationTimestamp: Instant,
-                              lastUpdatedTimestamp: Instant,
-                              latestVersions: List[MLFRegisteredModelVersion],
-                              private val repository: MLFModelRepository) extends Model {
+final case class MLFRegisteredModel(name: MLFRegisteredModelName,
+                                    creationTimestamp: Instant,
+                                    lastUpdatedTimestamp: Instant,
+                                    latestVersions: List[MLFRegisteredModelVersion],
+                                    private val repository: MLFModelRepository) extends Model {
 
-  override val signatureProvider: SignatureProvider = MLFSignatureProvider(repository.config)
+  override val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
+    .provideSignature(createMLFModelSignatureLocationMetadata(name, latestVersions))
 
   override def getName: MLFRegisteredModelName = name
 
@@ -20,13 +23,24 @@ case class MLFRegisteredModel(name: MLFRegisteredModelName,
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
 }
 
-case class MLFRegisteredModelName(name: String) extends ModelName(name)
+object MLFRegisteredModel {
 
-case class MLFRegisteredModelVersion(name: String,
-                                     version: String,
-                                     creationTimestamp: Instant,
-                                     lastUpdatedTimestamp: Instant,
-                                     currentStage: String,
-                                     source: String,
-                                     runId: String,
-                                     status: String) extends ModelVersion
+  private def createMLFModelSignatureLocationMetadata(name: MLFRegisteredModelName,
+                                                      latestVersions: List[MLFRegisteredModelVersion]):
+  MLFModelSignatureLocationMetadata = MLFModelSignatureLocationMetadata(name, latestVersions.maxBy(_.lastUpdatedTimestamp))
+}
+
+final case class MLFRegisteredModelName(name: String) extends ModelName(name)
+
+final case class MLFRegisteredModelVersion(name: String,
+                                           version: String,
+                                           creationTimestamp: Instant,
+                                           lastUpdatedTimestamp: Instant,
+                                           currentStage: String,
+                                           source: String,
+                                           runId: String,
+                                           status: String) extends ModelVersion
+
+final case class MLFModelSignatureLocationMetadata(name: MLFRegisteredModelName,
+                                                   version: MLFRegisteredModelVersion)
+  extends ModelSignatureLocationMetadata

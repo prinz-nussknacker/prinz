@@ -5,12 +5,12 @@ import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload.splitFilen
 
 import java.io.InputStream
 
-final case class PMMLModelPayload(inputStream: InputStream, name: String, version: String)
+final case class PMMLModelPayload(inputStreamSource: () => InputStream, name: String, version: String)
 
 object PMMLModelPayload {
 
-  def apply(payload: ModelPayload, inputStream: InputStream, extension: String, separator: String): PMMLModelPayload = {
+  def apply(payload: ModelPayload, inputStreamSource: () => InputStream, extension: String, separator: String): PMMLModelPayload = {
     val (name, version) = splitFilenameToNameAndVersion(payload.filename, extension, separator)
-    PMMLModelPayload(inputStream, name, version)
+    PMMLModelPayload(inputStreamSource, name, version)
   }
 }

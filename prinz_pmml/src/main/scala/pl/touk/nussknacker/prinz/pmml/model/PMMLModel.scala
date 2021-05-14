@@ -1,14 +1,20 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
-import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, ModelEvaluator, PMMLException}
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelVersion, SignatureProvider}
+import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, PMMLException}
+import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException,
+  ModelSignatureLocationMetadata, ModelVersion}
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
-  override val signatureProvider: SignatureProvider = PMMLSignatureProvider
+  override protected val signatureOption: ProvideSignatureResult = PMMLSignatureProvider
+    .provideSignature(PMMLModelSignatureLocationMetadata(payload))
 
-  private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(payload.inputStream)
+  // TODO open model evaluator twice - for signature parse and scoring. Use ResourceManager to properly manage opened stream
+  private val inputStream = payload.inputStreamSource()
+
+  private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(inputStream)
 
   private val optionalModelName: Option[String] = Option(evaluatorBuilder.getModel.getModelName)
 
@@ -17,9 +23,9 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
   try {
     evaluator.verify()
   } catch {
-    case ex: PMMLException => throw ModelNotValidException(this, ex)
+    case ex: PMMLException => throw ModelNotValidException(ex)
   } finally {
-    payload.inputStream.close()
+    inputStream.close()
   }
 
   override def getName: PMMLModelName = extractName
@@ -31,9 +37,11 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
   private def extractName: PMMLModelName = PMMLModelName(optionalModelName.getOrElse(payload.name))
 }
 
-case class PMMLModelName(name: String) extends ModelName(name)
+final case class PMMLModelName(name: String) extends ModelName(name)
 
-case class PMMLModelVersion(version: String) extends ModelVersion
+final case class PMMLModelVersion(version: String) extends ModelVersion
+
+final case class PMMLModelSignatureLocationMetadata(payload: PMMLModelPayload) extends ModelSignatureLocationMetadata
 
 object PMMLModel {
 

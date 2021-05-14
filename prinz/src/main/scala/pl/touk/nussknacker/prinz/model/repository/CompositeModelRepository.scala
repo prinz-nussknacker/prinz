@@ -1,5 +1,5 @@
 package pl.touk.nussknacker.prinz.model.repository
-import pl.touk.nussknacker.prinz.model.{Model, ModelName}
+import pl.touk.nussknacker.prinz.model.Model
 
 class CompositeModelRepository private(repositories: List[ModelRepository]) extends ModelRepository {
 
@@ -8,18 +8,6 @@ class CompositeModelRepository private(repositories: List[ModelRepository]) exte
       case (Nil, lists) => Right((for (Right(list) <- lists) yield list).flatten)
       case(exceptions,  _) => Left((for (Left(exc) <- exceptions) yield exc).head)
     }
-
-  override def getModel(name: ModelName): RepositoryResponse[Model] = {
-    val results = repositories.map(_.getModel(name))
-      .partition(_.isRight)
-    val (responses, errors) = results
-    if (responses.nonEmpty) {
-      responses.head
-    }
-    else {
-      errors.head
-    }
-  }
 }
 
 object CompositeModelRepository {

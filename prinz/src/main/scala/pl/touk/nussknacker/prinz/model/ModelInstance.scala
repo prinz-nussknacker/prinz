@@ -10,8 +10,6 @@ abstract class ModelInstance(val model: Model) {
 
   def run(inputMap: ModelInputData): ModelRunResult
 
-  def getParameterDefinition: ModelSignature = model.getSignature
-
   override def toString: String = s"ModelInstance for: $model"
 }
 
