@@ -1,12 +1,12 @@
 package pl.touk.nussknacker.prinz.proxy
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
-import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
 import pl.touk.nussknacker.prinz.container.TestModelsManager
 import pl.touk.nussknacker.prinz.model.SignatureName
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
+import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
 
 import java.sql.ResultSet
 import scala.concurrent.{Await, Future}
@@ -87,12 +87,12 @@ trait ModelsProxySpec extends UnitTest
     val paramProvider = new TestH2IdTransformedParamProvider(tableName)
     val proxiedModel = ProxiedInputModel(model, paramProvider)
     val instance = proxiedModel.toModelInstance
-    val enricherInputsDefinition = instance.getParameterDefinition.getSignatureInputs
+    val enricherInputsDefinition = proxiedModel.getParameterDefinition.getSignatureInputs
     val inputsNames = enricherInputsDefinition.map(_.signatureName.name)
 
-    inputsNames should contain (s"${tableName}_id")
-    inputsNames should contain ("age")
-    inputsNames should contain ("category")
+    inputsNames should contain(s"${tableName}_id")
+    inputsNames should contain("age")
+    inputsNames should contain("category")
     inputsNames should not contain s"${tableName}_gender"
     inputsNames should not contain "gender"
     inputsNames should not contain s"${tableName}_amount"
