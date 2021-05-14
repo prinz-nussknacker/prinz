@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.mlflow.model.api
 import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.createMLFModelSignatureLocationMetadata
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelMetadata, ModelName, ModelSignature, ModelSignatureLocationMetadata, ModelVersion, SignatureProvider}
+import pl.touk.nussknacker.prinz.model.{Model, ModelMetadata, ModelName, ModelSignatureLocationMetadata, ModelVersion}
 
 import java.time.Instant
 
@@ -49,4 +49,4 @@ final case class MLFRegisteredModelVersion(name: String,
 
 final case class MLFModelSignatureLocationMetadata(name: MLFRegisteredModelName,
                                                    version: MLFRegisteredModelVersion)
-  extends ModelSignatureLocationMetadata with ModelMetadata
+  extends ModelSignatureLocationMetadata
