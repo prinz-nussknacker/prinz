@@ -14,7 +14,9 @@ import scala.concurrent.Future
 
 case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod with LazyLogging {
 
-  private val modelInstance = model.toModelInstance
+  private lazy val modelInstance = {
+    model.toModelInstance
+  }
 
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
@@ -29,12 +31,12 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
   }
 
   override def parameterDefinition: List[Parameter] =
-    modelInstance
+    model
       .getParameterDefinition
       .toInputParameterDefinition
 
   override def returnType: typing.TypingResult =
-    modelInstance
+    model
       .getParameterDefinition
       .getOutputDefinition
 
