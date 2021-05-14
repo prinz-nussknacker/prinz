@@ -8,7 +8,7 @@ import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 class TransformedModelInstance(originalModelInstance: ModelInstance,
                                transformedSignatureProvider: TransformedSignatureProvider,
                                paramProvider: TransformedParamProvider)
-  extends ModelInstance(originalModelInstance.model, originalModelInstance.signatureProvider) {
+  extends ModelInstance(originalModelInstance.model) {
 
   private val transformedSignatureOption: ProvideSignatureResult =
     transformedSignatureProvider
@@ -23,7 +23,7 @@ class TransformedModelInstance(originalModelInstance: ModelInstance,
 
   override def getParameterDefinition: ModelSignature = transformedSignatureOption match {
     case Some(value) => value
-    case None => throw SignatureNotFoundException(this)
+    case None => throw SignatureNotFoundException(originalModelInstance.model)
   }
 }
 

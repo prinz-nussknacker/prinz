@@ -11,7 +11,7 @@ class ProxiedInputModelInstance(modelMetadata: ModelMetadata,
                                 originalModelInstance: ModelInstance,
                                 proxiedParams: Iterable[ProxiedModelInputParam],
                                 compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]])
-  extends ModelInstance(originalModelInstance.model, originalModelInstance.signatureProvider) {
+  extends ModelInstance(originalModelInstance.model) {
 
   override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
     val addInputParams = supplyNonProvidedInputs(inputMap)

@@ -11,7 +11,7 @@ trait SignatureTransformer {
 class TransformedSignatureProvider(transformer: SignatureTransformer) extends SignatureProvider {
 
   override def provideSignature(model: Model): ProvideSignatureResult =
-    model.toModelInstance.signatureProvider
+    model.signatureProvider
       .provideSignature(model)
       .map(transformer.changeSignature)
 }

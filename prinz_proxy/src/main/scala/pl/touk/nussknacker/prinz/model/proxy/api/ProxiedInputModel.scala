@@ -1,10 +1,8 @@
 package pl.touk.nussknacker.prinz.model.proxy.api
 
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelVersion, SignatureProvider}
 import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance, ProxiedModelCompositeInputParam, ProxiedModelInputParam}
-import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer,
-  SignatureTransformer, TransformedModelInstance,
-  TransformedParamProvider, TransformedSignatureProvider}
+import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer, SignatureTransformer, TransformedModelInstance, TransformedParamProvider, TransformedSignatureProvider}
 
 
 class ProxiedInputModel private(model: Model,
@@ -12,11 +10,13 @@ class ProxiedInputModel private(model: Model,
                                 proxySupplier: (ModelMetadata, ModelInstance) => ModelInstance)
   extends Model {
 
+  override val signatureProvider: SignatureProvider = model.signatureProvider
+
   private val originalModelInstance: ModelInstance = model.toModelInstance
 
   private val proxiedName: ModelName = modelName
 
-  private val modelMetadata: ModelMetadata = ModelMetadata(model.getName, model.getVersion, originalModelInstance.getSignature)
+  private val modelMetadata: ModelMetadata = ModelMetadata(model.getName, model.getVersion, model.getSignature)
 
   private val proxiedModelInstance: ModelInstance = proxySupplier(modelMetadata, originalModelInstance)
 
