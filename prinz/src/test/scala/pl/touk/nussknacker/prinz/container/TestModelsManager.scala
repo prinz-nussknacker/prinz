@@ -14,7 +14,7 @@ trait TestModelsManager {
 
   def getRepository: ModelRepository
 
-  def getModel(extract: List[Model] => Model): Option[Model] = {
+  def getModel(extract: List[Model] => Model = getElasticnetWineModelModel(1)): Option[Model] = {
     val repository = getRepository
     repository.listModels
       .toOption
