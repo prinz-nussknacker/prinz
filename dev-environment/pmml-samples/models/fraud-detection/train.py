@@ -1,7 +1,6 @@
 import logging
 import sys
 import warnings
-
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -14,14 +13,16 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn2pmml import sklearn2pmml
 from sklearn2pmml.pipeline import PMMLPipeline
 
+
 def evaluate_metrics(actual, predicted):
-    rmse = np.sqrt(mean_squared_error(actual, predicted))
-    mae = mean_absolute_error(actual, predicted)
-    r2 = r2_score(actual, predicted)
-    return rmse, mae, r2
+    rmse_metric = np.sqrt(mean_squared_error(actual, predicted))
+    mae_metric = mean_absolute_error(actual, predicted)
+    r2_metric = r2_score(actual, predicted)
+    return rmse_metric, mae_metric, r2_metric
+
 
 output_path = sys.argv[1]
-id = sys.argv[2]
+model_id = sys.argv[2]
 
 if __name__ != "__main__":
     sys.exit()
@@ -31,7 +32,7 @@ np.random.seed(40)
 
 # Prepare dataset
 try:
-    csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
+    csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv"
     data = pd.read_csv(csv_url, sep=",", quotechar="'", header=0)
 except Exception as e:
     logging.exception("Could not read CSV file: {}".format(e))
@@ -61,7 +62,7 @@ preprocessor = ColumnTransformer(
         ("categorical", categorical_transformer, categorical_features)])
 
 lr = LogisticRegression(multi_class="ovr")
-lr.pmml_name_ = f"PMML-FraudDetection-{id}"
+lr.pmml_name_ = f"PMML-FraudDetection-{model_id}"
 
 classifier = PMMLPipeline([
     ("preprocessor", preprocessor),
@@ -80,5 +81,5 @@ print("  RMSE: {}".format(rmse))
 print("  MAE: {}".format(mae))
 print("  R2: {}".format(r2))
 
-sklearn2pmml(classifier, output_path, with_repr = True)
+sklearn2pmml(classifier, output_path, with_repr=True)
 print("Fraud detection model exported")

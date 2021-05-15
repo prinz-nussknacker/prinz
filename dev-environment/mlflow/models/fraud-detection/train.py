@@ -1,8 +1,6 @@
 import logging
 import sys
 import warnings
-
-import mlflow
 import mlflow.sklearn
 import numpy as np
 import pandas as pd
@@ -18,10 +16,11 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 def evaluate_metrics(actual, predicted):
-    rmse = np.sqrt(mean_squared_error(actual, predicted))
-    mae = mean_absolute_error(actual, predicted)
-    r2 = r2_score(actual, predicted)
-    return rmse, mae, r2
+    rmse_metric = np.sqrt(mean_squared_error(actual, predicted))
+    mae_metric = mean_absolute_error(actual, predicted)
+    r2_metric = r2_score(actual, predicted)
+    return rmse_metric, mae_metric, r2_metric
+
 
 if __name__ != "__main__":
     sys.exit()
@@ -33,7 +32,7 @@ model_id = int(sys.argv[2])
 
 # Prepare dataset
 try:
-    csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
+    csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv"
     data = pd.read_csv(csv_url, sep=",", quotechar="'", header=0)
 except Exception as e:
     logger.exception("Could not read CSV file: {}".format(e))
@@ -59,7 +58,6 @@ data_y = data[["fraud"]]
 train_x, test_x, train_y, test_y = train_test_split(data_x, data_y)
 
 with mlflow.start_run():
-
     # Define pipeline
     numeric_features = ['amount']
     numeric_transformer = Pipeline(
@@ -97,5 +95,5 @@ with mlflow.start_run():
     mlflow.sklearn.log_model(
         classifier,
         "model",
-        registered_model_name = model_name,
-        signature = signature)
+        registered_model_name=model_name,
+        signature=signature)
