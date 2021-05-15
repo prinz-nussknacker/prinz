@@ -13,7 +13,7 @@ model_id = int(sys.argv[2])
 h2o_port = int(os.environ['H2O_SERVER_PORT'])
 h2o.init(port=h2o_port)
 
-csv_url = "https://raw.githubusercontent.com/zygmuntz/wine-quality/master/winequality/winequality-red.csv"
+csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/wine-quality/master/winequality-red.csv"
 data = h2o.import_file(csv_url)
 
 predictors = data.columns[:-1]
