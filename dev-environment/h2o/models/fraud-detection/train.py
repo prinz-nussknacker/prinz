@@ -1,15 +1,14 @@
 import os
 import sys
 import time
-
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 
 
-def mark_factor_columns(data, columns):
+def mark_factor_columns(frame, columns):
     for col in columns:
-        data[col] = data[col].asfactor()
-    return data
+        frame[col] = frame[col].asfactor()
+    return frame
 
 
 def unix_timestamp_millis():
@@ -17,9 +16,9 @@ def unix_timestamp_millis():
 
 
 def evaluate_metrics(model):
-    rmse = model.rmse()
-    r2 = model.r2()
-    return rmse, r2
+    rmse_metric = model.rmse()
+    r2_metric = model.r2()
+    return rmse_metric, r2_metric
 
 
 if __name__ != "__main__":
@@ -32,7 +31,8 @@ h2o_port = int(os.environ['H2O_SERVER_PORT'])
 h2o.init(port=h2o_port)
 
 # Prepare dataset
-csv_url = ("https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv")
+repo_url = "https://raw.githubusercontent.com/prinz-nussknacker"
+csv_url = f"{repo_url}/banksim1/master/bs140513_032310.csv"
 data = h2o.import_file(csv_url, sep=",", header=0)
 
 data.na_omit()
@@ -60,5 +60,6 @@ print("  R2: {}".format(r2))
 model_path = glm.save_mojo("exports", force=True)
 print(f"Fraud detection model exported as {glm.model_id}.zip")
 print(model_path)
-renamed_model_path = model_path.replace(f"{glm.model_id}.zip", f"H2O-FraudDetection-{model_id}-v0-{model_id}.zip")
+renamed_model = f"H2O-FraudDetection-{model_id}-v0-{model_id}.zip"
+renamed_model_path = model_path.replace(f"{glm.model_id}.zip", renamed_model)
 os.rename(model_path, renamed_model_path)
