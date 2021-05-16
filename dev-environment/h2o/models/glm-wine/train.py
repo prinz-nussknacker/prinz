@@ -17,13 +17,13 @@ repo_url = "https://raw.githubusercontent.com/prinz-nussknacker"
 csv_url = f"{repo_url}/wine-quality/master/winequality-red.csv"
 data = h2o.import_file(csv_url)
 
-predictors = data.columns[:-1]
-response = "quality"
+data_cols = data.columns[:-1]
+labels = "quality"
 
 train, valid = data.split_frame(ratios=[.8])
 
 glm = H2OGeneralizedLinearEstimator(alpha=alpha)
-glm.train(x=predictors, y=response, training_frame=train, validation_frame=valid)
+glm.train(x=data_cols, y=labels, training_frame=train, validation_frame=valid)
 
 print("H2OWineGeneralizedLinearEstimator model (alpha={}):".format(alpha))
 print("  RMSE: {}".format(glm.rmse(valid=True)))

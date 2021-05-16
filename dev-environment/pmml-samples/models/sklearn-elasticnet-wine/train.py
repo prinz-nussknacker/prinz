@@ -70,4 +70,4 @@ print("  MAE: {}".format(mae))
 print("  R2: {}".format(r2))
 
 sklearn2pmml(pipeline, output_path, with_repr=True)
-print("Elasticnet model (alpha={}, l1_ratio={}) exported".format(alpha, l1_ratio))
+print(f"Elasticnet model (alpha={alpha}, l1_ratio={l1_ratio}) exported")
