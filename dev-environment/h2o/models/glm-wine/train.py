@@ -13,7 +13,8 @@ model_id = int(sys.argv[2])
 h2o_port = int(os.environ['H2O_SERVER_PORT'])
 h2o.init(port=h2o_port)
 
-csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/wine-quality/master/winequality-red.csv"
+repo_url = "https://raw.githubusercontent.com/prinz-nussknacker"
+csv_url = f"{repo_url}/wine-quality/master/winequality-red.csv"
 data = h2o.import_file(csv_url)
 
 predictors = data.columns[:-1]
@@ -31,5 +32,6 @@ print("  R2: {}".format(glm.r2(valid=True)))
 
 model_path = glm.save_mojo("exports", force=True)
 print(f"Wine model exported as {glm.model_id}.zip")
-renamed_model_path = model_path.replace(f"{glm.model_id}.zip", f"H2O-ElasticnetWineModel-{model_id}-v0-{model_id}.zip")
+renamed_model = f"H2O-ElasticnetWineModel-{model_id}-v0-{model_id}.zip"
+renamed_model_path = model_path.replace(f"{glm.model_id}.zip", renamed_model)
 os.rename(model_path, renamed_model_path)

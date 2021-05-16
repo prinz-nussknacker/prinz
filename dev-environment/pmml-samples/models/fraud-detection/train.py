@@ -32,14 +32,20 @@ np.random.seed(40)
 
 # Prepare dataset
 try:
-    csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/banksim1/master/bs140513_032310.csv"
+    repo_url = "https://raw.githubusercontent.com/prinz-nussknacker"
+    csv_url = f"{repo_url}/banksim1/master/bs140513_032310.csv"
     data = pd.read_csv(csv_url, sep=",", quotechar="'", header=0)
 except Exception as e:
-    logging.exception("Could not read CSV file: {}".format(e))
+    logger.exception("Could not read CSV file: {}".format(e))
     exit(1)
 
 data.dropna()
-data = data.drop(["step", "customer", "zipcodeOri", "merchant", "zipMerchant"], axis="columns")
+data = data.drop(["step",
+                  "customer",
+                  "zipcodeOri",
+                  "merchant",
+                  "zipMerchant"],
+                 axis="columns")
 
 # Prepare train and test sets
 data_x = data.drop(["fraud"], axis="columns")

@@ -1,5 +1,7 @@
-# Example based on example from mlflow repository https://github.com/mlflow/mlflow
-# The data set used in this example is from http://archive.ics.uci.edu/ml/datasets/Wine+Quality
+# Example based on example from mlflow repository
+# https://github.com/mlflow/mlflow
+# The data set used in this example is from
+# http://archive.ics.uci.edu/ml/datasets/Wine+Quality
 # P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
 # Modeling wine preferences by data mining from physicochemical properties.
 # In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
@@ -32,11 +34,13 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     np.random.seed(40)
 
-    csv_url = "https://raw.githubusercontent.com/prinz-nussknacker/wine-quality/master/winequality-red.csv"
+    repo_url = "https://raw.githubusercontent.com/prinz-nussknacker"
+    csv_url = f"{repo_url}/wine-quality/master/winequality-red.csv"
     try:
         data = pd.read_csv(csv_url, sep=";")
     except Exception as e:
-        logger.exception("Unable to download training & test CSV, check your internet connection. Error: {}".format(e))
+        logger.exception("Unable to download training & test CSV,"
+                         f"check your internet connection. Error: {e}")
 
     train, test = train_test_split(data)
 
@@ -72,7 +76,7 @@ if __name__ == "__main__":
 
         (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
 
-        print("Elasticnet model (alpha={}, l1_ratio={}):".format(alpha, l1_ratio))
+        print(f"Elasticnet model (alpha={alpha}, l1_ratio={l1_ratio}):")
         print("  RMSE: {}".format(rmse))
         print("  MAE: {}".format(mae))
         print("  R2: {}".format(r2))
@@ -85,7 +89,9 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="MLF-ElasticnetWineModel-{}".format(model_id),
+            model_name = "MLF-ElasticnetWineModel-{}".format(model_id)
+            mlflow.sklearn.log_model(lr, "model",
+                                     registered_model_name=model_name,
                                      signature=signature)
         else:
             mlflow.sklearn.log_model(lr, "model")
