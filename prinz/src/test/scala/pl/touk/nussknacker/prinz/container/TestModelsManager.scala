@@ -14,7 +14,7 @@ trait TestModelsManager {
 
   def getRepository: ModelRepository
 
-  def getModel(extract: List[Model] => Model): Option[Model] = {
+  def getModel(extract: List[Model] => Model = getElasticnetWineModelModel(1)): Option[Model] = {
     val repository = getRepository
     repository.listModels
       .toOption
@@ -27,10 +27,10 @@ trait TestModelsManager {
   }
 
   def getFraudDetectionModel(models: List[Model]): Model =
-    models.filter(_.getName.toString.contains("FraudDetection")).head
+    models.filter(_.getMetadata.modelName.toString.contains("FraudDetection")).head
 
   def getElasticnetWineModelModel(modelId: Int)(models: List[Model]): Model =
-    models.filter(_.getName.toString.contains("ElasticnetWineModel-" + modelId)).head
+    models.filter(_.getMetadata.modelName.toString.contains("ElasticnetWineModel-" + modelId)).head
 
   def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
     val names = signature.getInputNames.map(_.name)

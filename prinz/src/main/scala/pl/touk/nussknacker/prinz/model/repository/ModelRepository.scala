@@ -7,6 +7,4 @@ trait ModelRepository {
   type RepositoryResponse[RESPONSE] = Either[ModelRepositoryException, RESPONSE]
 
   def listModels: RepositoryResponse[List[Model]]
-
-  def getModel(name: ModelName): RepositoryResponse[Model]
 }

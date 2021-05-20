@@ -13,7 +13,7 @@ import scala.jdk.CollectionConverters.{mapAsJavaMapConverter, mapAsScalaMapConve
 
 case class PMMLModelInstance(private val evaluator: Evaluator,
                              override val model: PMMLModel)
-  extends ModelInstance(model, PMMLSignatureProvider)
+  extends ModelInstance(model)
     with LazyLogging {
 
   override def run(inputMap: ModelInputData): ModelRunResult = Future {

@@ -17,11 +17,6 @@ class MLFModelRepository(implicit val config: MLFConfig) extends ModelRepository
       .left.map(new MLFRepositoryException(_))
       .right.map(_.map(toApi))
 
-  override def getModel(name: ModelName): RepositoryResponse[MLFRegisteredModel] =
-    restClient.getModel(MLFRestModelName(name.internal))
-      .left.map(new MLFRepositoryException(_))
-      .right.map(toApi)
-
   private def toApi(model: MLFRestRegisteredModel): MLFRegisteredModel =
     MLFRegisteredModel(MLFRegisteredModelName(model.name), instant(model.creation_timestamp),
       instant(model.last_updated_timestamp), model.latest_versions.map(toApi), this)

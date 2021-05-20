@@ -14,14 +14,14 @@ import scala.concurrent.Future
 
 case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod with LazyLogging {
 
-  private val modelInstance = model.toModelInstance
+  private lazy val modelInstance = {
+    model.toModelInstance
+  }
 
   override def invokeService(params: List[AnyRef])
                             (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
                              metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
     val inputMap = createInputMap(params)
-    logger.info("input params in enricher: " + params)
-    logger.info("input map for model run: " + inputMap)
     modelInstance.run(inputMap).map {
       case Right(runResult) => runResult
       case Left(exc) => throw exc
@@ -29,13 +29,15 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
   }
 
   override def parameterDefinition: List[Parameter] =
-    modelInstance
-      .getParameterDefinition
+    model
+      .getMetadata
+      .parameterDefinition
       .toInputParameterDefinition
 
   override def returnType: typing.TypingResult =
-    modelInstance
-      .getParameterDefinition
+    model
+      .getMetadata
+      .parameterDefinition
       .getOutputDefinition
 
   def createInputMap(inputs: List[AnyRef]): ModelInputData =

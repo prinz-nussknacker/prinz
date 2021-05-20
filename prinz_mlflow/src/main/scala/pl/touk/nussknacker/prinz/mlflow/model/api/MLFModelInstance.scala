@@ -13,19 +13,19 @@ import scala.jdk.CollectionConverters.mapAsJavaMap
 
 case class MLFModelInstance(config: MLFConfig,
                             override val model: MLFRegisteredModel)
-  extends ModelInstance(model, MLFSignatureProvider(config)) with LazyLogging {
+  extends ModelInstance(model) with LazyLogging {
 
   private val invokeRestClient = MLFInvokeRestClient(config.servedModelsUrl.toString, model)
 
   override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
-    val dataframe = MLFDataConverter.inputToDataframe(inputMap, getSignature)
+    val dataframe = MLFDataConverter.inputToDataframe(inputMap, model.getMetadata.signature)
     logger.info("Send dataframe to mlflow model: {}", dataframe)
-    invokeRestClient.invoke(dataframe, getSignature, config.modelLocationStrategy)
+    invokeRestClient.invoke(dataframe, model.getMetadata.signature, config.modelLocationStrategy)
       .map { response =>
         logger.info("Response from mlflow model: {}", response)
         response
           .left.map(exception => new ModelRunException(exception))
-          .right.map(output => MLFDataConverter.outputToResultMap(output, getSignature))
+          .right.map(output => MLFDataConverter.outputToResultMap(output, model.getMetadata.signature))
                 .map(mapAsJavaMap)
       }
   }

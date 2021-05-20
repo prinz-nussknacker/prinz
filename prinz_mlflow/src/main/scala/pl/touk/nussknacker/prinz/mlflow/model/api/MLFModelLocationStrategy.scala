@@ -16,6 +16,6 @@ object LocalMLFModelLocationStrategy extends MLFModelLocationStrategy {
 object AzureDataBricksMLFModelLocationStrategy extends MLFModelLocationStrategy {
 
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
-    s"/model/${model.name.name}/${model.getVersion.name}/invocations"
+    s"/model/${model.name.name}/${model.getVersionName.name}/invocations"
   }
 }

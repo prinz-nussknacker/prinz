@@ -10,7 +10,7 @@ import pl.touk.nussknacker.prinz.mlflow.converter.MLFSignatureInterpreter
 import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFJsonMLModel, MLFRestRunId, MLFYamlInputDefinition, MLFYamlModelDefinition, MLFYamlOutputDefinition}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFBucketClient, MLFBucketClientConfig, MLFRestClient, MLFRestClientConfig}
 import pl.touk.nussknacker.prinz.model.SignatureProvider.{ProvideSignatureResult, indexedOutputName}
-import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, SignatureField, SignatureName, SignatureProvider, SignatureType}
+import pl.touk.nussknacker.prinz.model.{Model, ModelSignature, ModelSignatureLocationMetadata, SignatureField, SignatureName, SignatureProvider, SignatureType}
 
 import java.io.{InputStream, InputStreamReader, Reader}
 
@@ -22,30 +22,33 @@ case class MLFSignatureProvider(private val config: MLFConfig)
 
   private val restClient = MLFRestClient(MLFRestClientConfig.fromMLFConfig(config))
 
-  override def provideSignature(model: Model): ProvideSignatureResult = model match {
-    case model: MLFRegisteredModel => getLatestModelVersionArtifactLocation(model.getVersion.runId)
-      .map(bucketClient.getMLModelFile)
-      .flatMap(extractDefinitionAndCloseStream)
-      .map(definitionToSignature)
-    case _ => throw new IllegalArgumentException("MLFSignatureInterpreter can interpret only MLFRegisteredModels")
-  }
+  override def provideSignature(modelSignatureLocationMetadata: ModelSignatureLocationMetadata): ProvideSignatureResult =
+    modelSignatureLocationMetadata match {
+      case metadata: MLFModelSignatureLocationMetadata => getLatestModelVersionArtifactLocation(metadata.version.runId)
+        .map(bucketClient.getMLModelFile)
+        .flatMap(extractDefinitionAndCloseStream)
+        .map(definitionToSignature)
+      case _: Any => Left(new IllegalArgumentException("MLFSignatureProvider can interpret only PMMLModels"))
+    }
 
-  private def extractDefinitionAndCloseStream(stream: InputStream): Option[MLFYamlModelDefinition] = {
-    val definition = extractDefinition(new InputStreamReader(stream))
+  private def extractDefinitionAndCloseStream(stream: InputStream): Either[Exception, MLFYamlModelDefinition] = try {
+    extractDefinition(new InputStreamReader(stream))
+  } finally {
     stream.close()
-    definition
   }
 
-  private def getLatestModelVersionArtifactLocation(runId: String): Option[String] =
+  private def getLatestModelVersionArtifactLocation(runId: String): Either[Exception, String] =
     restClient.getRunInfo(MLFRestRunId(runId))
-      .toOption
       .map(_.info.artifact_uri)
 
-  private def extractDefinition(yamlFile: Reader): Option[MLFYamlModelDefinition] = for {
-    model <- parseYaml(yamlFile).flatMap(_.as[MLFJsonMLModel]).toOption
-    inputs <- extractDefinition[MLFYamlInputDefinition](model.signature.inputs)
-    outputs <- extractDefinition[MLFYamlOutputDefinition](model.signature.outputs)
-  } yield MLFYamlModelDefinition(inputs, outputs)
+  private def extractDefinition(yamlFile: Reader): Either[Exception, MLFYamlModelDefinition] = {
+    val definition = for {
+      model <- parseYaml(yamlFile).flatMap(_.as[MLFJsonMLModel]).toOption
+      inputs <- extractDefinition[MLFYamlInputDefinition](model.signature.inputs)
+      outputs <- extractDefinition[MLFYamlOutputDefinition](model.signature.outputs)
+    } yield MLFYamlModelDefinition(inputs, outputs)
+    definition.toRight[Exception](new RuntimeException(s"Parse model signature exception: $yamlFile"))
+  }
 
   private def extractDefinition[A](input: String)(implicit decoder: Decoder[List[A]]): Option[List[A]] =
     decode(input).toOption

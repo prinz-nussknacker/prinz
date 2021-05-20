@@ -6,7 +6,7 @@ import pl.touk.nussknacker.prinz.util.repository.payload.ModelPayload
 import java.io.InputStream
 import java.net.URI
 
-abstract class AbstractRepositoryClient(path: URI, fileExtension: String) {
+abstract class AbstractRepositoryClient(fileExtension: String) {
 
   def listModelFiles: Either[ModelRepositoryException, Iterable[ModelPayload]] = try {
     Right(loadModelsOnPath)

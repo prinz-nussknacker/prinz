@@ -34,12 +34,12 @@ def prinzMergeStrategy: String => MergeStrategy = {
   case PathList(ps@_*) if ps.last == "NumberUtils.class" => MergeStrategy.first
   case PathList(ps@_*) if ps.last == "module-info.class" => MergeStrategy.first
   case PathList(ps@_*) if ps.last == "io.netty.versions.properties" => MergeStrategy.first
-  case PathList("org", "w3c", "dom", "events", xs @ _*) => MergeStrategy.first
-  case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
-  case PathList("com", "sun", "activation", xs @ _*) => MergeStrategy.first
-  case PathList("javax", "activation", xs @ _*) => MergeStrategy.first
-  case PathList("org", "slf4j", "impl", xs @ _*) => MergeStrategy.first
-  case PathList("org", "apache", "log4j", xs @ _*) => MergeStrategy.first
+  case PathList("org", "w3c", "dom", "events", _*) => MergeStrategy.first
+  case PathList("org", "apache", "commons", "logging", _*) => MergeStrategy.first
+  case PathList("com", "sun", "activation", _*) => MergeStrategy.first
+  case PathList("javax", "activation", _*) => MergeStrategy.first
+  case PathList("org", "slf4j", "impl", _*) => MergeStrategy.first
+  case PathList("org", "apache", "log4j", _*) => MergeStrategy.first
   case x: Any => MergeStrategy.defaultMergeStrategy(x)
 }
 
