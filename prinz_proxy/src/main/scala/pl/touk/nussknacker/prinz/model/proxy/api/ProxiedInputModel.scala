@@ -7,38 +7,29 @@ import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer, 
   TransformedParamProvider, TransformedSignatureProvider}
 
 
-class ProxiedInputModel private(model: Model,
+class ProxiedInputModel private(proxiedModel: Model,
                                 modelName: ProxiedInputModelName,
                                 transformedSignatureProvider: TransformedSignatureProvider,
                                 proxySupplier: (ModelMetadata, ModelInstance) => ModelInstance)
   extends Model {
 
-  override protected val signatureOption: ProvideSignatureResult = transformedSignatureProvider
-    .provideSignature(ProxiedModelSignatureLocationMetadata(model))
-
-  private val originalModelInstance: ModelInstance = model.toModelInstance
-
-  private val proxiedName: ModelName = modelName
-
-  private val proxiedModelInstance: ModelInstance = proxySupplier(model.getMetadata, originalModelInstance)
-
-  def this(model: Model,
+  def this(proxiedModel: Model,
            proxiedParams: Iterable[ProxiedModelInputParam],
            compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]) {
     this(
-      model,
-      CompositeProxiedInputModelName(model),
+      proxiedModel,
+      CompositeProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(identity),
       (metadata, instance) => new ProxiedInputModelInstance(metadata, instance, proxiedParams, compositeProxiedParams)
     )
   }
 
-  def this(model: Model,
+  def this(proxiedModel: Model,
            signatureTransformer: SignatureTransformer,
            paramProvider: TransformedParamProvider) {
     this(
-      model,
-      TransformedProxiedInputModelName(model),
+      proxiedModel,
+      TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(signatureTransformer),
       (_, instance) => new TransformedModelInstance(
         instance,
@@ -46,11 +37,11 @@ class ProxiedInputModel private(model: Model,
     )
   }
 
-  def this(model: Model,
+  def this(proxiedModel: Model,
            transformer: ModelInputTransformer) {
     this(
-      model,
-      TransformedProxiedInputModelName(model),
+      proxiedModel,
+      TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(transformer),
       (_, instance) => new TransformedModelInstance(
         instance,
@@ -58,27 +49,34 @@ class ProxiedInputModel private(model: Model,
     )
   }
 
-  override def toModelInstance: ModelInstance = proxiedModelInstance
+  override def toModelInstance: ModelInstance = {
+    val originalModelInstance = proxiedModel.toModelInstance
+    proxySupplier(proxiedModel.getMetadata, originalModelInstance)
+  }
 
-  override protected def getName: ModelName = proxiedName
+  override protected val signatureOption: ProvideSignatureResult =
+    transformedSignatureProvider
+      .provideSignature(ProxiedModelSignatureLocationMetadata(proxiedModel))
 
-  override protected def getVersion: ModelVersion = model.getMetadata.modelVersion
+  override protected val name: ModelName = modelName
+
+  override protected val version: ModelVersion = proxiedModel.getMetadata.modelVersion
 }
 
 object ProxiedInputModel {
 
-  def apply(model: Model,
+  def apply(proxiedModel: Model,
             proxiedParams: Iterable[ProxiedModelInputParam],
             compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): ProxiedInputModel =
-    new ProxiedInputModel(model, proxiedParams, compositeProxiedParams)
+    new ProxiedInputModel(proxiedModel, proxiedParams, compositeProxiedParams)
 
-  def apply(model: Model,
+  def apply(proxiedModel: Model,
             signatureTransformer: SignatureTransformer,
             paramProvider: TransformedParamProvider): ProxiedInputModel =
-    new ProxiedInputModel(model, signatureTransformer, paramProvider)
+    new ProxiedInputModel(proxiedModel, signatureTransformer, paramProvider)
 
-  def apply(model: Model, transformer: ModelInputTransformer): ProxiedInputModel =
-    new ProxiedInputModel(model, transformer)
+  def apply(proxiedModel: Model, transformer: ModelInputTransformer): ProxiedInputModel =
+    new ProxiedInputModel(proxiedModel, transformer)
 }
 
 final case class ProxiedModelSignatureLocationMetadata(proxiedModel: Model) extends ModelSignatureLocationMetadata

@@ -7,33 +7,40 @@ import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelSignatureLocation
 
 import java.time.Instant
 
-final case class MLFRegisteredModel(name: MLFRegisteredModelName,
-                                    creationTimestamp: Instant,
-                                    lastUpdatedTimestamp: Instant,
-                                    latestVersions: List[MLFRegisteredModelVersion],
-                                    private val repository: MLFModelRepository) extends Model {
-
-  def getVersionName: MLFRegisteredModelVersionName = MLFRegisteredModelVersionName(latestVersions.maxBy(_.lastUpdatedTimestamp).name)
+final class MLFRegisteredModel(val registeredModelName: MLFRegisteredModelName,
+                               val creationTimestamp: Instant,
+                               val lastUpdatedTimestamp: Instant,
+                               private val latestVersions: List[MLFRegisteredModelVersion],
+                               private val repository: MLFModelRepository) extends Model {
 
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
 
   override protected val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
-    .provideSignature(MLFModelSignatureLocationMetadata(name, extractLatestVersion(latestVersions)))
+    .provideSignature(MLFModelSignatureLocationMetadata(registeredModelName, extractLatestVersion(latestVersions)))
 
-  override protected def getName: MLFRegisteredModelName = name
+  override protected val version: ModelVersion = extractLatestVersion(latestVersions)
 
-  override protected def getVersion: MLFRegisteredModelVersion = extractLatestVersion(latestVersions)
+  val versionName: MLFRegisteredModelVersionName = MLFRegisteredModelVersionName(latestVersions.maxBy(_.lastUpdatedTimestamp).name)
+
+  override protected val name: ModelName = registeredModelName
 }
 
 object MLFRegisteredModel {
+
+  def apply(name: MLFRegisteredModelName,
+            creationTimestamp: Instant,
+            lastUpdatedTimestamp: Instant,
+            latestVersions: List[MLFRegisteredModelVersion],
+            repository: MLFModelRepository): MLFRegisteredModel =
+    new MLFRegisteredModel(name, creationTimestamp, lastUpdatedTimestamp, latestVersions, repository)
 
   private def extractLatestVersion(latestVersions: List[MLFRegisteredModelVersion]): MLFRegisteredModelVersion =
     latestVersions.maxBy(_.lastUpdatedTimestamp)
 }
 
-final case class MLFRegisteredModelName(name: String) extends ModelName(name)
+final class MLFRegisteredModelName(name: String) extends ModelName(name)
 
-final case class MLFRegisteredModelVersionName(name: String)
+final case class MLFRegisteredModelVersionName(internal: String)
 
 final case class MLFRegisteredModelVersion(name: String,
                                            version: String,

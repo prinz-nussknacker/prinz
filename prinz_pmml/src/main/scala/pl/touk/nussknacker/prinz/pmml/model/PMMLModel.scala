@@ -30,9 +30,9 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
   override def toModelInstance: ModelInstance = PMMLModelInstance(evaluator, this)
 
-  override protected def getName: PMMLModelName = extractName(optionalModelName, payload)
+  override protected val name: ModelName = extractName(optionalModelName, payload)
 
-  override protected def getVersion: ModelVersion = PMMLModelVersion(payload.version)
+  override protected val version: ModelVersion = PMMLModelVersion(payload.version)
 }
 
 final case class PMMLModelName(name: String) extends ModelName(name)

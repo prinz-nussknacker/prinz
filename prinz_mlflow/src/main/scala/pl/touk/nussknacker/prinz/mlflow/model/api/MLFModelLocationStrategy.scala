@@ -8,7 +8,7 @@ abstract sealed class MLFModelLocationStrategy {
 object LocalMLFModelLocationStrategy extends MLFModelLocationStrategy {
 
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
-    val localModelBaseName = model.name.internal
+    val localModelBaseName = model.registeredModelName.internal
     s"/$localModelBaseName/invocations"
   }
 }
@@ -16,6 +16,6 @@ object LocalMLFModelLocationStrategy extends MLFModelLocationStrategy {
 object AzureDataBricksMLFModelLocationStrategy extends MLFModelLocationStrategy {
 
   override def createModelRelativeUrl(model: MLFRegisteredModel): String = {
-    s"/model/${model.name.name}/${model.getVersionName.name}/invocations"
+    s"/model/${model.registeredModelName.internal}/${model.versionName.internal}/invocations"
   }
 }

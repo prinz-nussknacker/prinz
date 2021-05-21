@@ -10,7 +10,7 @@ import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelSi
 
 import java.net.URL
 
-class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
+final class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
 
     private val modelReaderBackend: MojoReaderBackend =
         MojoReaderBackendFactory.createReaderBackend(payload.path, cachingStrategy)
@@ -27,9 +27,9 @@ class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) exten
         H2OSignatureProvider.provideSignature(metadata)
     }
 
-    override protected def getName: ModelName = H2OModelName(payload.name)
+    override protected val name: ModelName = H2OModelName(payload.name)
 
-    override protected def getVersion: ModelVersion = H2OModelVersion(payload.version)
+    override protected val version: ModelVersion = H2OModelVersion(payload.version)
 }
 
 object H2OModel {

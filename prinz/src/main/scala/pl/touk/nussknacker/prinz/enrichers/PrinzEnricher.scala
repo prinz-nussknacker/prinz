@@ -31,13 +31,13 @@ case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMe
   override def parameterDefinition: List[Parameter] =
     model
       .getMetadata
-      .parameterDefinition
+      .signature
       .toInputParameterDefinition
 
   override def returnType: typing.TypingResult =
     model
       .getMetadata
-      .parameterDefinition
+      .signature
       .getOutputDefinition
 
   def createInputMap(inputs: List[AnyRef]): ModelInputData =
