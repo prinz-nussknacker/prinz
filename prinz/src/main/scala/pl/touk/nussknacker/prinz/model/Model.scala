@@ -4,8 +4,6 @@ import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 
 trait Model {
 
-  final def getMetadata: ModelMetadata = ModelMetadata(name, version, signature)
-
   def toModelInstance: ModelInstance
 
   protected val signatureOption: ProvideSignatureResult
@@ -20,6 +18,8 @@ trait Model {
     case Right(value) => value
     case Left(exception) => throw SignatureNotFoundException(exception)
   }
+
+  final def getMetadata: ModelMetadata = ModelMetadata(name, version, signature)
 }
 
 class ModelName(name: String) {
