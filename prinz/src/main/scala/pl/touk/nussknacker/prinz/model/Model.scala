@@ -14,12 +14,12 @@ trait Model {
 
   override def toString: String = s"Model $name version: $version"
 
-  private final val signature: ModelSignature = signatureOption match {
+  private final def getSignature: ModelSignature = signatureOption match {
     case Right(value) => value
     case Left(exception) => throw SignatureNotFoundException(exception)
   }
 
-  final def getMetadata: ModelMetadata = ModelMetadata(name, version, signature)
+  final def getMetadata: ModelMetadata = ModelMetadata(name, version, getSignature)
 }
 
 class ModelName(name: String) {
