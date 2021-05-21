@@ -8,8 +8,10 @@ import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
-  override protected val signatureOption: ProvideSignatureResult = PMMLSignatureProvider
-    .provideSignature(PMMLModelSignatureLocationMetadata(payload))
+  override protected val signatureOption: ProvideSignatureResult = {
+    val metadata = PMMLModelSignatureLocationMetadata(payload)
+    PMMLSignatureProvider.provideSignature(metadata)
+  }
 
   override def toModelInstance: ModelInstance = {
     val evaluator = PMMLModelEvaluatorExtractor.extractModelEvaluator(payload)

@@ -14,8 +14,8 @@ final class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy)
     }
 
     override protected val signatureOption: ProvideSignatureResult = {
-        val model = H2OModelWrapperExtractor.extractGenModel(payload, cachingStrategy)
-        val metadata = H2OModelSignatureLocationMetadata(model)
+        val genModel = H2OModelWrapperExtractor.extractGenModel(payload, cachingStrategy)
+        val metadata = H2OModelSignatureLocationMetadata(genModel)
         H2OSignatureProvider.provideSignature(metadata)
     }
 

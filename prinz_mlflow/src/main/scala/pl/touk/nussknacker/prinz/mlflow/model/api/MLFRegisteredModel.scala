@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.mlflow.model.api
 
-import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.extractLatestVersion
+import pl.touk.nussknacker.prinz.mlflow.model.api.MLFRegisteredModel.extractLatestModelVersion
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.model.{Model, ModelName, ModelSignatureLocationMetadata, ModelVersion}
@@ -15,10 +15,13 @@ final class MLFRegisteredModel(val registeredModelName: MLFRegisteredModelName,
 
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
 
-  override protected val signatureOption: ProvideSignatureResult = MLFSignatureProvider(repository.config)
-    .provideSignature(MLFModelSignatureLocationMetadata(registeredModelName, extractLatestVersion(latestVersions)))
+  override protected val signatureOption: ProvideSignatureResult = {
+    val latestVersion = extractLatestModelVersion(latestVersions)
+    val metadata = MLFModelSignatureLocationMetadata(registeredModelName, latestVersion)
+    MLFSignatureProvider(repository.config).provideSignature(metadata)
+  }
 
-  override protected val version: ModelVersion = extractLatestVersion(latestVersions)
+  override protected val version: ModelVersion = extractLatestModelVersion(latestVersions)
 
   val versionName: MLFRegisteredModelVersionName = MLFRegisteredModelVersionName(latestVersions.maxBy(_.lastUpdatedTimestamp).name)
 
@@ -34,7 +37,7 @@ object MLFRegisteredModel {
             repository: MLFModelRepository): MLFRegisteredModel =
     new MLFRegisteredModel(name, creationTimestamp, lastUpdatedTimestamp, latestVersions, repository)
 
-  private def extractLatestVersion(latestVersions: List[MLFRegisteredModelVersion]): MLFRegisteredModelVersion =
+  private def extractLatestModelVersion(latestVersions: List[MLFRegisteredModelVersion]): MLFRegisteredModelVersion =
     latestVersions.maxBy(_.lastUpdatedTimestamp)
 }
 

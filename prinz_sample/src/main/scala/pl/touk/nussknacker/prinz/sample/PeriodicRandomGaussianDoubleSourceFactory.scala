@@ -45,7 +45,7 @@ class PeriodicRandomGaussianDoubleSourceFactory(timestampAssigner: TimestampWate
         val stream = env
           .addSource(new PeriodicFunction(period))
           .map(_ => Context(processId))
-          .flatMap { v =>
+          .flatMap { _ =>
             1.to(count).map(_ => {
               val stdDev = sqrt(variance)
               (Random.nextGaussian() * stdDev) + mean
