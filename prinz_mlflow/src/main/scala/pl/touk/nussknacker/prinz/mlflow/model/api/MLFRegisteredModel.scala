@@ -10,7 +10,7 @@ import java.time.Instant
 final class MLFRegisteredModel(val registeredModelName: MLFRegisteredModelName,
                                val creationTimestamp: Instant,
                                val lastUpdatedTimestamp: Instant,
-                               private val latestVersions: List[MLFRegisteredModelVersion],
+                               val latestVersions: List[MLFRegisteredModelVersion],
                                private val repository: MLFModelRepository) extends Model {
 
   override def toModelInstance: MLFModelInstance = MLFModelInstance(repository.config, this)
@@ -22,7 +22,7 @@ final class MLFRegisteredModel(val registeredModelName: MLFRegisteredModelName,
 
   val versionName: MLFRegisteredModelVersionName = MLFRegisteredModelVersionName(latestVersions.maxBy(_.lastUpdatedTimestamp).name)
 
-  override protected val name: ModelName = registeredModelName
+  override protected val name: MLFRegisteredModelName = registeredModelName
 }
 
 object MLFRegisteredModel {

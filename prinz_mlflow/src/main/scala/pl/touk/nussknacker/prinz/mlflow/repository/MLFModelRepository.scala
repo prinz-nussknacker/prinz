@@ -2,9 +2,8 @@ package pl.touk.nussknacker.prinz.mlflow.repository
 
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.{MLFRegisteredModel, MLFRegisteredModelName, MLFRegisteredModelVersion}
-import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFRestModelName, MLFRestRegisteredModel, MLFRestRegisteredModelVersion}
+import pl.touk.nussknacker.prinz.mlflow.model.rest.api.{MLFRestRegisteredModel, MLFRestRegisteredModelVersion}
 import pl.touk.nussknacker.prinz.mlflow.model.rest.client.{MLFRestClient, MLFRestClientConfig}
-import pl.touk.nussknacker.prinz.model.ModelName
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.util.time.Timestamp.instant
 
