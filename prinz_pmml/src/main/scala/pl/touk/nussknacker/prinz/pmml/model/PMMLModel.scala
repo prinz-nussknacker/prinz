@@ -8,31 +8,22 @@ import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 
 final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
-  override protected val signatureOption: ProvideSignatureResult = PMMLSignatureProvider
-    .provideSignature(PMMLModelSignatureLocationMetadata(payload))
-
-  // TODO open model evaluator twice - for signature parse and scoring. Use ResourceManager to properly manage opened stream
-  private val inputStream = payload.inputStreamSource()
-
-  private val evaluatorBuilder: LoadingModelEvaluatorBuilder = new LoadingModelEvaluatorBuilder().load(inputStream)
-
-  private val optionalModelName: Option[String] = Option(evaluatorBuilder.getModel.getModelName)
-
-  val evaluator: Evaluator = evaluatorBuilder.build()
-
-  try {
-    evaluator.verify()
-  } catch {
-    case ex: PMMLException => throw ModelNotValidException(ex)
-  } finally {
-    inputStream.close()
+  override protected val signatureOption: ProvideSignatureResult = {
+    val metadata = PMMLModelSignatureLocationMetadata(payload)
+    PMMLSignatureProvider.provideSignature(metadata)
   }
 
-  override def toModelInstance: ModelInstance = PMMLModelInstance(evaluator, this)
+  override def toModelInstance: ModelInstance = {
+    val evaluator = PMMLModelEvaluatorExtractor.extractModelEvaluator(payload)
+    PMMLModelInstance(evaluator, this)
+  }
 
-  override protected def getName: PMMLModelName = extractName(optionalModelName, payload)
+  override protected val name: ModelName = {
+    val optionalModelName = PMMLModelEvaluatorExtractor.extractModelName(payload)
+    extractName(optionalModelName, payload)
+  }
 
-  override protected def getVersion: ModelVersion = PMMLModelVersion(payload.version)
+  override protected val version: ModelVersion = PMMLModelVersion(payload.version)
 }
 
 final case class PMMLModelName(name: String) extends ModelName(name)

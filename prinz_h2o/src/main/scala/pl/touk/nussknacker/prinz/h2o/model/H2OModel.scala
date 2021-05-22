@@ -1,43 +1,27 @@
 package pl.touk.nussknacker.prinz.h2o.model
 
-import hex.genmodel.{GenModel, ModelMojoReader, MojoReaderBackend, MojoReaderBackendFactory}
+import hex.genmodel.GenModel
 import hex.genmodel.MojoReaderBackendFactory.CachingStrategy
-import hex.genmodel.easy.EasyPredictModelWrapper
-import pl.touk.nussknacker.prinz.h2o.model.H2OModel.loadGenModel
 import pl.touk.nussknacker.prinz.h2o.repository.H2OModelPayload
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelSignatureLocationMetadata, ModelVersion}
 
-import java.net.URL
+final class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
 
-class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy) extends Model {
-
-    private val modelReaderBackend: MojoReaderBackend =
-        MojoReaderBackendFactory.createReaderBackend(payload.path, cachingStrategy)
-
-    private val genModel: GenModel = ModelMojoReader.readFrom(modelReaderBackend)
-
-    val modelWrapper: EasyPredictModelWrapper = new EasyPredictModelWrapper(genModel)
-
-    override def toModelInstance: ModelInstance = H2OModelInstance(modelWrapper, this)
+    override def toModelInstance: ModelInstance = {
+        val modelWrapper = H2OModelWrapperExtractor.extractModelWrapper(payload, cachingStrategy)
+        H2OModelInstance(modelWrapper, this)
+    }
 
     override protected val signatureOption: ProvideSignatureResult = {
-        val model = loadGenModel(payload.path, cachingStrategy)
-        val metadata = H2OModelSignatureLocationMetadata(model)
+        val genModel = H2OModelWrapperExtractor.extractGenModel(payload, cachingStrategy)
+        val metadata = H2OModelSignatureLocationMetadata(genModel)
         H2OSignatureProvider.provideSignature(metadata)
     }
 
-    override protected def getName: ModelName = H2OModelName(payload.name)
+    override protected val name: ModelName = H2OModelName(payload.name)
 
-    override protected def getVersion: ModelVersion = H2OModelVersion(payload.version)
-}
-
-object H2OModel {
-
-    private def loadGenModel(modelUrl: URL, cachingStrategy: CachingStrategy): GenModel = {
-        val readerBackend = MojoReaderBackendFactory.createReaderBackend(modelUrl, cachingStrategy)
-        ModelMojoReader.readFrom(readerBackend)
-    }
+    override protected val version: ModelVersion = H2OModelVersion(payload.version)
 }
 
 final case class H2OModelName(name: String) extends ModelName(name)
