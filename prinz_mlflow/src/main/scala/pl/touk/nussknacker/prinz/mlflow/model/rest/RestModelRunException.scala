@@ -3,7 +3,7 @@ package pl.touk.nussknacker.prinz.mlflow.model.rest
 import pl.touk.nussknacker.prinz.model.ModelRunException
 import pl.touk.nussknacker.prinz.util.http.RestClientException
 
-class RestModelRunException(message: String) extends ModelRunException(message) {
+class RestModelRunException(cause: Throwable) extends ModelRunException(cause) {
 
-  def this(ex: RestClientException) = this(ex.getMessage)
+  def this(ex: RestClientException) = this(ex)
 }

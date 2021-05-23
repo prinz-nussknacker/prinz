@@ -19,31 +19,24 @@ import scala.jdk.CollectionConverters.mapAsJavaMapConverter
 
 case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
                             override val model: H2OModel)
-  extends ModelInstance(model)
-    with LazyLogging {
+  extends ModelInstance(model) {
 
   override def run(inputMap: ModelInputData): ModelRunResult = Future {
     try {
       val convertedInputMap = H2ODataConverter.inputToTypedModelInput(inputMap, model.getMetadata.signature)
-      logger.info("Converted input: {}", convertedInputMap)
       val resultSeq = convertedInputMap.mapRows(evaluateRow)
-      logger.info("Mapped rows: {}", resultSeq)
       val results = collectOutputs(resultSeq).asJava
       Right(results)
     } catch {
       case ex: PredictException =>
-        logger.warn("Got PredictException:", ex)
-        Left(new ModelRunException(ex.toString))
+        Left(new ModelRunException(ex))
     }
   }
 
   private def evaluateRow(row: Map[String, AnyRef]): AbstractPrediction = {
-    logger.info("Evaluate row {}", row)
     val rowData = new RowData()
     rowData.putAll(row.asJava)
-    logger.info("Args for H2O evaluator: {}", rowData)
     val result = modelWrapper.predict(rowData)
-    logger.info("Evaluation result: {}", result)
     result
   }
 
@@ -56,7 +49,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     case ModelCategory.KLime            => p.asInstanceOf[KLimeModelPrediction].cluster
     case ModelCategory.CoxPH            => p.asInstanceOf[CoxPHModelPrediction].value
     case ModelCategory.Regression       => p.asInstanceOf[RegressionModelPrediction].value
-    case _ => throw new ModelRunException(s"ModelCategory $modelCategory not supported.")
+    case _ => throw new ModelRunException(new Exception(s"ModelCategory $modelCategory not supported."))
   }
 
   private def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
