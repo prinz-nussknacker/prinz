@@ -5,7 +5,5 @@ import pl.touk.nussknacker.prinz.util.http.RestClientException
 
 class MLFRepositoryException(cause: Throwable) extends ModelRepositoryException(cause) {
 
-  def this(ex: RestClientException) = this(ex)
-
   override def toString: String = s"${getClass.getSimpleName}: ${this.getMessage}"
 }

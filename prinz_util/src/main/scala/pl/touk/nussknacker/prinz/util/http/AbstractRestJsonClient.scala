@@ -28,7 +28,7 @@ abstract class AbstractRestJsonClient(private val baseUrl: String) {
     uri"${s"$baseUrl$relativePath"}?$params"
 
   protected def clientExceptionFromResponse(value: ResponseException[String, Exception]): RestClientException =
-    RestClientException(value.toString)
+    RestClientException(value)
 
   protected def wrapCaughtException[R](requestAction: () => R, exceptionHandler: Exception => R): R = try {
     requestAction()
