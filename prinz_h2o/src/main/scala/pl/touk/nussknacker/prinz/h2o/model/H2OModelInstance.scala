@@ -49,7 +49,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
     case ModelCategory.KLime            => p.asInstanceOf[KLimeModelPrediction].cluster
     case ModelCategory.CoxPH            => p.asInstanceOf[CoxPHModelPrediction].value
     case ModelCategory.Regression       => p.asInstanceOf[RegressionModelPrediction].value
-    case _ => throw new ModelRunException(new Exception(s"ModelCategory $modelCategory not supported."))
+    case _ => throw new ModelRunException(s"ModelCategory $modelCategory not supported.")
   }
 
   private def collectOutputs(rows: IndexedSeq[AbstractPrediction]): Map[String, _] = {
