@@ -1,6 +1,6 @@
 import sbtassembly.MergeStrategy
 
-val prinzV = "0.0.1-SNAPSHOT"
+val prinzV = "0.1.0-SNAPSHOT"
 val prinzOrg = "pl.touk.nussknacker.prinz"
 val repositoryOwner = "prinz-nussknacker"
 val repositoryName = "prinz"
@@ -22,7 +22,6 @@ val typesafeLogV = "3.9.2"
 val logbackV = "1.2.3"
 val h2V = "1.4.200"
 val jsoupV = "1.13.1"
-
 val h2oV = "3.32.0.5"
 
 ThisBuild / scalaVersion  := scalaV
@@ -199,6 +198,7 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         // "pl.touk.nussknacker.prinz" %% "prinz" % prinzV,
         // "pl.touk.nussknacker.prinz" %% "prinz-mlflow" % prinzV,
         // "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
+        // "pl.touk.nussknacker.prinz" %% "prinz-h2o" % prinzV,
 
         "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
