@@ -2,7 +2,7 @@ package pl.touk.nussknacker.prinz.model
 
 import pl.touk.nussknacker.prinz.util.exceptions.PrinzException
 
-class ModelRunException(message: String) extends PrinzException(message) {
+class ModelRunException(cause: Throwable) extends PrinzException(cause) {
 
-  def this(e: Exception) = this(e.toString)
+  def this(message: String) = this(new Exception(message))
 }

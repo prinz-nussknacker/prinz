@@ -2,9 +2,12 @@ package pl.touk.nussknacker.prinz.util.http
 
 import io.circe
 import io.circe.{Decoder, Encoder}
+import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import sttp.client3.circe.asJson
-import sttp.client3.{Identity, RequestT, ResponseException, SttpClientException, UriContext, basicRequest}
+import sttp.client3.{Identity, RequestT, ResponseException, SttpBackend, SttpClientException, UriContext, basicRequest}
 import sttp.model.Uri
+
+import scala.concurrent.Future
 
 abstract class AbstractRestJsonClient(private val baseUrl: String) {
 
@@ -28,7 +31,7 @@ abstract class AbstractRestJsonClient(private val baseUrl: String) {
     uri"${s"$baseUrl$relativePath"}?$params"
 
   protected def clientExceptionFromResponse(value: ResponseException[String, Exception]): RestClientException =
-    RestClientException(value.toString)
+    RestClientException(value)
 
   protected def wrapCaughtException[R](requestAction: () => R, exceptionHandler: Exception => R): R = try {
     requestAction()

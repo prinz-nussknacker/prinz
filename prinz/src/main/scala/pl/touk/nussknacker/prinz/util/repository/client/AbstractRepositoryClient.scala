@@ -12,7 +12,7 @@ abstract class AbstractRepositoryClient(fileExtension: String) {
     Right(loadModelsOnPath)
   }
   catch {
-    case ex: Exception => Left(new ModelRepositoryException(ex.getMessage))
+    case ex: Exception => Left(new ModelRepositoryException(ex))
   }
 
 

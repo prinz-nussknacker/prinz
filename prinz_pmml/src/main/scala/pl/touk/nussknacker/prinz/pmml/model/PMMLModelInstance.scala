@@ -19,24 +19,18 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
   override def run(inputMap: ModelInputData): ModelRunResult = Future {
     try {
       val resultSeq = inputMap.mapRows(evaluateRow)
-      logger.info("Mapped rows: {}", resultSeq)
       val results = collectOutputs(resultSeq).asJava
       Right(results)
     } catch {
       case ex: PMMLException =>
-        logger.warn("Got PMMLException:", ex)
-        Left(new ModelRunException(ex.toString))
+        Left(new ModelRunException(ex))
     }
   }
 
   def evaluateRow(row: Map[String, AnyRef]): Map[String, _] = {
-    logger.info("Evaluate row {}", row)
     val args = EvaluatorUtil.encodeKeys(row.asJava)
-    logger.info("Args for PMML evaluator: {}", args)
     val results = evaluator.evaluate(args)
-    logger.info("Evaluation results: {}", results)
     val decodeResult = EvaluatorUtil.decodeAll(results).asScala.toMap
-    logger.info("Decoding result: {}", decodeResult)
     decodeResult
   }
 
