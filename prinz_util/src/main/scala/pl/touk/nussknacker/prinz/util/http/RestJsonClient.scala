@@ -11,16 +11,16 @@ class RestJsonClient(baseUrl: String, private val backend: SttpBackend[Identity,
   def postJsonBody[BODY, RESPONSE: Manifest](body: BODY, relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
                                             (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
     val request = createPostJsonRequest(relativePath, body, params)
-    defaultWrapCaughtException(request)
+    wrapIdentityResponseException(request)
   }
 
   def getJson[RESPONSE: Manifest](relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
                                  (implicit decoder: Decoder[RESPONSE]): RestClientResponse[RESPONSE] = {
     val request = createGetRequest(relativePath, params)
-    defaultWrapCaughtException(request)
+    wrapIdentityResponseException(request)
   }
 
-  private def defaultWrapCaughtException[RESPONSE: Manifest]
+  private def wrapIdentityResponseException[RESPONSE: Manifest]
   (request: RequestT[Identity, Either[ResponseException[String, circe.Error], RESPONSE], Any]) = wrapCaughtException(
     () => request.send(backend).body.left.map(clientExceptionFromResponse),
     e => Left(RestClientException(e))

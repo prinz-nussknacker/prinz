@@ -16,16 +16,16 @@ class AsyncRestJsonClient(baseUrl: String, private val backend: SttpBackend[Futu
   def postJsonBody[BODY, RESPONSE: Manifest](body: BODY, relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
                                             (implicit encoder: Encoder[BODY], decoder: Decoder[RESPONSE]): Future[RestClientResponse[RESPONSE]] = {
     val request = createPostJsonRequest(relativePath, body, params)
-    defaultWrapCaughtException(request)
+    wrapFutureResponseException(request)
   }
 
   def getJson[RESPONSE: Manifest](relativePath: String = "", params: RestRequestParams = EmptyRestRequestParams)
                                  (implicit decoder: Decoder[RESPONSE]): Future[RestClientResponse[RESPONSE]] = {
     val request = createGetRequest(relativePath, params)
-    defaultWrapCaughtException(request)
+    wrapFutureResponseException(request)
   }
 
-  private def defaultWrapCaughtException[RESPONSE: Manifest]
+  private def wrapFutureResponseException[RESPONSE: Manifest]
     (request: RequestT[Identity, Either[ResponseException[String, circe.Error], RESPONSE], Any]) = wrapCaughtException(
     () => request.send(backend).map { response => response.body.left.map(clientExceptionFromResponse) },
     e => Future(Left(RestClientException(e)))

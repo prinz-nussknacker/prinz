@@ -38,12 +38,6 @@ abstract class AbstractRestJsonClient(private val baseUrl: String) {
   } catch {
     case e: SttpClientException => exceptionHandler(e)
   }
-
-  /*protected def defaultWrapCaughtException[RESPONSE: Manifest, F[_]]
-  (request: RequestT[Identity, Either[ResponseException[String, circe.Error], RESPONSE], Any], backend: SttpBackend[F, Any]) = wrapCaughtException(
-    () => request.send(backend).map { response => response.body.left.map(clientExceptionFromResponse) },
-    e => Future(Left(RestClientException(e)))
-  )*/
 }
 
 object AbstractRestJsonClient {
