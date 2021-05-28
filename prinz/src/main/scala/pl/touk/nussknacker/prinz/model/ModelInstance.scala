@@ -12,12 +12,12 @@ abstract class ModelInstance(val model: Model) {
   protected def verify(inputMap: ModelInputData): Boolean = {
     val inputColumnNames = inputMap.keys.toSet
     val signatureColumnNames = model.getMetadata.signature.getInputNames.map(_.name).toSet
-    inputColumnNames.subsetOf(signatureColumnNames)
+    inputColumnNames.equals(signatureColumnNames)
   }
 
   protected def runVerified(inputMap: ModelInputData): ModelRunResult
 
-  def run(inputMap: ModelInputData): ModelRunResult = {
+  final def run(inputMap: ModelInputData): ModelRunResult = {
     if(verify(inputMap)) {
       runVerified(inputMap)
     }

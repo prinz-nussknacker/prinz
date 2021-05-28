@@ -8,7 +8,7 @@ class TransformedModelInstance(originalModelInstance: ModelInstance,
                                paramProvider: TransformedParamProvider)
   extends ModelInstance(originalModelInstance.model) {
 
-  override def run(inputMap: ModelInputData): ModelRunResult =
+  override def runVerified(inputMap: ModelInputData): ModelRunResult =
     paramProvider
       .transformInputData(inputMap)
       .flatMap { transformedInput =>

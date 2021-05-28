@@ -13,7 +13,7 @@ class ProxiedInputModelInstance(modelMetadata: ModelMetadata,
                                 compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]])
   extends ModelInstance(originalModelInstance.model) {
 
-  override def run(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
+  override def runVerified(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
     val addInputParams = supplyNonProvidedInputs(inputMap)
     val addComposedParams = addInputParams.flatMap(supplyNonProvidedComposedInputs)
     addComposedParams.flatMap(originalModelInstance.run)
