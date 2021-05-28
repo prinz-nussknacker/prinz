@@ -21,7 +21,7 @@ case class H2OModelInstance(private val modelWrapper: EasyPredictModelWrapper,
                             override val model: H2OModel)
   extends ModelInstance(model) {
 
-  override def run(inputMap: ModelInputData): ModelRunResult = Future {
+  override def runVerified(inputMap: ModelInputData): ModelRunResult = Future {
     try {
       val convertedInputMap = H2ODataConverter.inputToTypedModelInput(inputMap, model.getMetadata.signature)
       val resultSeq = convertedInputMap.mapRows(evaluateRow)
