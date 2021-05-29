@@ -2,7 +2,8 @@ package pl.touk.nussknacker.prinz.proxy
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.container.TestModelsManager
-import pl.touk.nussknacker.prinz.model.SignatureName
+import pl.touk.nussknacker.prinz.model.ModelInstance.ModelRunResult
+import pl.touk.nussknacker.prinz.model.{ModelRunException, SignatureName}
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
@@ -29,7 +30,7 @@ trait ModelsProxySpec extends UnitTest
     ).mapValues(_.asInstanceOf[AnyRef])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
+    assertRunResult(response)
   }
 
   it should "allow to run fraud model with database composed proxied data" in {
@@ -58,7 +59,7 @@ trait ModelsProxySpec extends UnitTest
     ).mapValues(_.asInstanceOf[AnyRef])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
+    assertRunResult(response)
   }
 
   it should "allow to run fraud model with database transformed proxied data" in {
@@ -76,7 +77,7 @@ trait ModelsProxySpec extends UnitTest
     ).mapValues(_.asInstanceOf[AnyRef])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
-    response.toOption.isDefined shouldBe true
+    assertRunResult(response)
   }
 
   it should "transform model param definition with database transformed proxied data" in {
@@ -114,4 +115,9 @@ trait ModelsProxySpec extends UnitTest
 
   private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
     Future(extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs))))
+
+  private def assertRunResult(runResult: Either[ModelRunException, util.Map[String, _]]): Unit = runResult match {
+    case Left(exc) => throw exc
+    case Right(_) => Unit
+  }
 }
