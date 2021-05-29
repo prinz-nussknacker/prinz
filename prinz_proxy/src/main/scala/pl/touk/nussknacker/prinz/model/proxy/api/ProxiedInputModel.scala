@@ -1,7 +1,7 @@
 package pl.touk.nussknacker.prinz.model.proxy.api
 
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel.filtered
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel.filteredTransform
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName,
   ModelSignatureLocationMetadata, ModelVersion, SignatureName}
 import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance,
@@ -14,35 +14,35 @@ import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransf
 class ProxiedInputModel private(originalModel: Model,
                                 modelName: ProxiedInputModelName,
                                 transformedSignatureProvider: TransformedSignatureProvider,
-                                proxySupplier: (ModelMetadata, ModelInstance, ProxiedInputModel) => ModelInstance)
+                                proxySupplier: (Model, ProxiedInputModel) => ModelInstance)
   extends Model {
 
-  def this(proxiedModel: Model,
+  def this(model: Model,
            proxiedParams: Iterable[ProxiedModelInputParam],
            compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]) {
     this(
-      proxiedModel,
-      CompositeProxiedInputModelName(proxiedModel),
-      new TransformedSignatureProvider(filtered(proxiedParams, compositeProxiedParams)),
-      (metadata, instance, proxiedModel) => new ProxiedInputModelInstance(
-        metadata,
-        instance,
-        proxiedModel,
+      model,
+      CompositeProxiedInputModelName(model),
+      new TransformedSignatureProvider(filteredTransform(proxiedParams, compositeProxiedParams)),
+      (originalModel, proxiedInputModel) => new ProxiedInputModelInstance(
+        originalModel.getMetadata,
+        originalModel.toModelInstance,
+        proxiedInputModel,
         proxiedParams,
         compositeProxiedParams)
     )
   }
 
-  def this(proxiedModel: Model,
+  def this(model: Model,
            signatureTransformer: SignatureTransformer,
            paramProvider: TransformedParamProvider) {
     this(
-      proxiedModel,
-      TransformedProxiedInputModelName(proxiedModel),
+      model,
+      TransformedProxiedInputModelName(model),
       new TransformedSignatureProvider(signatureTransformer),
-      (_, instance, proxiedModel) => new TransformedModelInstance(
-        instance,
-        proxiedModel,
+      (originalModel, proxiedInputModel) => new TransformedModelInstance(
+        originalModel.toModelInstance,
+        proxiedInputModel,
         paramProvider)
     )
   }
@@ -53,9 +53,9 @@ class ProxiedInputModel private(originalModel: Model,
       proxiedModel,
       TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(signatureTransformer),
-      (_, instance, proxiedModel) => new TransformedModelInstance(
-        instance,
-        proxiedModel,
+      (originalModel, proxiedInputModel) => new TransformedModelInstance(
+        originalModel.toModelInstance,
+        proxiedInputModel,
         signatureTransformer)
     )
   }
@@ -77,18 +77,19 @@ class ProxiedInputModel private(originalModel: Model,
 
 object ProxiedInputModel {
 
-  def apply(proxiedModel: Model,
+  def apply(model: Model,
             proxiedParams: Iterable[ProxiedModelInputParam],
             compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): ProxiedInputModel =
-    new ProxiedInputModel(proxiedModel, proxiedParams, compositeProxiedParams)
+    new ProxiedInputModel(model, proxiedParams, compositeProxiedParams)
 
-  def apply(proxiedModel: Model,
+  def apply(model: Model,
             signatureTransformer: SignatureTransformer,
             paramProvider: TransformedParamProvider): ProxiedInputModel =
-    new ProxiedInputModel(proxiedModel, signatureTransformer, paramProvider)
+    new ProxiedInputModel(model, signatureTransformer, paramProvider)
 
-  def apply(proxiedModel: Model, transformer: ModelInputTransformer): ProxiedInputModel =
-    new ProxiedInputModel(proxiedModel, transformer)
+  def apply(model: Model,
+            transformer: ModelInputTransformer): ProxiedInputModel =
+    new ProxiedInputModel(model, transformer)
 
   private def collectRemovedParams(proxiedParams: Iterable[ProxiedModelInputParam],
                                   compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): Iterable[SignatureName] = {
@@ -97,8 +98,9 @@ object ProxiedInputModel {
     proxiedNames ++ composedProxiedNames
   }
 
-  private def filtered(proxiedParams: Iterable[ProxiedModelInputParam],
-                                   compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): FilteredSignatureTransformer =
+  private def filteredTransform(proxiedParams: Iterable[ProxiedModelInputParam],
+                                compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]
+                               ): FilteredSignatureTransformer =
     new FilteredSignatureTransformer(collectRemovedParams(proxiedParams, compositeProxiedParams))
 }
 
