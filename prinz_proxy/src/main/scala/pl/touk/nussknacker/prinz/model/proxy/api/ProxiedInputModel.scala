@@ -7,10 +7,10 @@ import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransf
   SignatureTransformer, TransformedModelInstance, TransformedParamProvider, TransformedSignatureProvider}
 
 
-class ProxiedInputModel private(proxiedModel: Model,
+class ProxiedInputModel private(originalModel: Model,
                                 modelName: ProxiedInputModelName,
                                 transformedSignatureProvider: TransformedSignatureProvider,
-                                proxySupplier: (ModelMetadata, ModelInstance) => ModelInstance)
+                                proxySupplier: (ModelMetadata, ModelInstance, ProxiedInputModel) => ModelInstance)
   extends Model {
 
   def this(proxiedModel: Model,
@@ -20,7 +20,12 @@ class ProxiedInputModel private(proxiedModel: Model,
       proxiedModel,
       CompositeProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(new FilteredSignatureTransformer(proxiedParams)),
-      (metadata, instance) => new ProxiedInputModelInstance(metadata, instance, proxiedParams, compositeProxiedParams)
+      (metadata, instance, proxiedModel) => new ProxiedInputModelInstance(
+        metadata,
+        instance,
+        proxiedModel,
+        proxiedParams,
+        compositeProxiedParams)
     )
   }
 
@@ -31,7 +36,7 @@ class ProxiedInputModel private(proxiedModel: Model,
       proxiedModel,
       TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(signatureTransformer),
-      (_, instance) => new TransformedModelInstance(
+      (_, instance, _) => new TransformedModelInstance(
         instance,
         paramProvider)
     )
@@ -43,25 +48,25 @@ class ProxiedInputModel private(proxiedModel: Model,
       proxiedModel,
       TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(transformer),
-      (_, instance) => new TransformedModelInstance(
+      (_, instance, _) => new TransformedModelInstance(
         instance,
         transformer)
     )
   }
 
   override def toModelInstance: ModelInstance = {
-    val originalModelInstance = proxiedModel.toModelInstance
-    proxySupplier(proxiedModel.getMetadata, originalModelInstance)
+    val originalModelInstance = originalModel.toModelInstance
+    proxySupplier(originalModel.getMetadata, originalModelInstance, this)
   }
 
   override protected val signatureOption: ProvideSignatureResult = {
-    val metadata = ProxiedModelSignatureLocationMetadata(proxiedModel)
+    val metadata = ProxiedModelSignatureLocationMetadata(originalModel)
     transformedSignatureProvider.provideSignature(metadata)
   }
 
   override protected val name: ModelName = modelName
 
-  override protected val version: ModelVersion = proxiedModel.getMetadata.modelVersion
+  override protected val version: ModelVersion = originalModel.getMetadata.modelVersion
 }
 
 object ProxiedInputModel {

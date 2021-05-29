@@ -2,7 +2,6 @@ package pl.touk.nussknacker.prinz.proxy
 
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.container.TestModelsManager
-import pl.touk.nussknacker.prinz.model.ModelInstance.ModelRunResult
 import pl.touk.nussknacker.prinz.model.{ModelRunException, SignatureName}
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel
 import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder, ProxiedInputModelBuilder}
