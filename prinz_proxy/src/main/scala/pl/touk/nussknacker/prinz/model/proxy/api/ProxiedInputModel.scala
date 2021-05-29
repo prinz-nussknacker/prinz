@@ -60,10 +60,7 @@ class ProxiedInputModel private(originalModel: Model,
     )
   }
 
-  override def toModelInstance: ModelInstance = {
-    val originalModelInstance = originalModel.toModelInstance
-    proxySupplier(originalModel.getMetadata, originalModelInstance, this)
-  }
+  override def toModelInstance: ModelInstance = proxySupplier(originalModel, this)
 
   override protected val signatureOption: ProvideSignatureResult = {
     val metadata = ProxiedModelSignatureLocationMetadata(originalModel)

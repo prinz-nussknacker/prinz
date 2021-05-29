@@ -2,7 +2,6 @@ package pl.touk.nussknacker.prinz.model.proxy.tranformer
 
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedModelSignatureLocationMetadata
-import pl.touk.nussknacker.prinz.model.proxy.composite.ProxiedModelInputParam
 import pl.touk.nussknacker.prinz.model.{ModelSignature, ModelSignatureLocationMetadata, SignatureName, SignatureProvider}
 
 trait SignatureTransformer {
@@ -18,7 +17,7 @@ class FilteredSignatureTransformer(removeParams: Iterable[SignatureName])
     val filteredInputs = modelSignature.getSignatureInputs
       .filter(input => !removeParamsNames.contains(input.signatureName))
     ModelSignature(filteredInputs, modelSignature.getSignatureOutputs)
-  }
+  }ProxiedInputModel
 }
 
 class TransformedSignatureProvider(transformer: SignatureTransformer) extends SignatureProvider {
