@@ -12,7 +12,9 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-case class PrinzEnricher(private val model: Model) extends ServiceWithExplicitMethod with LazyLogging {
+final case class PrinzEnricher(private val model: Model)
+  extends ServiceWithExplicitMethod
+    with LazyLogging {
 
   private lazy val modelInstance = {
     model.toModelInstance
