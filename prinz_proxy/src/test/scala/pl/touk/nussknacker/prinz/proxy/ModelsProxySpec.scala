@@ -9,6 +9,7 @@ import pl.touk.nussknacker.prinz.model.proxy.build.{ProxiedHttpInputModelBuilder
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import pl.touk.nussknacker.prinz.{H2Database, UnitTest}
 
+import java.util.{Map => JMap}
 import java.sql.ResultSet
 import scala.concurrent.{Await, Future}
 
@@ -116,7 +117,7 @@ trait ModelsProxySpec extends UnitTest
   private def extractResultSetValues(rs: ResultSet, extracts: List[(String, ResultSet => AnyRef)]): Future[Iterable[(SignatureName, AnyRef)]] =
     Future(extracts.map(colExtract => (SignatureName(colExtract._1), colExtract._2(rs))))
 
-  private def assertRunResult(runResult: Either[ModelRunException, util.Map[String, _]]): Unit = runResult match {
+  private def assertRunResult(runResult: Either[ModelRunException, JMap[String, _]]): Unit = runResult match {
     case Left(exc) => throw exc
     case Right(_) => Unit
   }

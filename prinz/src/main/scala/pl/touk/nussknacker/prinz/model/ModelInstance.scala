@@ -3,7 +3,6 @@ package pl.touk.nussknacker.prinz.model
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
-import pl.touk.nussknacker.prinz.model.ModelRunException
 
 import java.util.{Map => JMap}
 import scala.concurrent.Future
