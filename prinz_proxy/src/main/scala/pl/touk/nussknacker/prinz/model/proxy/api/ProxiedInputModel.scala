@@ -1,8 +1,10 @@
 package pl.touk.nussknacker.prinz.model.proxy.api
 
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelSignatureLocationMetadata, ModelVersion}
-import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance, ProxiedModelCompositeInputParam, ProxiedModelInputParam}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata,
+  ModelName, ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance,
+  ProxiedModelCompositeInputParam, ProxiedModelInputParam}
 import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransformer, ModelInputTransformer,
   SignatureTransformer, TransformedModelInstance, TransformedParamProvider, TransformedSignatureProvider}
 
@@ -36,21 +38,23 @@ class ProxiedInputModel private(originalModel: Model,
       proxiedModel,
       TransformedProxiedInputModelName(proxiedModel),
       new TransformedSignatureProvider(signatureTransformer),
-      (_, instance, _) => new TransformedModelInstance(
+      (_, instance, proxiedModel) => new TransformedModelInstance(
         instance,
+        proxiedModel,
         paramProvider)
     )
   }
 
   def this(proxiedModel: Model,
-           transformer: ModelInputTransformer) {
+           signatureTransformer: ModelInputTransformer) {
     this(
       proxiedModel,
       TransformedProxiedInputModelName(proxiedModel),
-      new TransformedSignatureProvider(transformer),
-      (_, instance, _) => new TransformedModelInstance(
+      new TransformedSignatureProvider(signatureTransformer),
+      (_, instance, proxiedModel) => new TransformedModelInstance(
         instance,
-        transformer)
+        proxiedModel,
+        signatureTransformer)
     )
   }
 

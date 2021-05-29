@@ -46,7 +46,7 @@ case class SignatureField(signatureName: SignatureName, signatureType: Signature
     NotBlankParameter(signatureName.name, signatureType.typingResult)
 
   override def toString: String =
-    s"{${signatureName.name}: ${signatureType.typingResult.display}"
+    s"${signatureName.name}: ${signatureType.typingResult.display}"
 }
 
 object ModelSignature {
