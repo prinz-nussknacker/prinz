@@ -3,8 +3,7 @@ package pl.touk.nussknacker.prinz.model.proxy.api
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
 import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName, ModelSignatureLocationMetadata, ModelVersion}
 import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance, ProxiedModelCompositeInputParam, ProxiedModelInputParam}
-import pl.touk.nussknacker.prinz.model.proxy.tranformer.{ModelInputTransformer, SignatureTransformer, TransformedModelInstance,
-  TransformedParamProvider, TransformedSignatureProvider}
+import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransformer, ModelInputTransformer, SignatureTransformer, TransformedModelInstance, TransformedParamProvider, TransformedSignatureProvider}
 
 
 class ProxiedInputModel private(proxiedModel: Model,
@@ -19,7 +18,7 @@ class ProxiedInputModel private(proxiedModel: Model,
     this(
       proxiedModel,
       CompositeProxiedInputModelName(proxiedModel),
-      new TransformedSignatureProvider(identity),
+      new TransformedSignatureProvider(new FilteredSignatureTransformer(proxiedParams)),
       (metadata, instance) => new ProxiedInputModelInstance(metadata, instance, proxiedParams, compositeProxiedParams)
     )
   }
