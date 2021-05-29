@@ -17,7 +17,7 @@ class FilteredSignatureTransformer(removeParams: Iterable[SignatureName])
     val filteredInputs = modelSignature.getSignatureInputs
       .filter(input => !removeParamsNames.contains(input.signatureName))
     ModelSignature(filteredInputs, modelSignature.getSignatureOutputs)
-  }ProxiedInputModel
+  }
 }
 
 class TransformedSignatureProvider(transformer: SignatureTransformer) extends SignatureProvider {
