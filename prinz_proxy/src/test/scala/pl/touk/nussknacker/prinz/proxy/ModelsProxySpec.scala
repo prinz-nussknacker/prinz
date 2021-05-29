@@ -49,7 +49,8 @@ trait ModelsProxySpec extends UnitTest
         rs => extractResultSetValues(rs, List(
           ("amount", _.getDouble("amount").asInstanceOf[AnyRef]),
           ("gender", _.getString("gender"))
-        ))
+        )),
+        List(SignatureName("amount"), SignatureName("gender"))
       )
       .build()
     val instance = proxiedModel.toModelInstance

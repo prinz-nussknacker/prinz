@@ -1,12 +1,14 @@
 package pl.touk.nussknacker.prinz.model.proxy.api
 
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata,
-  ModelName, ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.model.proxy.api.ProxiedInputModel.filtered
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelMetadata, ModelName,
+  ModelSignatureLocationMetadata, ModelVersion, SignatureName}
 import pl.touk.nussknacker.prinz.model.proxy.composite.{ProxiedInputModelInstance,
   ProxiedModelCompositeInputParam, ProxiedModelInputParam}
-import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransformer, ModelInputTransformer,
-  SignatureTransformer, TransformedModelInstance, TransformedParamProvider, TransformedSignatureProvider}
+import pl.touk.nussknacker.prinz.model.proxy.tranformer.{FilteredSignatureTransformer,
+  ModelInputTransformer, SignatureTransformer, TransformedModelInstance,
+  TransformedParamProvider, TransformedSignatureProvider}
 
 
 class ProxiedInputModel private(originalModel: Model,
@@ -21,7 +23,7 @@ class ProxiedInputModel private(originalModel: Model,
     this(
       proxiedModel,
       CompositeProxiedInputModelName(proxiedModel),
-      new TransformedSignatureProvider(new FilteredSignatureTransformer(proxiedParams)),
+      new TransformedSignatureProvider(filtered(proxiedParams, compositeProxiedParams)),
       (metadata, instance, proxiedModel) => new ProxiedInputModelInstance(
         metadata,
         instance,
@@ -87,6 +89,17 @@ object ProxiedInputModel {
 
   def apply(proxiedModel: Model, transformer: ModelInputTransformer): ProxiedInputModel =
     new ProxiedInputModel(proxiedModel, transformer)
+
+  private def collectRemovedParams(proxiedParams: Iterable[ProxiedModelInputParam],
+                                  compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): Iterable[SignatureName] = {
+    val proxiedNames = proxiedParams.map(_.paramName)
+    val composedProxiedNames = compositeProxiedParams.flatMap(_.proxiedParams)
+    proxiedNames ++ composedProxiedNames
+  }
+
+  private def filtered(proxiedParams: Iterable[ProxiedModelInputParam],
+                                   compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): FilteredSignatureTransformer =
+    new FilteredSignatureTransformer(collectRemovedParams(proxiedParams, compositeProxiedParams))
 }
 
 final case class ProxiedModelSignatureLocationMetadata(proxiedModel: Model) extends ModelSignatureLocationMetadata
