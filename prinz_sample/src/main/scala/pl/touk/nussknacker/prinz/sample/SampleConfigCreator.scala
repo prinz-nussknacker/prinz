@@ -7,9 +7,11 @@ import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFa
 import pl.touk.nussknacker.engine.flink.util.exception.VerboselyLoggingExceptionHandler
 import pl.touk.nussknacker.engine.flink.util.sink.EmptySink
 import pl.touk.nussknacker.engine.flink.util.transformer.PeriodicSourceFactory
+import pl.touk.nussknacker.engine.modelconfig.DefaultModelConfigLoader
 import pl.touk.nussknacker.engine.util.process.EmptyProcessConfigCreator
 import pl.touk.nussknacker.prinz.enrichers.PrinzEnricher
 import pl.touk.nussknacker.prinz.h2o.H2OConfig
+import pl.touk.nussknacker.prinz.h2o.model.H2OModelInstance
 import pl.touk.nussknacker.prinz.h2o.repository.H2OModelRepository
 import pl.touk.nussknacker.prinz.mlflow.MLFConfig
 import pl.touk.nussknacker.prinz.mlflow.model.api.LocalMLFModelLocationStrategy
@@ -62,6 +64,8 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
       case Right(services) => services
       case Left(exception) => throw exception
     }
+
+    new SampleComponentProvider(repository).create(config, processObjectDependencies)
   }
 
   override def exceptionHandlerFactory(processObjectDependencies: ProcessObjectDependencies): ExceptionHandlerFactory =
