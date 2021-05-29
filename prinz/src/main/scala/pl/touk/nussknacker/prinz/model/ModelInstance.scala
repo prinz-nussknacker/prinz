@@ -1,5 +1,6 @@
 package pl.touk.nussknacker.prinz.model
 
+import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimap
 import pl.touk.nussknacker.prinz.model.ModelRunException
@@ -9,21 +10,24 @@ import scala.concurrent.Future
 
 abstract class ModelInstance(val model: Model) {
 
-  protected def verify(inputMap: ModelInputData): Boolean = {
+  protected def verify(inputMap: ModelInputData): Either[ModelRunException, ModelInputData] = {
     val inputColumnNames = inputMap.keys.toSet
-    val signatureColumnNames = model.getMetadata.signature.getInputNames.map(_.name).toSet
-    inputColumnNames.equals(signatureColumnNames)
+    val signature = model.getMetadata.signature
+    val signatureColumnNames = signature.getInputNames.map(_.name).toSet
+    if (inputColumnNames.equals(signatureColumnNames)) {
+      Right(inputMap)
+    }
+    else {
+      Left(new ModelRunException(s"Input data $inputMap does not match signature for " +
+        s"model ${model.getMetadata.modelName} with signature $signature"))
+    }
   }
 
   protected def runVerified(inputMap: ModelInputData): ModelRunResult
 
-  final def run(inputMap: ModelInputData): ModelRunResult = {
-    if(verify(inputMap)) {
-      runVerified(inputMap)
-    }
-    else {
-      throw new ModelRunException(s"Input data does not match signature for model ${model.getMetadata.modelName}")
-    }
+  final def run(inputMap: ModelInputData): ModelRunResult = verify(inputMap) match {
+    case Right(verifiedInputMap) => runVerified(verifiedInputMap)
+    case Left(value) => Future(Left(value))
   }
 
   override def toString: String = s"ModelInstance for: $model"
