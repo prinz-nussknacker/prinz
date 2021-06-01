@@ -7,7 +7,8 @@ import pl.touk.nussknacker.prinz.model.{ModelMetadata, SignatureName}
 import scala.concurrent.Future
 
 final case class ProxiedModelCompositeInputParam[T](paramsSupplier: ComposedParamsSupplier[T],
-                                                    paramsExtractor: ParamsExtractor[T]) {
+                                                    paramsExtractor: ParamsExtractor[T],
+                                                    proxiedParams: Iterable[SignatureName]) {
 
   def supplyCompositeParamValues(modelMetadata: ModelMetadata): Future[Iterable[(String, AnyRef)]] = {
     paramsSupplier(modelMetadata)
