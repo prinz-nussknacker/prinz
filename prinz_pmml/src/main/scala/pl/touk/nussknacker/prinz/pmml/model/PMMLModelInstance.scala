@@ -16,7 +16,7 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
   extends ModelInstance(model)
     with LazyLogging {
 
-  override def runVerified(inputMap: ModelInputData): ModelRunResult = Future {
+  override protected def runVerified(inputMap: ModelInputData): ModelRunResult = Future {
     try {
       val resultSeq = inputMap.mapRows(evaluateRow)
       val results = collectOutputs(resultSeq).asJava

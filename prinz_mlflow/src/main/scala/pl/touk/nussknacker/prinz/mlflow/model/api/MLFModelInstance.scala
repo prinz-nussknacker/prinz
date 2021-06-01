@@ -17,7 +17,7 @@ case class MLFModelInstance(config: MLFConfig,
 
   private val invokeRestClient = MLFInvokeRestClient(config.servedModelsUrl.toString, model)
 
-  override def runVerified(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
+  override protected def runVerified(inputMap: VectorMultimap[String, AnyRef]): ModelRunResult = {
     val dataframe = MLFDataConverter.inputToDataframe(inputMap, model.getMetadata.signature)
     invokeRestClient.invoke(dataframe, model.getMetadata.signature, config.modelLocationStrategy)
       .map { response =>

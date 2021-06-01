@@ -10,7 +10,7 @@ class TransformedModelInstance(originalModelInstance: ModelInstance,
                                paramProvider: TransformedParamProvider)
   extends ModelInstance(proxiedModel) {
 
-  override def runVerified(inputMap: ModelInputData): ModelRunResult =
+  override protected def runVerified(inputMap: ModelInputData): ModelRunResult =
     paramProvider
       .transformInputData(inputMap)
       .flatMap { transformedInput =>
