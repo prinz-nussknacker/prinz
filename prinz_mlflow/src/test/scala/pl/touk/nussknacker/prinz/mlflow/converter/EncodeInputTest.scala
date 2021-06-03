@@ -104,11 +104,11 @@ class EncodeInputTest extends UnitTest {
   }
 
   private def createInputMultimap(input: List[AnyRef], signature: ModelSignature): VectorMultimap[String, AnyRef] = {
-    VectorMultimap(signature.getInputNames.map(_.name).zip(input))
+    VectorMultimap(signature.getSignatureInputs.map(_.signatureName.name).zip(input))
   }
 
   private def buildMultipleInput(inputs: List[List[AnyRef]], signature: ModelSignature): VectorMultimap[String, AnyRef] = {
-    val colValuesList = signature.getInputNames.map(_.name).zip(inputs)
+    val colValuesList = signature.getSignatureInputs.map(_.signatureName.name).zip(inputs)
     val colValues = colValuesList.flatMap { case (col, colValues) => colValues.map((col, _)) }
     VectorMultimap(colValues)
   }

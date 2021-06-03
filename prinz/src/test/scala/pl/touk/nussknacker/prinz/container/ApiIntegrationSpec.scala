@@ -91,8 +91,8 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
   it should "have wine model with proper model signature" in {
     val model = getModel(getElasticnetWineModelModel(1))
     val signature = model.map(_.getMetadata.signature).get
-    val inputNames = signature.getInputNames
-    val outputNames = signature.getOutputNames
+    val inputNames = signature.getSignatureInputs.map(_.signatureName)
+    val outputNames = signature.getSignatureOutputs.map(_.signatureName)
 
     assertSignatureFields(inputNames, expectedWineInputs)(signature.getInputValueType)
     assertSignatureFields(outputNames, expectedWineOutputs)(signature.getOutputValueType)
@@ -101,8 +101,8 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
   it should "have fraud detection model with proper model signature" in {
     val model = getModel(getFraudDetectionModel)
     val signature = model.map(_.getMetadata.signature).get
-    val inputNames = signature.getInputNames
-    val outputNames = signature.getOutputNames
+    val inputNames = signature.getSignatureInputs.map(_.signatureName)
+    val outputNames = signature.getSignatureOutputs.map(_.signatureName)
 
     assertSignatureFields(inputNames, expectedFraudInputs)(signature.getInputValueType)
     assertSignatureFields(outputNames, expectedFraudOutputs)(signature.getOutputValueType)

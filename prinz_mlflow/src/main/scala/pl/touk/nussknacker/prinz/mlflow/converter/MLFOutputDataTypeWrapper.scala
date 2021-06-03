@@ -24,7 +24,7 @@ object MLFOutputDataTypeWrapper {
     }
 
     private def getDecoderForIndex(index: Int): Decoder[_] = {
-      val outputName = signature.getOutputNames(index)
+      val outputName = signature.getSignatureOutputs(index).signatureName
       val outputType = signature.getOutputValueType(outputName).get.typingResult
       getDecoderForType(outputType)
     }
