@@ -20,7 +20,7 @@ class PMMLLocalFileApiTest extends PMMLContainerUnitTest
 
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
-      |  pmml {
+      |  pmmlConfig {
       |    fileExtension: ".pmml"
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/pmml-samples/exports"
       |    modelVersionSeparator: "-v"
