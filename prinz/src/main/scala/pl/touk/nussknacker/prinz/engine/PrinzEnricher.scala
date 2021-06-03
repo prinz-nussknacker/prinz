@@ -1,4 +1,4 @@
-package pl.touk.nussknacker.prinz.enrichers
+package pl.touk.nussknacker.prinz.engine
 
 import com.typesafe.scalalogging.LazyLogging
 import pl.touk.nussknacker.engine.api.definition.{Parameter, ServiceWithExplicitMethod}

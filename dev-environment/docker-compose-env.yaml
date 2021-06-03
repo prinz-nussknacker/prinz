@@ -6,11 +6,11 @@ services:
     container_name: nussknacker
     build: ./nussknacker
     ports:
-      - "3000:3000"
       - "8080:8080"
     environment:
       NUSSKNACKER_CONFIG_FILE: >-
         ${NUSSKNACKER_CONFIG_FILE:-/opt/prinz-sample/prinz-application.conf}
+      JDK_JAVA_OPTIONS: -Xmx256M
     networks:
       - dev-bridge-net
     depends_on:
