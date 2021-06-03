@@ -17,7 +17,7 @@ data sources in the [prinz_proxy](./prinz_proxy) module.
 
 ## Releases
 
-Prinz is released on GitHub packages registry so accessing the library 
+Prinz is released on GitHub packages registry so accessing the library
 code needs using the GitHub authentication. Full sample of working Prinz
 integration is available in [prinz_sample](./prinz_sample)
 
