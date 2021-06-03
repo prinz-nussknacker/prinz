@@ -11,8 +11,8 @@ class MLFComponentProvider extends PrinzComponentProvider {
   override def providerName: String = "prinzMLflow"
 
   override final def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository = {
-    implicit val config: Config = dependencies.config
-    implicit val h2oConfig: MLFConfig = MLFConfig()
+    implicit val implicitConfig: Config = config
+    implicit val mlfConfig: MLFConfig = MLFConfig()
     new MLFModelRepository()
   }
 }

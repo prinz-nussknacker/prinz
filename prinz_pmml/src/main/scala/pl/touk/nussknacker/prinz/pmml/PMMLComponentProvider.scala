@@ -11,8 +11,8 @@ class PMMLComponentProvider extends PrinzComponentProvider {
   override def providerName: String = "prinzPMML"
 
   override final def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository = {
-    implicit val config: Config = dependencies.config
-    implicit val h2oConfig: PMMLConfig = PMMLConfig()
+    implicit val implicitConfig: Config = config
+    implicit val pmmlConfig: PMMLConfig = PMMLConfig()
     new PMMLModelRepository()
   }
 }
