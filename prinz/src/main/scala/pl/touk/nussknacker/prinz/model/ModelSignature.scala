@@ -11,15 +11,11 @@ case class ModelSignature private(private val signatureInputs: List[SignatureFie
 
   private val signatureOutputMap = signatureOutputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
-  def getInputDefinition: TypedObjectTypingResult =
-    TypedObjectTypingResult(signatureInputMap.map(kv => (kv._1.name, kv._2.typingResult)).toList)
+  def toInputParameterDefinition: List[Parameter] =
+    signatureInputs.map(field => field.toNussknackerParameter)
 
-  def getOutputDefinition: TypedObjectTypingResult =
+  def toOutputTypedObjectTypingResult: TypedObjectTypingResult =
     TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)).toList)
-
-  def getInputNames: List[SignatureName] = signatureInputs.map(_.signatureName)
-
-  def getOutputNames: List[SignatureName] = signatureOutputs.map(_.signatureName)
 
   def getSignatureInputs: List[SignatureField] = signatureInputs
 
@@ -28,10 +24,6 @@ case class ModelSignature private(private val signatureInputs: List[SignatureFie
   def getInputValueType(valueName: SignatureName): Option[SignatureType] = signatureInputMap.get(valueName)
 
   def getOutputValueType(valueName: SignatureName): Option[SignatureType] = signatureOutputMap.get(valueName)
-
-  def toInputParameterDefinition: List[Parameter] = signatureInputs.map(field => field.toNussknackerParameter)
-
-  def toOutputParameterDefinition: List[Parameter] = signatureOutputs.map(field => field.toNussknackerParameter)
 
   override def toString: String = s"${getClass.getSimpleName}(\ninputs: $signatureInputs\noutputs: $signatureOutputs\n)"
 }
@@ -46,7 +38,7 @@ case class SignatureField(signatureName: SignatureName, signatureType: Signature
     NotBlankParameter(signatureName.name, signatureType.typingResult)
 
   override def toString: String =
-    s"{${signatureName.name}: ${signatureType.typingResult.display}"
+    s"${signatureName.name}: ${signatureType.typingResult.display}"
 }
 
 object ModelSignature {

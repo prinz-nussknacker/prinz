@@ -40,7 +40,7 @@ final case class PrinzEnricher(private val model: Model)
     model
       .getMetadata
       .signature
-      .getOutputDefinition
+      .toOutputTypedObjectTypingResult
 
   def createInputMap(inputs: List[AnyRef]): ModelInputData =
     VectorMultimap(parameterDefinition.map(_.name) zip inputs)

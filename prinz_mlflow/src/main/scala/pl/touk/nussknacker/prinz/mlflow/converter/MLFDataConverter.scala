@@ -10,7 +10,7 @@ import pl.touk.nussknacker.prinz.util.collection.immutable.VectorMultimapUtils.V
 object MLFDataConverter extends LazyLogging {
 
   def outputToResultMap(output: MLFOutputDataTypeWrapper, signature: ModelSignature): Map[String, _] = {
-    val outNames = signature.getOutputNames.map(_.name)
+    val outNames = signature.getSignatureOutputs.map(_.signatureName.name)
     outNames.zip(output.outputData)
       .toMap
   }
