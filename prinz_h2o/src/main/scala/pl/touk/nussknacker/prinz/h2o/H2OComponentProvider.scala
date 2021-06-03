@@ -8,7 +8,7 @@ import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 
 class H2OComponentProvider extends PrinzComponentProvider {
 
-  override def providerName: String = "H2O"
+  override def providerName: String = "prinzH2O"
 
   override final def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository = {
     implicit val config: Config = dependencies.config
