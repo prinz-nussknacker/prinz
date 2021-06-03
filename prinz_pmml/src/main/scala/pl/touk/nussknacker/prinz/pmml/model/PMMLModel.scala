@@ -28,7 +28,10 @@ final class PMMLModel(payload: PMMLModelPayload) extends Model {
 
 final case class PMMLModelName(name: String) extends ModelName(name)
 
-final case class PMMLModelVersion(version: String) extends ModelVersion
+final case class PMMLModelVersion(version: String) extends ModelVersion {
+
+  override def toString: String = version
+}
 
 final case class PMMLModelSignatureLocationMetadata(payload: PMMLModelPayload) extends ModelSignatureLocationMetadata
 
