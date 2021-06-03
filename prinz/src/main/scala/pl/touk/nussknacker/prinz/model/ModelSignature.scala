@@ -12,10 +12,10 @@ case class ModelSignature private(private val signatureInputs: List[SignatureFie
   private val signatureOutputMap = signatureOutputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
   def getInputDefinition: TypedObjectTypingResult =
-    TypedObjectTypingResult(signatureInputMap.map(kv => (kv._1.name, kv._2.typingResult)))
+    TypedObjectTypingResult(signatureInputMap.map(kv => (kv._1.name, kv._2.typingResult)).toList)
 
   def getOutputDefinition: TypedObjectTypingResult =
-    TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)))
+    TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)).toList)
 
   def getInputNames: List[SignatureName] = signatureInputs.map(_.signatureName)
 

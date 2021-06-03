@@ -12,5 +12,6 @@ trait ModelRepository {
 }
 
 final case class ModelRepositoryName(internal: String) {
+
   override def toString: String = internal
 }
