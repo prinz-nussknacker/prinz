@@ -1,3 +1,5 @@
+[![Check code quality](https://github.com/prinz-nussknacker/prinz/actions/workflows/code_quality.yaml/badge.svg?branch=master)](https://github.com/prinz-nussknacker/prinz/actions/workflows/code_quality.yaml) [![Run unit tests](https://github.com/prinz-nussknacker/prinz/actions/workflows/unit_tests.yaml/badge.svg?branch=master)](https://github.com/prinz-nussknacker/prinz/actions/workflows/unit_tests.yaml)
+
 # Prinz
 
 ## Nussknacker - operation model
