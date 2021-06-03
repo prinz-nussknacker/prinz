@@ -13,7 +13,7 @@ object ConfigReader extends LazyLogging {
     }
 
   def getOptionConfigValue[T](path: String, extractor: (Config, String) => T)(implicit config: Config, basePath: String): Option[T] = {
-    val fullPath = s"$basePath$path"
+    val fullPath = s"$basePath.$path"
     if (config.hasPath(fullPath)) {
       val extracted = extractor(config, fullPath)
       logger.info("Config value {} defined with value {}", fullPath, extracted)

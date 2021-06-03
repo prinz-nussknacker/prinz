@@ -9,7 +9,7 @@ import java.net.URL
 final case class MLFConfig(modelLocationStrategy: MLFModelLocationStrategy = LocalMLFModelLocationStrategy)
                           (private implicit val config: Config) {
 
-  private implicit val BASE_CONFIG_PATH: String = "mlfConfig."
+  private implicit val BASE_CONFIG_PATH: String = "mlfConfig"
 
   val baseApiPath: String = "/api/2.0/mlflow"
 
