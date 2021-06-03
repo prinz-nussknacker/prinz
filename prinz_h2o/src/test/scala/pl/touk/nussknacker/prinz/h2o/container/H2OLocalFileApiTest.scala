@@ -20,7 +20,7 @@ class H2OLocalFileApiTest extends H2OContainerUnitTest
 
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
-      |  h2o {
+      |  h2oConfig {
       |    fileExtension: ".zip"
       |    modelsDirectory: "file://${readEnv("REPOSITORY_ABSOLUTE_ROOT")}/dev-environment/h2o/exports"
       |    cachingStrategy: "MEMORY"

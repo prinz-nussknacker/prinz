@@ -20,7 +20,7 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
 
   private implicit val config: Config = ConfigFactory.parseString(
     s"""
-       |  pmml {
+       |  pmmlConfig {
        |    fileExtension: ".pmml"
        |    modelsDirectory: "http://localhost:${readEnv("PMML_SAMPLES_PORT")}"
        |    modelDirectoryHrefSelector: "body > ul > li > a"
