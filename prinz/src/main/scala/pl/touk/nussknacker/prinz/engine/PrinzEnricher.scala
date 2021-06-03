@@ -21,8 +21,10 @@ final case class PrinzEnricher(private val model: Model)
   }
 
   override def invokeService(params: List[AnyRef])
-                            (implicit ec: ExecutionContext, collector: InvocationCollectors.ServiceInvocationCollector,
-                             metaData: MetaData, contextId: ContextId): Future[AnyRef] = {
+                            (implicit ec: ExecutionContext,
+                             collector: InvocationCollectors.ServiceInvocationCollector,
+                             metaData: MetaData,
+                             contextId: ContextId): Future[AnyRef] = {
     val inputMap = createInputMap(params)
     modelInstance.run(inputMap).map {
       case Right(runResult) => runResult
