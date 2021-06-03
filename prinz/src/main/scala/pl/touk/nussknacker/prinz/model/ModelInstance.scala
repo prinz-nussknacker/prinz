@@ -12,7 +12,7 @@ abstract class ModelInstance(val model: Model) {
   protected def verify(inputMap: ModelInputData): Either[ModelRunException, ModelInputData] = {
     val inputColumnNames = inputMap.keys.toSet
     val signature = model.getMetadata.signature
-    val signatureColumnNames = signature.getInputNames.map(_.name).toSet
+    val signatureColumnNames = signature.getSignatureInputs.map(_.signatureName.name).toSet
     if (inputColumnNames.equals(signatureColumnNames)) {
       Right(inputMap)
     }
