@@ -11,4 +11,3 @@ Adding / configuring your own model consists of:
     * Reference to the Kafka cluster
     * References to external services
     * UI configuration: Links to the documentation, default values etc.
-
