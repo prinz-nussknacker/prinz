@@ -11,7 +11,7 @@ class H2OComponentProvider extends PrinzComponentProvider {
   override def providerName: String = "prinzH2O"
 
   override final def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository = {
-    implicit val config: Config = dependencies.config
+    implicit val implicitConfig: Config = config
     implicit val h2oConfig: H2OConfig = H2OConfig()
     new H2OModelRepository()
   }
