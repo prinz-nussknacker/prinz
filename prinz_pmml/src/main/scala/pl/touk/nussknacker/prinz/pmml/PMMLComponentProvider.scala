@@ -8,7 +8,7 @@ import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 
 class PMMLComponentProvider extends PrinzComponentProvider {
 
-  override def providerName: String = "PMML"
+  override def providerName: String = "prinzPMML"
 
   override final def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository = {
     implicit val config: Config = dependencies.config
