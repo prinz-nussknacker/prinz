@@ -29,4 +29,7 @@ class ModelName(name: String) {
   override def toString: String = name
 }
 
-trait ModelVersion
+trait ModelVersion {
+
+  def toString: String
+}
