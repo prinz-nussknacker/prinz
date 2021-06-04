@@ -10,7 +10,7 @@ A current version of library supports:
 Additionally, the library adds the ability for models proxying in order to add extra models
 data sources in the [prinz_proxy](./prinz_proxy) module.
 
-## Useful links:
+## Useful links
 
 - [Project documentation](https://prinz-nussknacker.github.io/prinz/)
 - [Project presentation](https://prinz-nussknacker.github.io/prinz/presentation.html)
