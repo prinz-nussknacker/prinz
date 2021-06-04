@@ -1,3 +1,5 @@
+* [Internal model overview](internal-model.md)
+* [Nussknacker model overview](nussknacker-model.md)
 * [Architecture overview](architecture-overview.md)
 * [MLflow implementation](mlflow.md)
 * [Testing](testing.md)
