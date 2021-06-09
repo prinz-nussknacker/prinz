@@ -44,6 +44,8 @@
             justify-content: center;
         }
 
+        /* Content-specific styles */
+
         #mlflow-logo {
             display: block;
             margin: 3em auto 3em;
@@ -54,6 +56,39 @@
             display: block;
             margin: 1em auto 1em;
             height: 16em;
+        }
+
+        .h2o p, .h2o ul, .h2o figure, .h2o .remark-inline-code {
+            font-size: 26px;
+        }
+
+        .h2o code {
+            font-size: 26px;
+        }
+
+        .h2o .right-half {
+            box-sizing: border-box;
+            padding-left: 0.5em;
+        }
+
+        .h2o ul, .h2o figure {
+            margin: 0;
+            margin-bottom: 1em;
+        }
+
+        .h2o ul {
+            margin-left: -0.75em;
+        }
+
+        .h2o ul ul {
+            margin-top: 0.25em;
+            margin-bottom: 0.5em;
+        }
+
+        #h2o-logo {
+            display: inline-block;
+            height: 1em;
+            vertical-align: bottom;
         }
 
     </style>
@@ -249,10 +284,38 @@ class: center, middle
 # PMML integration
 
 ---
-class: center, middle
+class: h2o
 
-# H2O integration
+## About <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" />
 
+.left-half[
+* Open-source ML platform
+* Over 12k customers
+* Central server with:
+  * Hosted notebooks
+  * Client APIs (R & Python)
+  * Deployment exports
+* H2O.ai, project creator, named Visionary in Gartner Quadrant 2021 for DS & ML
+]
+
+.right-half[
+  <figure>
+    <img src="./images/h2o-flow-screenshot.png" />
+    <figcaption style="margin-left: 0.5em;">H2O Flow notebook</figcaption>
+  </figure>
+]
+
+---
+class: h2o
+
+## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> integration
+
+* Based on Java libraries
+* Uses deployment files
+  * MOJO format by H2O.ai
+  * Custom implementation of `ModelRepository`
+* Scores events individually
+* Needs additional output extraction phase on top of Prinz implementation
 ---
 class: center, middle
 
