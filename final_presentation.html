@@ -147,11 +147,98 @@ class: center, middle
 ]
 
 ---
+class: center, middle
 
-## Introduction
+# Introduction
 
-Let's see the [first presentation source](https://prinz-nussknacker.github.io/prinz/presentation.html)
-for the examples how to add presentation pages.
+---
+
+## Basic terms
+
+- Event Stream Processing
+  - definition of ESP
+
+  - most common use cases
+
+- Fraud detection
+  - example categories of fraud
+
+  - usage of Machine Learning and Event Stream Processing
+
+---
+
+## Introduction to Nussknacker and Prinz
+
+- Nussknacker
+  - Event Stream Processing tool
+
+  - open-source, developed by TouK
+
+  - easy to use GUI, intended for non-programmers
+
+  - main use case - fraud detection
+
+- Prinz
+  - library of extensions for Nussknacker
+
+  - provides integrations with Machine Learning engines/repositories
+
+  - applications are highly configurable thanks to the Prinz API
+
+---
+class: center, middle
+
+# Prinz API
+
+---
+
+## Overview
+
+- main goal of the API - consistent and simple integration process
+
+- mandatory traits
+  - ModelSignature with SignatureProvider
+
+  - Model and ModelInstance
+
+  - ModelRepository
+
+---
+
+## ModelSignature with SignatureProvider
+
+- ModelSignature
+  - defines the input and output format of the model
+
+  - two lists - one for the input and one for the output
+
+  - each entry consists of a SignatureName and SignatureType
+
+- SignatureProvider
+  - extracts the signature from a model
+
+  - takes care of the typing
+
+---
+
+## Model, ModelInstance, and ModelRepository
+
+- Model
+  - a top-level representation of the model
+
+  - can be instantiated and prepared for scoring
+
+  - gives access to the model metadata
+
+- ModelInstance
+  - runnable instance of the model
+
+  - verifies input data and and returns model output
+
+- ModelRepository
+  - contains configuration information
+
+  - lists models for a given integration
 
 ---
 class: center, middle
