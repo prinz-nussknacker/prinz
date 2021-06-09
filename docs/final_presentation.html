@@ -46,6 +46,8 @@
 
         /* Content-specific styles */
 
+
+
         #mlflow-logo {
             display: block;
             margin: 3em auto 3em;
@@ -58,12 +60,22 @@
             height: 16em;
         }
 
-        .h2o p, .h2o ul, .h2o figure, .h2o .remark-inline-code {
+        p, ul, figure, code, .remark-inline-code {
             font-size: 26px;
         }
 
-        .h2o code {
-            font-size: 26px;
+        ul, figure {
+            margin: 0;
+            margin-bottom: 1em;
+        }
+
+        ul {
+            margin-left: -0.75em;
+        }
+
+        ul ul {
+            margin-top: 0.25em;
+            margin-bottom: 0.5em;
         }
 
         .h2o .right-half {
@@ -71,24 +83,20 @@
             padding-left: 0.5em;
         }
 
-        .h2o ul, .h2o figure {
-            margin: 0;
-            margin-bottom: 1em;
-        }
-
-        .h2o ul {
-            margin-left: -0.75em;
-        }
-
-        .h2o ul ul {
-            margin-top: 0.25em;
-            margin-bottom: 0.5em;
-        }
-
         #h2o-logo {
             display: inline-block;
             height: 1em;
             vertical-align: bottom;
+        }
+
+        .left-narrow {
+            width: 30%;
+            float: left;
+        }
+
+        .right-wide {
+            width: 68%;
+            float: right;
         }
 
     </style>
@@ -348,6 +356,12 @@ class: center, middle
 
 - used also in H2O
 
+
+---
+class: center, middle
+
+# H2O integration
+
 ---
 
 class: h2o
@@ -356,12 +370,12 @@ class: h2o
 
 .left-half[
 * Open-source ML platform
-* Over 12k customers
 * Central server with:
   * Hosted notebooks
   * Client APIs (R & Python)
   * Deployment exports
-* H2O.ai, project creator, named Visionary in Gartner Quadrant 2021 for DS & ML
+* Over 12k customers
+* H2O.ai, project creator, named Visionary leader in DS & ML (Gartner Quadrant 2021)
 ]
 
 .right-half[
@@ -370,68 +384,119 @@ class: h2o
     <figcaption style="margin-left: 0.5em;">H2O Flow notebook</figcaption>
   </figure>
 ]
-      
+
 ---
 class: h2o
 
-## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> integration
+## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> and Prinz
 
 * Based on Java libraries
 * Uses deployment files
   * MOJO format by H2O.ai
   * Custom implementation of `ModelRepository`
-* Scores events individually
 * Needs additional output extraction phase on top of Prinz implementation
+
 ---
 class: center, middle
 
-## Technical aspects of project
+## Project development
 
 ---
 
-## Models lifecycle in prepared environment
+## Dev environment
 
-1. Configure and set up the models with DB and extra services
-
-2. Train small, toy models and add them to the models registry
-
-3. Serve trained models
-
-4. Score trained models from Prinz in Nussknacker
-
----
-
-## Open source project repository
+* Sample implementation with `docker-compose`
+* All third-party components, Nussknacker and Prinz integrations
+* Sample `scikit-learn` models for each integration
 
 .centered-flex[
-<img src="./images/gh1.png" style="height: 20em">
+  <img src="images/final-presentation/docker-logo.svg" style="height: 10rem; padding-right: 5rem;" />
+  <img src="images/final-presentation/scikit-learn-logo.svg" style="height: 9rem;" />
 ]
 
 ---
 
-## Work documentation
+## Repository
 
-.centered-flex[
-<img src="./images/gh2.png" style="height: 22em">
-<img src="./images/gh4.png" style="height: 22em">
-<img src="./images/gh5.png" style="height: 22em">
+.left-narrow[
+* Open-source
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-opensource.png" />
+  </figure>
 ]
 
 ---
 
-## Testing and automating tools
+## Repository
 
-.centered-flex[
-<img src="./images/gh3.png" style="height: 20em">
+.left-narrow[
+* Open-source
+* Transparent
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-transparent.png" />
+  </figure>
 ]
 
 ---
 
-## Final result
+## Repository
 
-.centered-flex[
-<img src="./images/example_usage.png" style="height: 20em">
+.left-narrow[
+* Open-source
+* Transparent
+* Automated
 ]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-automated.png" />
+  </figure>
+]
+
+---
+
+## Repository
+
+.left-narrow[
+* Open-source
+* Transparent
+* Automated
+* Documented
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-documented.png" />
+  </figure>
+]
+
+---
+class: center, middle
+
+## Demo
+
+---
+class: center, middle
+
+<iframe
+  style="width: 37em; height: 20.8125em;"
+  src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen></iframe>
+
+---
+class: center, middle
+
+<h2 style="margin-top: 0; margin-bottom: 0.5em;">Thank you!</h2>
+https://github.com/prinz-nussknacker/prinz
 
  </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js">
