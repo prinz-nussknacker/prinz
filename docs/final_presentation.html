@@ -109,11 +109,9 @@ class: center, middle
 
 - Introduction
 
- 1.1 Source of problem
+ 1.1 Basic terms
 
- 1.2 Available tools
-
- 1.3 Our mission
+ 1.2 Nussknacker & Prinz
 ]
 
 --
@@ -241,6 +239,7 @@ class: center, middle
   - lists models for a given integration
 
 ---
+
 class: center, middle
 
 # MLflow integration
@@ -257,29 +256,11 @@ class: center, middle
 
 - well documented library API
 
+- high compatibility with multiple existing frameworks
+
 - ML models management (with user friendly Web UI)
 
 - ML models serving
-
----
-
-## Models lifecycle in prepared environment
-
-1. Configure and set up the MLflow models registry with DB and extra services
-
-2. Train small, toy models and add them to the models registry
-
-3. Serve trained models as service
-
-4. Score trained models from Prinz in Nussknacker
-
-## Extra assumptions
-
-- models trained with signature saved to storage service (S3 bucket)
-
-- served models location depends on the name and version of the model
-
-- models outputs indexing
 
 ---
 
@@ -297,75 +278,20 @@ class: center, middle
 
 ---
 
-## Model and Model' Instance
+## Model and Model Instance
 
 - listed from JSON response from MLflow registry
 
-- models' signatures downloaded from external service
-
-- models converted to instances capable of scoring external service
-
 - need of i/o data conversion
-
-.left-half[
-
-```
-my_model/
-```
-```
-- MLmodel
-- model.pkl
-```
-
-]
-
-.right-half[
-
-```
-MLmodel:
-```
-
-```yaml
-time_created: 2020-12-20T17:28:53.35
-
-flavors:
- sklearn:
- sklearn_version: 0.19.1
- pickled_model: model.pkl
- python_function:
- loader_module: mlflow.sklearn
-```
-
-]
-
----
 
 ## Model Signature
 
 - created during training by Data Scientists
 
-- available on external storage service as YAML file
-
-- downloaded once per model loading process
-
-- automatic parse process with strict typing approach
-
-```yaml
-signature:
- inputs: >
- [
- {"name": "age", "type": "string"},
- {"name": "gender", "type": "string"},
- {"name": "category", "type": "string"},
- {"name": "amount", "type": "double"}
- ]
- outputs: >
- [
- {"type": "integer"}
- ]
-```
+- available on external storage service (S3 bucket) as YAML file
 
 ---
+
 class: center, middle
 
 # PMML integration
@@ -383,24 +309,6 @@ class: center, middle
 - managed by Data Mining Group
 
 - Repository Client
-
----
-
-## PMML Fields
-
-- Header
-
-- Data Dictionary
-
-- Mining Schema
-
-- Data Transformations
-
-- Model
-
-- Outputs
-
-- Targets
 
 ---
 
@@ -478,6 +386,18 @@ class: h2o
 class: center, middle
 
 ## Technical aspects of project
+
+---
+
+## Models lifecycle in prepared environment
+
+1. Configure and set up the models with DB and extra services
+
+2. Train small, toy models and add them to the models registry
+
+3. Serve trained models
+
+4. Score trained models from Prinz in Nussknacker
 
 ---
 
