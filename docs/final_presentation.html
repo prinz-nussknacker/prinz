@@ -114,28 +114,19 @@ class: center, middle
 ## Agenda
 
 .left-half[
-
-- Introduction
-
- 1.1 Basic terms
-
+- Introduction<br />
+ 1.1 Basic terms<br />
  1.2 Nussknacker & Prinz
 ]
 
 --
 
 .left-half[
-
-- Implementation
-
- 2.1 Prinz API
-
- 2.2 MLflow implementation
-
- 2.3 PMML implementation
-
- 2.4 H2O implementation
-
+- Implementation<br />
+ 2.1 Prinz API<br />
+ 2.2 MLflow implementation<br />
+ 2.3 PMML implementation<br />
+ 2.4 H2O implementation<br />
  2.5 Prepared examples
 ]
 
@@ -143,12 +134,9 @@ class: center, middle
 
 .left-half[
 
-- Technical aspects of project
-
- 3.1 Environment for development
-
- 3.2 Project management
-
+- Technical aspects of project<br />
+ 3.1 Environment for development<br />
+ 3.2 Project management<br />
  3.3 Final results
 ]
 
@@ -163,32 +151,23 @@ class: center, middle
 
 - Event Stream Processing
   - definition of ESP
-
   - most common use cases
-
 - Fraud detection
   - example categories of fraud
-
   - usage of Machine Learning and Event Stream Processing
 
 ---
 
-## Introduction to Nussknacker and Prinz
+## Nussknacker and Prinz
 
 - Nussknacker
   - Event Stream Processing tool
-
   - open-source, developed by TouK
-
   - easy to use GUI, intended for non-programmers
-
   - main use case - fraud detection
-
 - Prinz
   - library of extensions for Nussknacker
-
   - provides integrations with Machine Learning engines/repositories
-
   - applications are highly configurable thanks to the Prinz API
 
 ---
@@ -201,12 +180,9 @@ class: center, middle
 ## Overview
 
 - main goal of the API - consistent and simple integration process
-
 - mandatory traits
   - ModelSignature with SignatureProvider
-
   - Model and ModelInstance
-
   - ModelRepository
 
 ---
@@ -215,14 +191,10 @@ class: center, middle
 
 - ModelSignature
   - defines the input and output format of the model
-
   - two lists - one for the input and one for the output
-
   - each entry consists of a SignatureName and SignatureType
-
 - SignatureProvider
   - extracts the signature from a model
-
   - takes care of the typing
 
 ---
@@ -231,19 +203,13 @@ class: center, middle
 
 - Model
   - a top-level representation of the model
-
   - can be instantiated and prepared for scoring
-
   - gives access to the model metadata
-
 - ModelInstance
   - runnable instance of the model
-
   - verifies input data and and returns model output
-
 - ModelRepository
   - contains configuration information
-
   - lists models for a given integration
 
 ---
@@ -259,15 +225,10 @@ class: center, middle
 <img id="mlflow-logo" src="./images/mlflow-logo.svg" alt="MLflow logo" title="MLflow logo" />
 
 - project to manage the complete ML models lifecycle
-
 - open-source and open-interface approach to project
-
 - well documented library API
-
 - high compatibility with multiple existing frameworks
-
 - ML models management (with user friendly Web UI)
-
 - ML models serving
 
 ---
@@ -275,11 +236,8 @@ class: center, middle
 ## Models Repository
 
 - based on open source scala HTTP client (`sttp`)
-
 - implementation of MLflow REST API from scratch
-
 - heavy use of Scala `circe` library with `@JsonCodec` approach
-
 - parametrized with external configuration
 
 <img id="mlflow-repository" src="./images/mlflow-run-list.png" alt="MLflow repository" />
@@ -289,13 +247,11 @@ class: center, middle
 ## Model and Model Instance
 
 - listed from JSON response from MLflow registry
-
 - need of i/o data conversion
 
 ## Model Signature
 
 - created during training by Data Scientists
-
 - available on external storage service (S3 bucket) as YAML file
 
 ---
@@ -311,11 +267,8 @@ class: center, middle
 <img id="pmml-logo" src="./images/pmml-logo.png" alt="PMML logo" title="PMML logo" />
 
 - standard describing format of machine learning models
-
 - based on XML
-
 - managed by Data Mining Group
-
 - Repository Client
 
 ---
@@ -349,11 +302,8 @@ class: center, middle
 ## Repository Client
 
 - designed to support multiple types of repositories
-
 - currently supporting local FS and HTML-based
-
 - allows implementing further types of clients
-
 - used also in H2O
 
 
@@ -399,7 +349,7 @@ class: h2o
 ---
 class: center, middle
 
-## Project development
+# Project development
 
 ---
 
@@ -479,7 +429,7 @@ class: center, middle
 ---
 class: center, middle
 
-## Demo
+# Demo
 
 ---
 class: center, middle
