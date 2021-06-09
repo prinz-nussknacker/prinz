@@ -46,6 +46,8 @@
 
         /* Content-specific styles */
 
+
+
         #mlflow-logo {
             display: block;
             margin: 3em auto 3em;
@@ -58,12 +60,22 @@
             height: 16em;
         }
 
-        .h2o p, .h2o ul, .h2o figure, .h2o .remark-inline-code {
+        p, ul, figure, code, .remark-inline-code {
             font-size: 26px;
         }
 
-        .h2o code {
-            font-size: 26px;
+        ul, figure {
+            margin: 0;
+            margin-bottom: 1em;
+        }
+
+        ul {
+            margin-left: -0.75em;
+        }
+
+        ul ul {
+            margin-top: 0.25em;
+            margin-bottom: 0.5em;
         }
 
         .h2o .right-half {
@@ -71,24 +83,20 @@
             padding-left: 0.5em;
         }
 
-        .h2o ul, .h2o figure {
-            margin: 0;
-            margin-bottom: 1em;
-        }
-
-        .h2o ul {
-            margin-left: -0.75em;
-        }
-
-        .h2o ul ul {
-            margin-top: 0.25em;
-            margin-bottom: 0.5em;
-        }
-
         #h2o-logo {
             display: inline-block;
             height: 1em;
             vertical-align: bottom;
+        }
+
+        .left-narrow {
+            width: 30%;
+            float: left;
+        }
+
+        .right-wide {
+            width: 68%;
+            float: right;
         }
 
     </style>
@@ -106,28 +114,19 @@ class: center, middle
 ## Agenda
 
 .left-half[
-
-- Introduction
-
- 1.1 Basic terms
-
+- Introduction<br />
+ 1.1 Basic terms<br />
  1.2 Nussknacker & Prinz
 ]
 
 --
 
 .left-half[
-
-- Implementation
-
- 2.1 Prinz API
-
- 2.2 MLflow implementation
-
- 2.3 PMML implementation
-
- 2.4 H2O implementation
-
+- Implementation<br />
+ 2.1 Prinz API<br />
+ 2.2 MLflow implementation<br />
+ 2.3 PMML implementation<br />
+ 2.4 H2O implementation<br />
  2.5 Prepared examples
 ]
 
@@ -135,12 +134,9 @@ class: center, middle
 
 .left-half[
 
-- Technical aspects of project
-
- 3.1 Environment for development
-
- 3.2 Project management
-
+- Technical aspects of project<br />
+ 3.1 Environment for development<br />
+ 3.2 Project management<br />
  3.3 Final results
 ]
 
@@ -155,32 +151,23 @@ class: center, middle
 
 - Event Stream Processing
   - definition of ESP
-
   - most common use cases
-
 - Fraud detection
   - example categories of fraud
-
   - usage of Machine Learning and Event Stream Processing
 
 ---
 
-## Introduction to Nussknacker and Prinz
+## Nussknacker and Prinz
 
 - Nussknacker
   - Event Stream Processing tool
-
   - open-source, developed by TouK
-
   - easy to use GUI, intended for non-programmers
-
   - main use case - fraud detection
-
 - Prinz
   - library of extensions for Nussknacker
-
   - provides integrations with Machine Learning engines/repositories
-
   - applications are highly configurable thanks to the Prinz API
 
 ---
@@ -193,12 +180,9 @@ class: center, middle
 ## Overview
 
 - main goal of the API - consistent and simple integration process
-
 - mandatory traits
   - ModelSignature with SignatureProvider
-
   - Model and ModelInstance
-
   - ModelRepository
 
 ---
@@ -207,14 +191,10 @@ class: center, middle
 
 - ModelSignature
   - defines the input and output format of the model
-
   - two lists - one for the input and one for the output
-
   - each entry consists of a SignatureName and SignatureType
-
 - SignatureProvider
   - extracts the signature from a model
-
   - takes care of the typing
 
 ---
@@ -223,19 +203,13 @@ class: center, middle
 
 - Model
   - a top-level representation of the model
-
   - can be instantiated and prepared for scoring
-
   - gives access to the model metadata
-
 - ModelInstance
   - runnable instance of the model
-
   - verifies input data and and returns model output
-
 - ModelRepository
   - contains configuration information
-
   - lists models for a given integration
 
 ---
@@ -251,15 +225,10 @@ class: center, middle
 <img id="mlflow-logo" src="./images/mlflow-logo.svg" alt="MLflow logo" title="MLflow logo" />
 
 - project to manage the complete ML models lifecycle
-
 - open-source and open-interface approach to project
-
 - well documented library API
-
 - high compatibility with multiple existing frameworks
-
 - ML models management (with user friendly Web UI)
-
 - ML models serving
 
 ---
@@ -267,11 +236,8 @@ class: center, middle
 ## Models Repository
 
 - based on open source scala HTTP client (`sttp`)
-
 - implementation of MLflow REST API from scratch
-
 - heavy use of Scala `circe` library with `@JsonCodec` approach
-
 - parametrized with external configuration
 
 <img id="mlflow-repository" src="./images/mlflow-run-list.png" alt="MLflow repository" />
@@ -281,13 +247,11 @@ class: center, middle
 ## Model and Model Instance
 
 - listed from JSON response from MLflow registry
-
 - need of i/o data conversion
 
 ## Model Signature
 
 - created during training by Data Scientists
-
 - available on external storage service (S3 bucket) as YAML file
 
 ---
@@ -303,11 +267,8 @@ class: center, middle
 <img id="pmml-logo" src="./images/pmml-logo.png" alt="PMML logo" title="PMML logo" />
 
 - standard describing format of machine learning models
-
 - based on XML
-
 - managed by Data Mining Group
-
 - Repository Client
 
 ---
@@ -341,12 +302,15 @@ class: center, middle
 ## Repository Client
 
 - designed to support multiple types of repositories
-
 - currently supporting local FS and HTML-based
-
 - allows implementing further types of clients
-
 - used also in H2O
+
+
+---
+class: center, middle
+
+# H2O integration
 
 ---
 
@@ -356,12 +320,12 @@ class: h2o
 
 .left-half[
 * Open-source ML platform
-* Over 12k customers
 * Central server with:
   * Hosted notebooks
   * Client APIs (R & Python)
   * Deployment exports
-* H2O.ai, project creator, named Visionary in Gartner Quadrant 2021 for DS & ML
+* Over 12k customers
+* H2O.ai, project creator, named Visionary leader in DS & ML (Gartner Quadrant 2021)
 ]
 
 .right-half[
@@ -370,68 +334,119 @@ class: h2o
     <figcaption style="margin-left: 0.5em;">H2O Flow notebook</figcaption>
   </figure>
 ]
-      
+
 ---
 class: h2o
 
-## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> integration
+## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> and Prinz
 
 * Based on Java libraries
 * Uses deployment files
   * MOJO format by H2O.ai
   * Custom implementation of `ModelRepository`
-* Scores events individually
 * Needs additional output extraction phase on top of Prinz implementation
+
 ---
 class: center, middle
 
-## Technical aspects of project
+# Project development
 
 ---
 
-## Models lifecycle in prepared environment
+## Dev environment
 
-1. Configure and set up the models with DB and extra services
-
-2. Train small, toy models and add them to the models registry
-
-3. Serve trained models
-
-4. Score trained models from Prinz in Nussknacker
-
----
-
-## Open source project repository
+* Sample implementation with `docker-compose`
+* All third-party components, Nussknacker and Prinz integrations
+* Sample `scikit-learn` models for each integration
 
 .centered-flex[
-<img src="./images/gh1.png" style="height: 20em">
+  <img src="images/final-presentation/docker-logo.svg" style="height: 10rem; padding-right: 5rem;" />
+  <img src="images/final-presentation/scikit-learn-logo.svg" style="height: 9rem;" />
 ]
 
 ---
 
-## Work documentation
+## Repository
 
-.centered-flex[
-<img src="./images/gh2.png" style="height: 22em">
-<img src="./images/gh4.png" style="height: 22em">
-<img src="./images/gh5.png" style="height: 22em">
+.left-narrow[
+* Open-source
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-opensource.png" />
+  </figure>
 ]
 
 ---
 
-## Testing and automating tools
+## Repository
 
-.centered-flex[
-<img src="./images/gh3.png" style="height: 20em">
+.left-narrow[
+* Open-source
+* Transparent
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-transparent.png" />
+  </figure>
 ]
 
 ---
 
-## Final result
+## Repository
 
-.centered-flex[
-<img src="./images/example_usage.png" style="height: 20em">
+.left-narrow[
+* Open-source
+* Transparent
+* Automated
 ]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-automated.png" />
+  </figure>
+]
+
+---
+
+## Repository
+
+.left-narrow[
+* Open-source
+* Transparent
+* Automated
+* Documented
+]
+
+.right-wide[
+  <figure>
+    <img src="images/final-presentation/repo-documented.png" />
+  </figure>
+]
+
+---
+class: center, middle
+
+# Demo
+
+---
+class: center, middle
+
+<iframe
+  style="width: 37em; height: 20.8125em;"
+  src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen></iframe>
+
+---
+class: center, middle
+
+<h2 style="margin-top: 0; margin-bottom: 0.5em;">Thank you!</h2>
+https://github.com/prinz-nussknacker/prinz
 
  </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js">
