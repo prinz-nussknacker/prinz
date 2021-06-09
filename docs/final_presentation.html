@@ -430,31 +430,15 @@ class: center, middle
 
 ---
 
-## Repository Client trait & Repository Client interface
+## Repository Client
 
-```scala
-trait RepositoryClient {
+- designed to support multiple types of repositories
 
-    protected implicit val config: RepositoryClientConfig
-  
-    protected final val client = new RepositoryClientFactory().getClient
-}  
-```
+- currently supporting local FS and HTML-based
 
-```scala
-abstract class AbstractRepositoryClient(fileExtension: String) {
+- allows implementing further types of clients
 
-    def listModelFiles: Either[ModelRepositoryException, Iterable[ModelPayload]]
-  
-    //abstract method
-    def openModelFile(path: URI): InputStream
-  
-    //abstract method
-    protected def loadModelsOnPath: Iterable[ModelPayload]
-  
-    protected def isValidFile(path: URI): Boolean
-}
-```
+- used also in H2O
 
 ---
 
