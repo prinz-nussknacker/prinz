@@ -44,6 +44,8 @@
             justify-content: center;
         }
 
+        /* Content-specific styles */
+
         #mlflow-logo {
             display: block;
             margin: 3em auto 3em;
@@ -54,6 +56,39 @@
             display: block;
             margin: 1em auto 1em;
             height: 16em;
+        }
+
+        .h2o p, .h2o ul, .h2o figure, .h2o .remark-inline-code {
+            font-size: 26px;
+        }
+
+        .h2o code {
+            font-size: 26px;
+        }
+
+        .h2o .right-half {
+            box-sizing: border-box;
+            padding-left: 0.5em;
+        }
+
+        .h2o ul, .h2o figure {
+            margin: 0;
+            margin-bottom: 1em;
+        }
+
+        .h2o ul {
+            margin-left: -0.75em;
+        }
+
+        .h2o ul ul {
+            margin-top: 0.25em;
+            margin-bottom: 0.5em;
+        }
+
+        #h2o-logo {
+            display: inline-block;
+            height: 1em;
+            vertical-align: bottom;
         }
 
     </style>
@@ -112,11 +147,98 @@ class: center, middle
 ]
 
 ---
+class: center, middle
 
-## Introduction
+# Introduction
 
-Let's see the [first presentation source](https://prinz-nussknacker.github.io/prinz/presentation.html)
-for the examples how to add presentation pages.
+---
+
+## Basic terms
+
+- Event Stream Processing
+  - definition of ESP
+
+  - most common use cases
+
+- Fraud detection
+  - example categories of fraud
+
+  - usage of Machine Learning and Event Stream Processing
+
+---
+
+## Introduction to Nussknacker and Prinz
+
+- Nussknacker
+  - Event Stream Processing tool
+
+  - open-source, developed by TouK
+
+  - easy to use GUI, intended for non-programmers
+
+  - main use case - fraud detection
+
+- Prinz
+  - library of extensions for Nussknacker
+
+  - provides integrations with Machine Learning engines/repositories
+
+  - applications are highly configurable thanks to the Prinz API
+
+---
+class: center, middle
+
+# Prinz API
+
+---
+
+## Overview
+
+- main goal of the API - consistent and simple integration process
+
+- mandatory traits
+  - ModelSignature with SignatureProvider
+
+  - Model and ModelInstance
+
+  - ModelRepository
+
+---
+
+## ModelSignature with SignatureProvider
+
+- ModelSignature
+  - defines the input and output format of the model
+
+  - two lists - one for the input and one for the output
+
+  - each entry consists of a SignatureName and SignatureType
+
+- SignatureProvider
+  - extracts the signature from a model
+
+  - takes care of the typing
+
+---
+
+## Model, ModelInstance, and ModelRepository
+
+- Model
+  - a top-level representation of the model
+
+  - can be instantiated and prepared for scoring
+
+  - gives access to the model metadata
+
+- ModelInstance
+  - runnable instance of the model
+
+  - verifies input data and and returns model output
+
+- ModelRepository
+  - contains configuration information
+
+  - lists models for a given integration
 
 ---
 class: center, middle
@@ -336,13 +458,76 @@ abstract class AbstractRepositoryClient(fileExtension: String) {
 
 ---
 
+class: h2o
+
+## About <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" />
+
+.left-half[
+* Open-source ML platform
+* Over 12k customers
+* Central server with:
+  * Hosted notebooks
+  * Client APIs (R & Python)
+  * Deployment exports
+* H2O.ai, project creator, named Visionary in Gartner Quadrant 2021 for DS & ML
+]
+
+.right-half[
+  <figure>
+    <img src="./images/h2o-flow-screenshot.png" />
+    <figcaption style="margin-left: 0.5em;">H2O Flow notebook</figcaption>
+  </figure>
+]
+      
+---
+class: h2o
+
+## <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" /> integration
+
+* Based on Java libraries
+* Uses deployment files
+  * MOJO format by H2O.ai
+  * Custom implementation of `ModelRepository`
+* Scores events individually
+* Needs additional output extraction phase on top of Prinz implementation
+---
 class: center, middle
 
-# H2O integration
+## Technical aspects of project
 
 ---
 
-## Technical aspects of project
+## Open source project repository
+
+.centered-flex[
+<img src="./images/gh1.png" style="height: 20em">
+]
+
+---
+
+## Work documentation
+
+.centered-flex[
+<img src="./images/gh2.png" style="height: 22em">
+<img src="./images/gh4.png" style="height: 22em">
+<img src="./images/gh5.png" style="height: 22em">
+]
+
+---
+
+## Testing and automating tools
+
+.centered-flex[
+<img src="./images/gh3.png" style="height: 20em">
+]
+
+---
+
+## Final result
+
+.centered-flex[
+<img src="./images/example_usage.png" style="height: 20em">
+]
 
  </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js">
