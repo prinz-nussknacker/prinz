@@ -44,6 +44,18 @@
             justify-content: center;
         }
 
+        #mlflow-logo {
+            display: block;
+            margin: 3em auto 3em;
+            height: 6em;
+        }
+
+        #mlflow-repository {
+            display: block;
+            margin: 1em auto 1em;
+            height: 16em;
+        }
+
     </style>
 </head>
 <body>
@@ -108,7 +120,123 @@ for the examples how to add presentation pages.
 
 ---
 
-## MLflow
+## MLflow - integration overview
+
+<img id="mlflow-logo" src="./images/mlflow-logo.svg" alt="MLflow logo" title="MLflow logo" />
+
+- project to manage the complete ML models lifecycle
+
+- open-source and open-interface approach to project
+
+- well documented library API
+
+- ML models management (with user friendly Web UI)
+
+- ML models serving
+
+---
+
+## Models lifecycle in prepared environment
+
+1. Configure and set up the MLflow models registry with DB and extra services
+
+2. Train small, toy models and add them to the models registry
+
+3. Serve trained models as service
+
+4. Score trained models from Prinz in Nussknacker
+
+## Extra assumptions
+
+- models trained with signature saved to storage service (S3 bucket)
+
+- served models location depends on the name and version of the model
+
+- models outputs indexing
+
+---
+
+## Models Repository
+
+- based on open source scala HTTP client (`sttp`)
+
+- implementation of MLflow REST API from scratch
+
+- heavy use of Scala `circe` library with `@JsonCodec` approach
+
+- parametrized with external configuration
+
+<img id="mlflow-repository" src="./images/mlflow-run-list.png" alt="MLflow repository" />
+
+---
+
+## Model and Model' Instance
+
+- listed from JSON response from MLflow registry
+
+- models' signatures downloaded from external service
+
+- models converted to instances capable of scoring external service
+
+- need of i/o data conversion
+
+.left-half[
+
+```
+my_model/
+```
+```
+- MLmodel
+- model.pkl
+```
+
+]
+
+.right-half[
+
+```
+MLmodel:
+```
+
+```yaml
+time_created: 2020-12-20T17:28:53.35
+
+flavors:
+ sklearn:
+ sklearn_version: 0.19.1
+ pickled_model: model.pkl
+ python_function:
+ loader_module: mlflow.sklearn
+```
+
+]
+
+---
+
+## Model Signature
+
+- created during training by Data Scientists
+
+- available on external storage service as YAML file
+
+- downloaded once per model loading process
+
+- automatic parse process with strict typing approach
+
+```yaml
+signature:
+ inputs: >
+ [
+ {"name": "age", "type": "string"},
+ {"name": "gender", "type": "string"},
+ {"name": "category", "type": "string"},
+ {"name": "amount", "type": "double"}
+ ]
+ outputs: >
+ [
+ {"type": "integer"}
+ ]
+```
 
 ---
 
