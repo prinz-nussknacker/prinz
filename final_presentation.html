@@ -371,6 +371,77 @@ class: center, middle
 # PMML integration
 
 ---
+
+## Integration overview
+
+<img id="pmml-logo" src="./images/pmml-logo.png" alt="PMML logo" title="PMML logo" />
+
+- standard describing format of machine learning models
+
+- based on XML
+
+- managed by Data Mining Group
+
+- Repository Client
+
+---
+
+## PMML Fields
+
+- Header
+
+- Data Dictionary
+
+- Mining Schema
+
+- Data Transformations
+
+- Model
+
+- Outputs
+
+- Targets
+
+---
+
+## PMML Sample file
+
+```xml
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="KNIME">
+        <Application name="KNIME" version="2.8.0"/>
+    </Header>
+    <DataDictionary numberOfFields="10">
+        <DataField dataType="integer" name="Age" optype="continuous">
+            <Interval closure="closedClosed" leftMargin="17.0" rightMargin="90.0"/>
+        </DataField>
+    <DataField dataType="string" name="Employment" optype="categorical">
+        <Value value="Private"/>
+        <Value value="Consultant"/>
+        <Value value="SelfEmp"/>
+        <Value value="PSLocal"/>
+        <Value value="PSState"/>
+        <Value value="PSFederal"/>
+        <Value value="Unemployed"/>
+        <Value value="NA"/>
+        <Value value="Volunteer"/>
+    </DataField>
+```
+
+---
+
+## Repository Client
+
+- designed to support multiple types of repositories
+
+- currently supporting local FS and HTML-based
+
+- allows implementing further types of clients
+
+- used also in H2O
+
+---
+
 class: h2o
 
 ## About <img id="h2o-logo" src="./images/h2o-logo-nospacing.svg" alt="H2O logo" title="H2O logo" />
@@ -391,7 +462,7 @@ class: h2o
     <figcaption style="margin-left: 0.5em;">H2O Flow notebook</figcaption>
   </figure>
 ]
-
+      
 ---
 class: h2o
 
