@@ -106,7 +106,7 @@
 
 class: center, middle
 
-<img src="./images/prinz-logo.svg" style="height: 16em">
+<img src="./images/prinz-logo.svg" style="height: 16em; margin: -1.5em">
 # "Integrating Nussknacker with selected Machine Learning tools"
 
 ---
@@ -238,7 +238,6 @@ class: center, middle
 - based on open source scala HTTP client (`sttp`)
 - implementation of MLflow REST API from scratch
 - heavy use of Scala `circe` library with `@JsonCodec` approach
-- parametrized with external configuration
 
 <img id="mlflow-repository" src="./images/mlflow-run-list.png" alt="MLflow repository" />
 
@@ -251,7 +250,7 @@ class: center, middle
 
 ## Model Signature
 
-- created during training by Data Scientists
+- created explicitly during training by Data Scientists
 - available on external storage service (S3 bucket) as YAML file
 
 ---
