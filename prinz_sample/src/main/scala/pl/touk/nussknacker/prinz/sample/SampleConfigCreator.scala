@@ -30,7 +30,7 @@ class SampleConfigCreator extends EmptyProcessConfigCreator {
 
   override def sinkFactories(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[SinkFactory]] = Map(
     "empty" -> allCategories(SinkFactory.noParam(EmptySink)),
-    "logMessage" -> allCategories(SinkFactory.noParam(LoggingSink)),
+    "logMessage" -> allCategories(SinkFactory.noParam(LoggingSink))
   )
 
   override def services(processObjectDependencies: ProcessObjectDependencies): Map[String, WithCategories[Service]] = {
