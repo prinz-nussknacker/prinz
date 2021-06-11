@@ -4,8 +4,6 @@ on:
     branches:
       - 'master'
       - 'dev/**'
-    paths-ignore:
-      - 'docs/**'
   push:
     branches:
       - 'master'
