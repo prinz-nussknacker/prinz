@@ -2,6 +2,7 @@
 * [Nussknacker model overview](nussknacker-model.md)
 * [Architecture overview](architecture-overview.md)
 * [MLflow implementation](mlflow.md)
+* [H2O integration](h2o.md)
 * [Testing](testing.md)
 * [Configuration](configuration.md)
 * [Release process](release.md)
