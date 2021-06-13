@@ -11,7 +11,7 @@ H2O provides both a server endpoint and a set of Java libraries for automated sc
 
 ## H2O in Prinz
 
-Prinz uses deployment files in POJO format.
+Prinz uses deployment files in MOJO format.
 Client shipped with Prinz allows for loading files from HTTP or local path.
 
 Sample environment presents a minimal deployment:
