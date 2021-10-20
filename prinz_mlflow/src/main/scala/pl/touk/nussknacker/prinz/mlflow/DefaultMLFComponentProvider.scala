@@ -6,7 +6,7 @@ import pl.touk.nussknacker.prinz.engine.PrinzComponentProvider
 import pl.touk.nussknacker.prinz.mlflow.repository.MLFModelRepository
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 
-class MLFComponentProvider extends PrinzComponentProvider {
+class DefaultMLFComponentProvider extends PrinzComponentProvider {
 
   override def providerName: String = "prinzMLflow"
 

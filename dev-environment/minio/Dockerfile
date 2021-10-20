@@ -1,4 +1,4 @@
-FROM minio/minio:latest
+FROM minio/minio:RELEASE.2021-06-17T00-10-46Z-28-gac7697426
 
 ENV MINIO_HOME /opt/minio
 ENV BUCKET_NAME mlflow

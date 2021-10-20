@@ -6,7 +6,7 @@ import pl.touk.nussknacker.prinz.engine.PrinzComponentProvider
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelRepository
 
-class PMMLComponentProvider extends PrinzComponentProvider {
+class DefaultPMMLComponentProvider extends PrinzComponentProvider {
 
   override def providerName: String = "prinzPMML"
 

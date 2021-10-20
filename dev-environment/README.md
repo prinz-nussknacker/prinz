@@ -7,9 +7,9 @@ To use it on CI the `secrets.GITHUB_TOKEN` is used to authenticate to repository
 To use it on your local machine you have to generate Personal Access Token
 on [this website](https://github.com/settings/tokens) and save it to `~/token.txt` file. Then use
 ```
-cat ~/token.txt | docker login https://docker.pkg.github.com -u YOUR_GITHUB_USERNAME --password-stdin
+cat ~/token.txt | docker login https://ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
 ```
-to login to Github Docker Registry and use the prepared version.
+to login to GitHub Docker Registry and use the prepared version.
 
 ## Publish updated image
 To publish the updated version of any image you should build a new version locally with command

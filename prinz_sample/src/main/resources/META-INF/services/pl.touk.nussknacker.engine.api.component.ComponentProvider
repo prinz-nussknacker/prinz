@@ -1,3 +1,3 @@
-pl.touk.nussknacker.prinz.mlflow.MLFComponentProvider
-pl.touk.nussknacker.prinz.pmml.PMMLComponentProvider
-pl.touk.nussknacker.prinz.h2o.H2OComponentProvider
+pl.touk.nussknacker.prinz.mlflow.DefaultMLFComponentProvider
+pl.touk.nussknacker.prinz.pmml.DefaultPMMLComponentProvider
+pl.touk.nussknacker.prinz.h2o.DefaultH2OComponentProvider

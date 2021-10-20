@@ -6,7 +6,7 @@ import pl.touk.nussknacker.prinz.engine.PrinzComponentProvider
 import pl.touk.nussknacker.prinz.h2o.repository.H2OModelRepository
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 
-class H2OComponentProvider extends PrinzComponentProvider {
+class DefaultH2OComponentProvider extends PrinzComponentProvider {
 
   override def providerName: String = "prinzH2O"
 
