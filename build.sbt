@@ -1,13 +1,13 @@
 import sbtassembly.MergeStrategy
 
-val prinzV = "0.1.0-SNAPSHOT"
+val prinzV = "1.0.0-SNAPSHOT"
 val prinzOrg = "pl.touk.nussknacker.prinz"
 val repositoryOwner = "prinz-nussknacker"
 val repositoryName = "prinz"
 
 // Dependency versions
 val scalaV = "2.12.10"
-val nussknackerV = "0.3.0"
+val nussknackerV = "1.0.0"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"

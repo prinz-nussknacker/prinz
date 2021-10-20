@@ -17,14 +17,13 @@
 ################################################################################
 
 
-################################################################################
+#==============================================================================
 # Common
-################################################################################
+#==============================================================================
 
-# The host on which the JobManager runs. Only used in
-# non-high-availability mode. The JobManager process will use
-# this hostname to bind the listening servers to. The TaskManagers
-# will try to connect to the JobManager on that host.
+# The host on which the JobManager runs. Only used in non-high-availability mode.
+# The JobManager process will use this hostname to bind the listening servers to.
+# The TaskManagers will try to connect to the JobManager on that host.
 
 taskmanager.hostname: taskmanager
 
@@ -41,10 +40,9 @@ env.java.opts.taskmanager: "
   -Dcom.sun.management.jmxremote.authenticate=false
   -Dcom.sun.management.jmxremote.ssl=false"
 
-# The number of task slots that each TaskManager offers.
-# Each slot runs one parallel pipeline.
+# The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
 
-taskmanager.numberOfTaskSlots: 40
+taskmanager.numberOfTaskSlots: <configured_by_flink_entrypoint>
 
 jobmanager.rpc.address: jobmanager
 
@@ -60,9 +58,9 @@ jobmanager.heap.size: 256m
 
 parallelism.default: 8
 
-################################################################################
+#==============================================================================
 # Web Frontend
-################################################################################
+#==============================================================================
 
 # The port under which the web-based runtime monitor listens.
 # A value of -1 deactivates the web server.
@@ -73,7 +71,7 @@ web.log.path: /opt/flink/data/logs
 
 high-availability: zookeeper
 high-availability.zookeeper.quorum: zookeeper:2181
-high-availability.zookeeper.path.root: /demo
+high-availability.zookeeper.path.root: /flink
 high-availability.cluster-id: nussknacker
 high-availability.storageDir: file:///opt/flink/data/storage
 
@@ -81,25 +79,38 @@ state.backend: filesystem
 state.checkpoints.dir: file:///opt/flink/data/checkpoints
 state.savepoints.dir: file:///opt/flink/data/savepoints
 
+#Below are base settings for rocksdb metrics, that can be used for grafana dashboards
+state.backend.rocksdb.metrics.estimate-num-keys: true
+state.backend.rocksdb.metrics.estimate-live-data-size: true
+state.backend.rocksdb.metrics.cur-size-all-mem-tables: true
+state.backend.rocksdb.metrics.size-all-mem-tables: true
+
+#We can have many jobs per cluster, in such setting managed memory is not easy to tune
+state.backend.rocksdb.memory.managed: false
+
+#For frequent writes increase the value as needed. Currently RocksDB settings can only be changed per Flink cluster
+state.backend.rocksdb.writebuffer.size: 256m
+
+
 metrics.reporters: influxdb_reporter
 
-metrics.reporter.influxdb_reporter.class:
-  org.apache.flink.metrics.influxdb.InfluxdbReporter
+metrics.reporter.influxdb_reporter.class: org.apache.flink.metrics.influxdb.InfluxdbReporter
 metrics.reporter.influxdb_reporter.host: telegraf
 metrics.reporter.influxdb_reporter.port: 8087
 metrics.reporter.influxdb_reporter.db: esp
 
-metrics.scope.jm: demo.<host>.jobmanagerGlobal
-metrics.scope.jm.job: demo.<host>.jobmanagerJob.<job_name>
-metrics.scope.tm: demo.<host>.taskmanagerGlobal.<tm_id>
-metrics.scope.tm.job: demo.<host>.taskmanagerJob.<tm_id>.<job_name>
-metrics.scope.task:
-  demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<task_name>.<subtask_index>
-metrics.scope.operator:
-  demo.<host>.taskmanagerTask.<tm_id>.<job_name>.<operator_name>.<subtask_index>
+metrics.scope.jm: local.<host>.jobmanagerGlobal
+metrics.scope.jm.job: local.<host>.jobmanagerJob.<job_name>
+metrics.scope.tm: local.<host>.taskmanagerGlobal.<tm_id>
+metrics.scope.tm.job: local.<host>.taskmanagerJob.<tm_id>.<job_name>
+metrics.scope.task: local.<host>.taskmanagerTask.<tm_id>.<job_name>.<task_name>.<subtask_index>
+metrics.scope.operator: local.<host>.taskmanagerTask.<tm_id>.<job_name>.<operator_name>.<subtask_index>
 
-classloader.resolve-order: parent-first
+#Uncomment if you encounter problems with classloading with complex custom components
+#classloader.resolve-order: parent-first
 akka.framesize: 209715200b
 
 query.server.port: 6125
 blob.server.port: 6124
+
+queryable-state.enable: true

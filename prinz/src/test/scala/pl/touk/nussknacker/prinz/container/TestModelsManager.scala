@@ -33,7 +33,7 @@ trait TestModelsManager {
     models.filter(_.getMetadata.modelName.toString.contains("ElasticnetWineModel-" + modelId)).head
 
   def constructInputMap(value: AnyRef, signature: ModelSignature): VectorMultimap[String, AnyRef] = {
-    val names = signature.getInputNames.map(_.name)
+    val names = signature.getSignatureInputs.map(_.signatureName.name)
     val data = List.fill(names.length)(value)
     VectorMultimap(names.zip(data))
   }

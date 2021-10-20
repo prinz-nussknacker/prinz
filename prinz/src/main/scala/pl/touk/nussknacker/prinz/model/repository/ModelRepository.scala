@@ -1,6 +1,6 @@
 package pl.touk.nussknacker.prinz.model.repository
 
-import pl.touk.nussknacker.prinz.model.{Model, ModelName}
+import pl.touk.nussknacker.prinz.model.Model
 
 trait ModelRepository {
 

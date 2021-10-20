@@ -26,6 +26,9 @@ final class H2OModel(payload: H2OModelPayload, cachingStrategy: CachingStrategy)
 
 final case class H2OModelName(name: String) extends ModelName(name)
 
-final case class H2OModelVersion(version: String) extends ModelVersion
+final case class H2OModelVersion(version: String) extends ModelVersion {
+
+    override def toString: String = version
+}
 
 final case class H2OModelSignatureLocationMetadata(genModel: GenModel) extends ModelSignatureLocationMetadata

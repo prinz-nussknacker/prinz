@@ -52,7 +52,10 @@ final case class MLFRegisteredModelVersion(name: String,
                                            currentStage: String,
                                            source: String,
                                            runId: String,
-                                           status: String) extends ModelVersion
+                                           status: String) extends ModelVersion {
+
+  override def toString: String = version
+}
 
 final case class MLFModelSignatureLocationMetadata(name: MLFRegisteredModelName,
                                                    version: MLFRegisteredModelVersion)

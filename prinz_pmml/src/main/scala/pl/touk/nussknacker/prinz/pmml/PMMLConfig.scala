@@ -8,5 +8,5 @@ final case class PMMLConfig(override protected implicit val config: Config)
   extends RepositoryClientConfig
     with ModelVersionConfig {
 
-  override protected implicit def baseConfigPath: String = "pmml."
+  override protected implicit def baseConfigPath: String = "pmmlConfig"
 }

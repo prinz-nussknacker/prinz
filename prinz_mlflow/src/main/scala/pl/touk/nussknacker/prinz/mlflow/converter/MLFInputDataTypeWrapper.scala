@@ -12,7 +12,7 @@ case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: AnyR
 
 object MLFInputDataTypeWrapper {
 
-  private val subclassedNumberEncoder = BestEffortJsonEncoder(failOnUnkown = true)
+  private val subclassedNumberEncoder = BestEffortJsonEncoder(failOnUnkown = true, classLoader = getClass.getClassLoader)
 
   implicit val encodeMLFDataType: Encoder[MLFInputDataTypeWrapper] = (data: MLFInputDataTypeWrapper) =>
     data.typing match {

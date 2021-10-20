@@ -12,7 +12,7 @@ final case class H2OConfig(protected implicit val config: Config)
     with ModelVersionConfig
     with LazyLogging {
 
-  override protected implicit def baseConfigPath: String = "h2o."
+  override protected implicit def baseConfigPath: String = "h2oConfig"
 
   val cachingStrategy: CachingStrategy  = getCachingStrategyForName(getConfigValue("cachingStrategy", getString))
 
