@@ -5,6 +5,8 @@ import pl.touk.nussknacker.engine.api.component.{ComponentDefinition, ComponentP
 import pl.touk.nussknacker.engine.api.process.ProcessObjectDependencies
 import pl.touk.nussknacker.prinz.model.repository.ModelRepository
 
+import scala.math.Ordered.orderingToOrdered
+
 abstract class PrinzComponentProvider extends ComponentProvider {
 
   def getComponentRepository(config: Config, dependencies: ProcessObjectDependencies): ModelRepository
@@ -19,7 +21,8 @@ abstract class PrinzComponentProvider extends ComponentProvider {
     }
   }
 
-  override def isCompatible(version: NussknackerVersion): Boolean = true
+  override def isCompatible(version: NussknackerVersion): Boolean =
+    version.value >= NussknackerVersion.current.value
 
   override def resolveConfigForExecution(config: Config): Config = config
 }
