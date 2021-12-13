@@ -7,7 +7,7 @@ val repositoryName = "prinz"
 
 // Dependency versions
 val scalaV = "2.12.10"
-val nussknackerV = "1.1.0"
+val nussknackerV = "1.2.0-staging-2021-12-09-5983-f15ac11992e3a82d32f651ef4e05b5d9458f46aa-SNAPSHOT"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
@@ -202,7 +202,7 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         // "pl.touk.nussknacker.prinz" %% "prinz-h2o" % prinzV,
 
         "pl.touk.nussknacker" %% "nussknacker-flink-engine" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-kafka-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-manager" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
