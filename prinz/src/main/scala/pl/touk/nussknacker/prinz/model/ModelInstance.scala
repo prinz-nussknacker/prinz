@@ -36,5 +36,5 @@ object ModelInstance {
 
   type ModelRunResult = Future[Either[ModelRunException, JMap[String, _]]]
 
-  type ModelInputData = VectorMultimap[String, AnyRef]
+  type ModelInputData = VectorMultimap[String, Any]
 }

@@ -32,6 +32,6 @@ object MLFDataConverter extends LazyLogging {
       Dataframe(columns, data)
     }
 
-  private def isMultimapConvertible(multimap: VectorMultimap[String, AnyRef]): Boolean =
+  private def isMultimapConvertible(multimap: VectorMultimap[String, Any]): Boolean =
     multimap.values.map(_.size).toSet.size <= 1
 }

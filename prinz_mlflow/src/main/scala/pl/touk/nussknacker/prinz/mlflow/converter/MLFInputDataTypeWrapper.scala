@@ -6,7 +6,7 @@ import pl.touk.nussknacker.engine.api.typed.typing.{Typed, TypingResult}
 import pl.touk.nussknacker.engine.util.json.BestEffortJsonEncoder
 
 
-case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: AnyRef) {
+case class MLFInputDataTypeWrapper private(typing: TypingResult, dataValue: Any) {
   override def toString: String = s"MLFInputDataTypeWrapper($dataValue: ${typing.display})"
 }
 
@@ -23,7 +23,7 @@ object MLFInputDataTypeWrapper {
       case _ => throw new IllegalArgumentException(s"Unknown mlflow data type wrapper type: ${data.typing}")
     }
 
-  def apply(signature: ModelSignature, columnName: String, value: AnyRef): MLFInputDataTypeWrapper = {
+  def apply(signature: ModelSignature, columnName: String, value: Any): MLFInputDataTypeWrapper = {
     val columnType = extractColumnType(signature, columnName)
     new MLFInputDataTypeWrapper(columnType, value)
   }

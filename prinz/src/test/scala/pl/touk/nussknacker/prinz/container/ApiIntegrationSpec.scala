@@ -42,7 +42,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
     val model = getModel().get
     val instance = getModelInstance().get
     val signature = model.getMetadata.signature
-    val sampleInput = constructInputMap(0.415.asInstanceOf[AnyRef], signature)
+    val sampleInput = constructInputMap(0.415.asInstanceOf[Any], signature)
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe true
@@ -82,7 +82,7 @@ trait ApiIntegrationSpec extends UnitTest with TestModelsManager {
       ("gender", "F"),
       ("category", "es_transportation"),
       ("amount", 800.0),
-    ).mapValues(_.asInstanceOf[AnyRef])
+    ).mapValues(_.asInstanceOf[Any])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     response.toOption.isDefined shouldBe true
