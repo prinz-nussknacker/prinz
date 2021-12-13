@@ -56,6 +56,6 @@ class PMMLHttpApiTest extends PMMLContainerUnitTest
   )
 
   override def expectedFraudOutputs: List[(String, typing.TypingResult)] = List(
-    ("fraud", Typed[BigInt])
+    ("fraud", Typed[Long])
   )
 }
