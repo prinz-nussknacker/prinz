@@ -9,4 +9,3 @@ object LoggingSinkFunction extends SinkFunction[AnyRef] with LazyLogging {
     logger.info(loggedMessage)
   }
 }
-
