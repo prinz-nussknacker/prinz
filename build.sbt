@@ -1,6 +1,6 @@
 import sbtassembly.MergeStrategy
 
-val prinzV = "1.0.0-SNAPSHOT"
+val prinzV = "1.2.0-preview-staging"
 val prinzOrg = "pl.touk.nussknacker.prinz"
 val repositoryOwner = "prinz-nussknacker"
 val repositoryName = "prinz"
