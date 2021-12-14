@@ -1,7 +1,7 @@
 #!/bin/bash
 
 scalaV="2.12"
-prinzV="1.0.0-SNAPSHOT"
+prinzV="1.2.0-preview-staging"
 
 COMP_FILES=""
 ENV_FILE="-f docker-compose-env.yaml"

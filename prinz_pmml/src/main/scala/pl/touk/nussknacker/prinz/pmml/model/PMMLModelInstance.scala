@@ -27,7 +27,7 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
     }
   }
 
-  def evaluateRow(row: Map[String, AnyRef]): Map[String, _] = {
+  def evaluateRow(row: Map[String, Any]): Map[String, _] = {
     val args = EvaluatorUtil.encodeKeys(row.asJava)
     val results = evaluator.evaluate(args)
     val decodeResult = EvaluatorUtil.decodeAll(results).asScala.toMap

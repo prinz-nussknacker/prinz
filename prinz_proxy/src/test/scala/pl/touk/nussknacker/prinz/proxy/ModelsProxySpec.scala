@@ -27,7 +27,7 @@ trait ModelsProxySpec extends UnitTest
     val sampleInput = VectorMultimap(
       ("age", "4"),
       ("category", "es_transportation"),
-    ).mapValues(_.asInstanceOf[AnyRef])
+    ).mapValues(_.asInstanceOf[Any])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     assertRunResult(response)
@@ -57,7 +57,7 @@ trait ModelsProxySpec extends UnitTest
     val sampleInput = VectorMultimap(
       ("age", "4"),
       ("category", "es_transportation"),
-    ).mapValues(_.asInstanceOf[AnyRef])
+    ).mapValues(_.asInstanceOf[Any])
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     assertRunResult(response)
@@ -75,7 +75,7 @@ trait ModelsProxySpec extends UnitTest
       (s"${tableName}_id", 1),
       ("age", "4"),
       ("category", "es_transportation"),
-    ).mapValues(_.asInstanceOf[AnyRef])
+    )
 
     val response = Await.result(instance.run(sampleInput), awaitTimeout)
     assertRunResult(response)

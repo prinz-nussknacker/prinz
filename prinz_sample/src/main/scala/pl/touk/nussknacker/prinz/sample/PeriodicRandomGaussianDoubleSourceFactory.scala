@@ -7,20 +7,20 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import pl.touk.nussknacker.engine.api.{MethodToInvoke, ParamName}
-import pl.touk.nussknacker.engine.api.process.Source
-import pl.touk.nussknacker.engine.flink.api.process.{BasicFlinkSource, FlinkSourceFactory}
+import pl.touk.nussknacker.engine.api.process.{Source, SourceFactory}
+import pl.touk.nussknacker.engine.flink.api.process.BasicFlinkSource
 import pl.touk.nussknacker.engine.flink.api.timestampwatermark.TimestampWatermarkHandler
 
 import scala.math.sqrt
 import scala.util.Random
 
-object PeriodicRandomGaussianDoubleSourceFactory extends FlinkSourceFactory[Double]  {
+object PeriodicRandomGaussianDoubleSourceFactory extends SourceFactory {
 
   @MethodToInvoke
   def create(@ParamName("period") period: Duration,
              @ParamName("mean") @Nullable nullableMean: Double,
              @ParamName("variance") @Nullable @Min(0) nullableVariance: Double,
-             @ParamName("count") @Nullable @Min(1) nullableCount: Integer): Source[_] =
+             @ParamName("count") @Nullable @Min(1) nullableCount: Integer): Source =
     new BasicFlinkSource[Double] {
 
       override def flinkSourceFunction: SourceFunction[Double] = {

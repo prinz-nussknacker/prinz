@@ -19,7 +19,7 @@ class ProxiedInputModel private(originalModel: Model,
 
   def this(model: Model,
            proxiedParams: Iterable[ProxiedModelInputParam],
-           compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]) {
+           compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: Any]]) {
     this(
       model,
       CompositeProxiedInputModelName(model),
@@ -76,7 +76,7 @@ object ProxiedInputModel {
 
   def apply(model: Model,
             proxiedParams: Iterable[ProxiedModelInputParam],
-            compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): ProxiedInputModel =
+            compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: Any]]): ProxiedInputModel =
     new ProxiedInputModel(model, proxiedParams, compositeProxiedParams)
 
   def apply(model: Model,
@@ -89,14 +89,14 @@ object ProxiedInputModel {
     new ProxiedInputModel(model, transformer)
 
   private def collectRemovedParams(proxiedParams: Iterable[ProxiedModelInputParam],
-                                  compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]): Iterable[SignatureName] = {
+                                  compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: Any]]): Iterable[SignatureName] = {
     val proxiedNames = proxiedParams.map(_.paramName)
     val composedProxiedNames = compositeProxiedParams.flatMap(_.proxiedParams)
     proxiedNames ++ composedProxiedNames
   }
 
   private def filteredTransform(proxiedParams: Iterable[ProxiedModelInputParam],
-                                compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: AnyRef]]
+                                compositeProxiedParams: Iterable[ProxiedModelCompositeInputParam[_ <: Any]]
                                ): FilteredSignatureTransformer =
     new FilteredSignatureTransformer(collectRemovedParams(proxiedParams, compositeProxiedParams))
 }

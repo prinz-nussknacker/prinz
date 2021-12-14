@@ -25,11 +25,11 @@ If you are already signed to GitHub in your project, just add any of these lines
 to add Prinz dependencies to your `.sbt` project
 
 ```sbt
-"pl.touk.nussknacker.prinz" %% "prinz" % "1.0.0-SNAPSHOT"
-"pl.touk.nussknacker.prinz" %% "prinz-mlflow" % "1.0.0-SNAPSHOT"
-"pl.touk.nussknacker.prinz" %% "prinz-pmml" % "1.0.0-SNAPSHOT"
-"pl.touk.nussknacker.prinz" %% "prinz-h2o" % "1.0.0-SNAPSHOT"
-"pl.touk.nussknacker.prinz" %% "prinz-proxy" % "1.0.0-SNAPSHOT"
+"pl.touk.nussknacker.prinz" %% "prinz" % "1.2.0-preview-staging"
+"pl.touk.nussknacker.prinz" %% "prinz-mlflow" % "1.2.0-preview-staging"
+"pl.touk.nussknacker.prinz" %% "prinz-pmml" % "1.2.0-preview-staging"
+"pl.touk.nussknacker.prinz" %% "prinz-h2o" % "1.2.0-preview-staging"
+"pl.touk.nussknacker.prinz" %% "prinz-proxy" % "1.2.0-preview-staging"
 ```
 
 ## Authors

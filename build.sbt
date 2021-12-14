@@ -1,17 +1,17 @@
 import sbtassembly.MergeStrategy
 
-val prinzV = "1.0.0-SNAPSHOT"
+val prinzV = "1.2.0-preview-staging"
 val prinzOrg = "pl.touk.nussknacker.prinz"
 val repositoryOwner = "prinz-nussknacker"
 val repositoryName = "prinz"
 
 // Dependency versions
 val scalaV = "2.12.10"
-val nussknackerV = "1.0.0"
+val nussknackerV = "1.2.0-staging-2021-12-09-5983-f15ac11992e3a82d32f651ef4e05b5d9458f46aa-SNAPSHOT"
 val sttpV = "3.0.0-RC7"
 val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
-val circeV = "0.11.1"
+val circeV = "0.14.1"
 val circeYamlV = "0.11.0-M1"
 val jpmmlV = "1.5.11"
 val jpmmlTranspilerV = "1.1.7"
@@ -69,7 +69,8 @@ lazy val commonSettings = Seq(
     Seq(
       "ch.qos.logback" % "logback-classic" % logbackV,
       "com.typesafe.scala-logging" %% "scala-logging" % typesafeLogV,
-      "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
+      "pl.touk.nussknacker" %% "nussknacker-util" % nussknackerV,
+      "pl.touk.nussknacker" %% "nussknacker-api" % nussknackerV,
     )
   },
 
@@ -200,13 +201,11 @@ lazy val prinz_sample = (project in file("prinz_sample"))
         // "pl.touk.nussknacker.prinz" %% "prinz-pmml" % prinzV,
         // "pl.touk.nussknacker.prinz" %% "prinz-h2o" % prinzV,
 
-        "pl.touk.nussknacker" %% "nussknacker-process" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-model-flink-util" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-kafka-flink-util" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-engine" % nussknackerV,
+        "pl.touk.nussknacker" %% "nussknacker-flink-kafka-util" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-ui" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-manager" % nussknackerV,
         "pl.touk.nussknacker" %% "nussknacker-flink-api" % nussknackerV,
-        "pl.touk.nussknacker" %% "nussknacker-flink-util" % nussknackerV,
       )
     },
     // add GitHub packages resolver dependency with GitHub token declared to download prinz
