@@ -22,7 +22,7 @@ services:
       # this is needed to be able to verify savepoints during deployments
       - storage_flink:/opt/flink/data
       - ./nussknacker/opt/prinz-sample/prinz.conf:/opt/nussknacker/conf/prinz.conf
-      - ./nussknacker/opt/prinz-sample/prinz-sample-assembly-1.2.0-preview-staging.jar:/opt/prinz-sample/prinz-sample.jar
+      - ./nussknacker/opt/prinz-sample/prinz-sample-assembly-1.2.0-preview-staging-2021-12-21.jar:/opt/prinz-sample/prinz-sample.jar
     networks:
       - dev-bridge-net
 
