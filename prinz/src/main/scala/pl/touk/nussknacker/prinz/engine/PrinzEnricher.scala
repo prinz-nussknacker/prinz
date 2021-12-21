@@ -35,7 +35,7 @@ final case class PrinzEnricher(private val model: Model)
     model
       .getMetadata
       .signature
-      .toInputParameterDefinition
+      .toInputLazyParameterDefinition
 
   override def returnType: typing.TypingResult =
     model

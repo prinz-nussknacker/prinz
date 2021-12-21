@@ -11,8 +11,8 @@ case class ModelSignature private(private val signatureInputs: List[SignatureFie
 
   private val signatureOutputMap = signatureOutputs.groupBy(_.signatureName).mapValues(_.head.signatureType)
 
-  def toInputParameterDefinition: List[Parameter] =
-    signatureInputs.map(field => field.toNussknackerParameter)
+  def toInputLazyParameterDefinition: List[Parameter] =
+    signatureInputs.map(field => field.toLazyNotBlankParameter)
 
   def toOutputTypedObjectTypingResult: TypedObjectTypingResult =
     TypedObjectTypingResult(signatureOutputMap.map(kv => (kv._1.name, kv._2.typingResult)).toList)
@@ -34,8 +34,8 @@ case class SignatureType(typingResult: TypingResult)
 
 case class SignatureField(signatureName: SignatureName, signatureType: SignatureType) {
 
-  def toNussknackerParameter: Parameter =
-    NotBlankParameter(signatureName.name, signatureType.typingResult)
+  def toLazyNotBlankParameter: Parameter =
+    NotBlankParameter(signatureName.name, signatureType.typingResult).copy(isLazyParameter = true)
 
   override def toString: String =
     s"${signatureName.name}: ${signatureType.typingResult.display}"
