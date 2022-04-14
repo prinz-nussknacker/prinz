@@ -1,6 +1,7 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
-import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, PMMLException}
+import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder}
+import org.jpmml.model.PMMLException
 import pl.touk.nussknacker.prinz.model.ModelNotValidException
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 import pl.touk.nussknacker.prinz.util.resource.ResourceManager

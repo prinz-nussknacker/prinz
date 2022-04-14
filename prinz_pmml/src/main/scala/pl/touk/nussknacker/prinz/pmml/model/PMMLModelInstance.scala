@@ -1,7 +1,8 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
 import com.typesafe.scalalogging.LazyLogging
-import org.jpmml.evaluator.{Evaluator, EvaluatorUtil, PMMLException}
+import org.jpmml.evaluator.{Evaluator, EvaluatorUtil}
+import org.jpmml.model.PMMLException
 import pl.touk.nussknacker.engine.util.SynchronousExecutionContext.ctx
 import pl.touk.nussknacker.prinz.model.ModelInstance.{ModelInputData, ModelRunResult}
 import pl.touk.nussknacker.prinz.model.{ModelInstance, ModelRunException}
@@ -28,9 +29,8 @@ case class PMMLModelInstance(private val evaluator: Evaluator,
   }
 
   def evaluateRow(row: Map[String, Any]): Map[String, _] = {
-    val args = EvaluatorUtil.encodeKeys(row.asJava)
-    val results = evaluator.evaluate(args)
-    val decodeResult = EvaluatorUtil.decodeAll(results).asScala.toMap
+    val args = evaluator.evaluate(row.asJava)
+    val decodeResult = EvaluatorUtil.decodeAll(args).asScala.toMap
     decodeResult
   }
 
