@@ -1,6 +1,6 @@
 import sbtassembly.MergeStrategy
 
-val prinzV = "1.2.0-preview-staging-2021-12-21"
+val prinzV = "1.2.0-preview-staging-2022-03-14"
 val prinzOrg = "pl.touk.nussknacker.prinz"
 val repositoryOwner = "prinz-nussknacker"
 val repositoryName = "prinz"
@@ -13,7 +13,7 @@ val scalatestV = "3.2.2"
 val minioS3V = "8.0.0"
 val circeV = "0.14.1"
 val circeYamlV = "0.11.0-M1"
-val jpmmlV = "1.5.11"
+val jpmmlV = "1.6.3"
 val jpmmlTranspilerV = "1.1.7"
 val testContainersV = "0.38.8"
 val paradiseV = "2.1.1"
@@ -23,6 +23,9 @@ val logbackV = "1.2.3"
 val h2V = "1.4.200"
 val jsoupV = "1.13.1"
 val h2oV = "3.32.0.5"
+val jaxbV = "3.0.0"
+val jakartaV = "3.0.0"
+
 
 ThisBuild / scalaVersion  := scalaV
 ThisBuild / versionScheme := Some("semver-spec")
@@ -117,7 +120,6 @@ lazy val prinz = (project in file("prinz"))
     libraryDependencies ++= {
       Seq(
         "com.typesafe" % "config" % typesafeConfigV,
-
         "org.jsoup" % "jsoup" % jsoupV,
 
         "org.scalatest" %% "scalatest" % scalatestV % Test,
@@ -165,10 +167,11 @@ lazy val prinz_pmml = (project in file("prinz_pmml"))
     libraryDependencies ++= {
       Seq(
         "org.jpmml" % "pmml-evaluator" % jpmmlV,
-        "org.jpmml" % "pmml-evaluator-extension" % jpmmlV,
         "org.jpmml" % "pmml-model" % jpmmlV,
         "org.jpmml" % "jpmml-transpiler" % jpmmlTranspilerV,
         "org.jsoup" % "jsoup" % jsoupV,
+        "jakarta.xml.bind" % "jakarta.xml.bind-api" % jakartaV,
+        "com.sun.xml.bind" % "jaxb-impl" % jaxbV,
       )
     }
   )

@@ -1,8 +1,7 @@
 package pl.touk.nussknacker.prinz.pmml.model
 
-import org.jpmml.evaluator.{Evaluator, LoadingModelEvaluatorBuilder, PMMLException}
 import pl.touk.nussknacker.prinz.model.SignatureProvider.ProvideSignatureResult
-import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelNotValidException, ModelSignatureLocationMetadata, ModelVersion}
+import pl.touk.nussknacker.prinz.model.{Model, ModelInstance, ModelName, ModelSignatureLocationMetadata, ModelVersion}
 import pl.touk.nussknacker.prinz.pmml.model.PMMLModel.extractName
 import pl.touk.nussknacker.prinz.pmml.repository.PMMLModelPayload
 

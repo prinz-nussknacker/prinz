@@ -24,7 +24,7 @@ final case class PrinzEnricher(private val model: Model)
                                        collector: InvocationCollectors.ServiceInvocationCollector,
                                        contextId: ContextId,
                                        metaData: MetaData): Future[Any] = {
-    val inputMap = createInputMap(params.values.toList)
+    val inputMap = createInputMap(params)
     modelInstance.run(inputMap).map {
       case Right(runResult) => runResult
       case Left(exc) => throw exc
@@ -43,6 +43,7 @@ final case class PrinzEnricher(private val model: Model)
       .signature
       .toOutputTypedObjectTypingResult
 
-  def createInputMap(inputs: List[Any]): ModelInputData =
-    VectorMultimap(parameters.map(_.name) zip inputs)
+  def createInputMap(inputs: Map[String, Any]): ModelInputData =
+    VectorMultimap(parameters.map{p => (p.name, inputs.getOrElse(p.name, throw new IllegalArgumentException(s"Missing param: ${p.name}.")))})
+
 }
